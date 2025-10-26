@@ -14,6 +14,17 @@ class ExampleTest extends TestCase
     public function validates_that_true_is_true(): void
     {
         $this->markTestIncomplete();
+
+        /** #region Arrange */
+        // No arrangement needed
+        /** #endregion */
+
+        /** #region Act */
+        // No action needed
+        /** #endregion */
+
+        /** #region Assert */
         $this->assertTrue(true);
+        /** #endregion */
     }
 }

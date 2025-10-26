@@ -15,8 +15,17 @@ class ExampleTest extends TestCase
     public function returns_successful_response_for_application(): void
     {
         $this->markTestIncomplete();
-        $response = $this->get('/');
 
+        /** #region Arrange */
+        // No arrangement needed
+        /** #endregion */
+
+        /** #region Act */
+        $response = $this->get('/');
+        /** #endregion */
+
+        /** #region Assert */
         $response->assertStatus(200);
+        /** #endregion */
     }
 }
