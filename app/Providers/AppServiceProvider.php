@@ -7,6 +7,7 @@ use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
 use App\Services\Instagram\BlockedAccountService;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Socialite\Facades\Socialite;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -35,6 +36,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Register the Instagram Socialite provider
+        Socialite::extend('instagram', function ($app) {
+            $config = $app['config']['services.instagram'];
+            
+            return Socialite::buildProvider(InstagramProvider::class, $config);
+        });
     }
 }
+

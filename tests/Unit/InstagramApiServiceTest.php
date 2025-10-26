@@ -154,17 +154,16 @@ class InstagramApiServiceTest extends TestCase
         $this->assertCount(0, $comments);
     }
 
-    public function testBlockUserThrowsExceptionWhenNoAccessToken(): void
+    public function testBlockUserReturnsFalseWhenNoAccessToken(): void
     {
         $account = new InstagramAccount(['username' => 'test']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
         $service = new InstagramApiService($mockClient);
 
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('No access token available for account: test');
-
-        $service->blockUser($account, 'user123');
+        $result = $service->blockUser($account, 'user123');
+        
+        $this->assertFalse($result);
     }
 
     public function testBlockUserReturnsTrueOnSuccess(): void
@@ -228,17 +227,16 @@ class InstagramApiServiceTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testGetUserInfoThrowsExceptionWhenNoAccessToken(): void
+    public function testGetUserInfoReturnsNullWhenNoAccessToken(): void
     {
         $account = new InstagramAccount(['username' => 'test']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
         $service = new InstagramApiService($mockClient);
 
-        $this->expectException(\Exception::class);
-        $this->expectExceptionMessage('No access token available for account: test');
-
-        $service->getUserInfo($account, 'search_user');
+        $userInfo = $service->getUserInfo($account, 'search_user');
+        
+        $this->assertNull($userInfo);
     }
 
     public function testGetUserInfoReturnsFirstUserFromSearchResults(): void
