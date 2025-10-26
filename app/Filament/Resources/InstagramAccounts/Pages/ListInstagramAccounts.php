@@ -20,7 +20,10 @@ class ListInstagramAccounts extends ListRecords
                 ->color('success')
                 ->url(route('instagram.oauth.redirect'))
                 ->openUrlInNewTab(false),
-            CreateAction::make(),
+            CreateAction::make()
+                ->using(function (array $data) {
+                    return static::getResource()::getModel()::create($data);
+                }),
         ];
     }
 }

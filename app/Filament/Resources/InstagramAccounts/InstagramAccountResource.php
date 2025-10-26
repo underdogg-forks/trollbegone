@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\InstagramAccounts;
 
-use App\Filament\Resources\InstagramAccounts\Pages\CreateInstagramAccount;
-use App\Filament\Resources\InstagramAccounts\Pages\EditInstagramAccount;
 use App\Filament\Resources\InstagramAccounts\Pages\ListInstagramAccounts;
 use App\Filament\Resources\InstagramAccounts\Schemas\InstagramAccountForm;
 use App\Filament\Resources\InstagramAccounts\Tables\InstagramAccountsTable;
@@ -62,7 +60,7 @@ class InstagramAccountResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\BlockedAccountsRelationManager::class,
         ];
     }
 
@@ -75,8 +73,7 @@ class InstagramAccountResource extends Resource
     {
         return [
             'index' => ListInstagramAccounts::route('/'),
-            'create' => CreateInstagramAccount::route('/create'),
-            'edit' => EditInstagramAccount::route('/{record}/edit'),
+            'view' => Pages\ViewInstagramAccount::route('/{record}'),
             'stories' => Pages\ViewStories::route('/{record}/stories'),
         ];
     }

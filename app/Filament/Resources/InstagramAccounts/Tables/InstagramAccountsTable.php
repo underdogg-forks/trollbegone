@@ -4,7 +4,7 @@ namespace App\Filament\Resources\InstagramAccounts\Tables;
 
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
-use Filament\Actions\EditAction;
+use Filament\Actions\ViewAction;
 use Filament\Actions\Action;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -56,7 +56,7 @@ class InstagramAccountsTable
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                ViewAction::make(),
                 Action::make('view_stories')
                     ->label('View Stories')
                     ->icon(Heroicon::OutlineEye)
