@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class BlockedAccount extends Model
 {
@@ -14,6 +15,11 @@ class BlockedAccount extends Model
         'reason',
         'comment_text',
     ];
+
+    public function setBlockedUsernameAttribute(?string $value): void
+    {
+        $this->attributes['blocked_username'] = $value !== null ? Str::lower($value) : null;
+    }
 
     public function instagramAccount(): BelongsTo
     {

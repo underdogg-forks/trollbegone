@@ -4,8 +4,11 @@ namespace App\Providers;
 
 use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientExceptionDecorator;
+use App\Models\InstagramAccount;
+use App\Policies\InstagramAccountPolicy;
 use App\Services\Instagram\InstagramApiService;
 use App\Services\Instagram\BlockedAccountService;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -35,6 +38,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        Gate::policy(InstagramAccount::class, InstagramAccountPolicy::class);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class InstagramAccount extends Model
@@ -13,6 +14,7 @@ class InstagramAccount extends Model
         'access_token',
         'is_active',
         'last_synced_at',
+        'user_id',
     ];
 
     protected $casts = [
@@ -23,5 +25,10 @@ class InstagramAccount extends Model
     public function blockedAccounts(): HasMany
     {
         return $this->hasMany(BlockedAccount::class);
+    }
+
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 }
