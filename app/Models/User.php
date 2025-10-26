@@ -7,6 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
+/**
+ * Application User Model
+ *
+ * Represents an authenticated user of the TrollBeGone application. Extends
+ * Laravel's authenticatable model and leverages factories and notifications
+ * for testing and user messaging.
+ */
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */

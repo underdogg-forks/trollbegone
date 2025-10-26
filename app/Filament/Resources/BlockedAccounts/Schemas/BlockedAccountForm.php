@@ -8,8 +8,20 @@ use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Schema;
 use App\Models\InstagramAccount;
 
+/**
+ * Blocked Account Form Schema
+ *
+ * Defines the form fields for creating and editing blocked account records in
+ * the Filament admin panel.
+ */
 class BlockedAccountForm
 {
+    /**
+     * Configure the form schema with all required fields.
+     *
+     * @param Schema $schema
+     * @return Schema
+     */
     public static function configure(Schema $schema): Schema
     {
         return $schema

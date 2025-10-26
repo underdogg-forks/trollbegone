@@ -7,8 +7,20 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
+/**
+ * Instagram Account Form Schema
+ *
+ * Defines the form fields for creating and editing Instagram accounts in the
+ * Filament admin panel.
+ */
 class InstagramAccountForm
 {
+    /**
+     * Configure the form schema with all required fields.
+     *
+     * @param Schema $schema
+     * @return Schema
+     */
     public static function configure(Schema $schema): Schema
     {
         return $schema

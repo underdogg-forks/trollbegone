@@ -14,6 +14,12 @@ use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
 
+/**
+ * Blocked Account Resource
+ *
+ * Filament admin resource for managing blocked Instagram accounts. Allows
+ * viewing, creating, editing, and deleting blocked account records.
+ */
 class BlockedAccountResource extends Resource
 {
     protected static ?string $model = BlockedAccount::class;
@@ -22,18 +28,34 @@ class BlockedAccountResource extends Resource
 
     protected static ?string $navigationLabel = 'Blocked Accounts';
 
+    /**
+     * The singular model label.
+     *
+     * @var string|null
+     */
     protected static ?string $modelLabel = 'Blocked Account';
 
+    /**
+     * Define the form schema for creating and editing blocked accounts.
+     */
     public static function form(Schema $schema): Schema
     {
         return BlockedAccountForm::configure($schema);
     }
 
+    /**
+     * Define the table schema for listing blocked accounts.
+     */
     public static function table(Table $table): Table
     {
         return BlockedAccountsTable::configure($table);
     }
 
+    /**
+     * Get the relations available on the resource.
+     *
+     * @return array<string, string>
+     */
     public static function getRelations(): array
     {
         return [
@@ -41,6 +63,11 @@ class BlockedAccountResource extends Resource
         ];
     }
 
+    /**
+     * Get the pages available for this resource.
+     *
+     * @return array<string, \Filament\Resources\Pages\PageRegistration>
+     */
     public static function getPages(): array
     {
         return [

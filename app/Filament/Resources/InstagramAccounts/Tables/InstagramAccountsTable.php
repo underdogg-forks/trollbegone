@@ -11,8 +11,16 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Support\Icons\Heroicon;
 
+/**
+ * Instagram Accounts Table Configuration
+ *
+ * Defines the table structure for listing Instagram accounts in Filament.
+ */
 class InstagramAccountsTable
 {
+    /**
+     * Configure the table with columns, filters, and actions.
+     */
     public static function configure(Table $table): Table
     {
         return $table
