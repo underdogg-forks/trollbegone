@@ -68,12 +68,12 @@ class InstagramOAuthController extends Controller
     public function disconnect(InstagramAccount $account): RedirectResponse
     {
         try {
+            $this->authorize('update', $account);
             // Clear the access token
             $account->update([
                 'access_token' => null,
                 'is_active' => false,
             ]);
-
             return redirect()
                 ->back()
                 ->with('success', "Instagram account @{$account->username} disconnected successfully!");
