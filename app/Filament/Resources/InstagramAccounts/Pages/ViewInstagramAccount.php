@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\InstagramAccounts\Pages;
 
 use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
-use Filament\Actions\EditAction;
 use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewInstagramAccount extends ViewRecord
@@ -17,6 +17,7 @@ class ViewInstagramAccount extends ViewRecord
             EditAction::make()
                 ->using(function ($record, array $data) {
                     $record->update($data);
+
                     return $record;
                 }),
             DeleteAction::make(),

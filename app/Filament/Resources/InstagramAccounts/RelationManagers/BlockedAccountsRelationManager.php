@@ -2,16 +2,15 @@
 
 namespace App\Filament\Resources\InstagramAccounts\RelationManagers;
 
-use App\Models\BlockedAccount;
 use App\Services\Instagram\BlockedAccountService;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
+use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\CreateAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -64,6 +63,7 @@ class BlockedAccountsRelationManager extends RelationManager
                 CreateAction::make()
                     ->using(function (array $data, RelationManager $livewire): Model {
                         $service = app(BlockedAccountService::class);
+
                         return $service->blockAccount(
                             $livewire->getOwnerRecord(),
                             $data['blocked_username'],
@@ -90,6 +90,7 @@ class BlockedAccountsRelationManager extends RelationManager
                 EditAction::make()
                     ->using(function (Model $record, array $data): Model {
                         $record->update($data);
+
                         return $record;
                     })
                     ->form([

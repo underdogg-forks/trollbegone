@@ -15,17 +15,16 @@ class ExternalClient
     /**
      * Send an HTTP request to an external API.
      *
-     * @param string $method HTTP method (GET, POST, PUT, DELETE, PATCH, etc.)
-     * @param string $url The URL to send the request to
-     * @param array $options Request options including:
-     *   - headers: array of HTTP headers
-     *   - token: Bearer token for authentication
-     *   - base_uri: Base URL for the request
-     *   - timeout: Request timeout in seconds (default: 30)
-     *   - connect_timeout: Connection timeout in seconds (default: 10)
-     *   - json: JSON data to send in the request body
-     *   - query: Query parameters for the request
-     * @return Response
+     * @param  string  $method  HTTP method (GET, POST, PUT, DELETE, PATCH, etc.)
+     * @param  string  $url  The URL to send the request to
+     * @param  array  $options  Request options including:
+     *                          - headers: array of HTTP headers
+     *                          - token: Bearer token for authentication
+     *                          - base_uri: Base URL for the request
+     *                          - timeout: Request timeout in seconds (default: 30)
+     *                          - connect_timeout: Connection timeout in seconds (default: 10)
+     *                          - json: JSON data to send in the request body
+     *                          - query: Query parameters for the request
      */
     public function request(
         string $method,
@@ -40,8 +39,7 @@ class ExternalClient
     /**
      * Build and configure the HTTP client with the provided options.
      *
-     * @param array $options Configuration options for the HTTP client
-     * @return PendingRequest
+     * @param  array  $options  Configuration options for the HTTP client
      */
     protected function buildClient(array $options = []): PendingRequest
     {

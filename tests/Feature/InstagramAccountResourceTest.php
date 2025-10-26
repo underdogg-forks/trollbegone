@@ -25,7 +25,7 @@ class InstagramAccountResourceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->adminUser = User::factory()->create();
         $this->actingAs($this->adminUser);
     }
@@ -33,7 +33,7 @@ class InstagramAccountResourceTest extends TestCase
     public function test_can_render_instagram_accounts_list_page(): void
     {
         $this->markTestSkipped('Skipping until Filament permissions are configured');
-        
+
         $this->get(InstagramAccountResource::getUrl('index'))
             ->assertSuccessful();
     }

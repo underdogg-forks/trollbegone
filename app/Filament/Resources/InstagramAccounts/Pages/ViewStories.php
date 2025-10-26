@@ -4,12 +4,11 @@ namespace App\Filament\Resources\InstagramAccounts\Pages;
 
 use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
 use App\Models\InstagramAccount;
-use App\Services\Instagram\InstagramApiService;
 use App\Services\Instagram\BlockedAccountService;
+use App\Services\Instagram\InstagramApiService;
+use Filament\Notifications\Notification;
 use Filament\Pages\Actions\Action;
 use Filament\Resources\Pages\Page;
-use Filament\Forms\Components\Textarea;
-use Filament\Notifications\Notification;
 
 /**
  * View Stories Page
@@ -25,7 +24,9 @@ class ViewStories extends Page
     public InstagramAccount $record;
 
     public array $stories = [];
+
     public array $comments = [];
+
     public ?string $selectedStoryId = null;
 
     /**
@@ -47,7 +48,7 @@ class ViewStories extends Page
             $this->stories = $instagramApi->getStories($this->record)->toArray();
 
             $this->record->update(['last_synced_at' => now()]);
-            
+
             Notification::make()
                 ->title('Stories loaded successfully')
                 ->success()
@@ -70,7 +71,7 @@ class ViewStories extends Page
             $this->selectedStoryId = $storyId;
             $instagramApi = app(InstagramApiService::class);
             $this->comments = $instagramApi->getStoryComments($this->record, $storyId)->toArray();
-            
+
             Notification::make()
                 ->title('Comments loaded successfully')
                 ->success()
@@ -97,7 +98,7 @@ class ViewStories extends Page
                 'Blocked from story comments',
                 $commentText
             );
-            
+
             Notification::make()
                 ->title("User @{$username} has been blocked")
                 ->success()

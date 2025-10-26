@@ -17,9 +17,6 @@ class InstagramAccountForm
 {
     /**
      * Configure the form schema with all required fields.
-     *
-     * @param Schema $schema
-     * @return Schema
      */
     public static function configure(Schema $schema): Schema
     {

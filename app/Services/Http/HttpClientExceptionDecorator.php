@@ -19,10 +19,10 @@ class HttpClientExceptionDecorator
     /**
      * Send an HTTP request with exception handling.
      *
-     * @param string $method HTTP method
-     * @param string $url Request URL
-     * @param array $options Request options
-     * @return Response
+     * @param  string  $method  HTTP method
+     * @param  string  $url  Request URL
+     * @param  array  $options  Request options
+     *
      * @throws HttpClientException
      */
     public function request(
@@ -32,9 +32,9 @@ class HttpClientExceptionDecorator
     ): Response {
         try {
             $response = $this->client->request($method, $url, $options);
-            
+
             $response->throw();
-            
+
             return $response;
         } catch (RequestException $e) {
             throw new HttpClientException(
@@ -55,16 +55,16 @@ class HttpClientExceptionDecorator
      * Magic method to handle HTTP method calls (get, post, put, delete, patch).
      * This allows backward compatibility with method-specific calls.
      *
-     * @param string $method The HTTP method name (get, post, put, delete, patch)
-     * @param array $arguments Arguments passed to the method [url, options]
-     * @return Response
+     * @param  string  $method  The HTTP method name (get, post, put, delete, patch)
+     * @param  array  $arguments  Arguments passed to the method [url, options]
+     *
      * @throws HttpClientException
      */
     public function __call(string $method, array $arguments): Response
     {
         $allowedMethods = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'];
-        
-        if (!in_array(strtolower($method), $allowedMethods)) {
+
+        if (! in_array(strtolower($method), $allowedMethods)) {
             throw new BadMethodCallException("Method {$method} is not supported");
         }
 

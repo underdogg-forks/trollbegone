@@ -20,7 +20,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $comment_text The comment that triggered the block
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- *
  * @property-read \App\Models\InstagramAccount $instagramAccount
  *
  * @method static \Illuminate\Database\Eloquent\Builder|BlockedAccount newModelQuery()
@@ -30,6 +29,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class BlockedAccount extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'instagram_account_id',
         'blocked_username',

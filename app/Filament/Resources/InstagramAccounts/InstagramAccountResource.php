@@ -29,8 +29,6 @@ class InstagramAccountResource extends Resource
 
     /**
      * The singular model label.
-     *
-     * @var string|null
      */
     protected static ?string $modelLabel = 'Instagram Account';
 

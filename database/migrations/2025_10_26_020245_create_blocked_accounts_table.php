@@ -19,7 +19,7 @@ return new class extends Migration
             $table->text('reason')->nullable();
             $table->text('comment_text')->nullable();
             $table->timestamps();
-            
+
             $table->unique(['instagram_account_id', 'blocked_instagram_id']);
         });
     }

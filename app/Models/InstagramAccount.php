@@ -21,7 +21,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Carbon\Carbon|null $last_synced_at Last time stories were fetched
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- *
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BlockedAccount> $blockedAccounts
  * @property-read int|null $blocked_accounts_count
  *
@@ -32,6 +31,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class InstagramAccount extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'username',
         'instagram_id',

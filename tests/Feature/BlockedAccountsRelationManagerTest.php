@@ -3,15 +3,12 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
-use App\Filament\Resources\InstagramAccounts\Pages\ViewInstagramAccount;
-use App\Filament\Resources\InstagramAccounts\RelationManagers\BlockedAccountsRelationManager;
 use App\Models\BlockedAccount;
 use App\Models\InstagramAccount;
 use App\Models\User;
 use App\Services\Instagram\BlockedAccountService;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Livewire\Livewire;
 use Mockery;
 use Tests\TestCase;
 
@@ -26,15 +23,16 @@ class BlockedAccountsRelationManagerTest extends TestCase
     use RefreshDatabase;
 
     protected User $adminUser;
+
     protected InstagramAccount $instagramAccount;
 
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         $this->adminUser = User::factory()->create();
         $this->actingAs($this->adminUser);
-        
+
         $this->instagramAccount = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -44,7 +42,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
     public function test_can_render_blocked_accounts_relation_manager(): void
     {
         $this->markTestSkipped('Skipping until Filament permissions are configured');
-        
+
         $this->get(
             InstagramAccountResource::getUrl('view', ['record' => $this->instagramAccount])
         )->assertSuccessful();
@@ -68,7 +66,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
             ->andReturn(null); // Simulate getUserInfo succeeding but returning null
 
         $service = new BlockedAccountService($mockApiService);
-        
+
         $result = $service->blockAccount(
             $this->instagramAccount,
             'test_user',
