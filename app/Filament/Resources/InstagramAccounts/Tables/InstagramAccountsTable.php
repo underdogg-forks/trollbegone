@@ -59,7 +59,7 @@ class InstagramAccountsTable
                 ViewAction::make(),
                 Action::make('view_stories')
                     ->label('View Stories')
-                    ->icon(Heroicon::OutlineEye)
+                    ->icon('heroicon-o-eye')
                     ->url(fn ($record) => route('filament.admin.resources.instagram-accounts.stories', $record))
                     ->openUrlInNewTab(),
             ])
