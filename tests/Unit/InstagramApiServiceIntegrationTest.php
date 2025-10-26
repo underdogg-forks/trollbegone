@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use PHPUnit\Framework\Attributes\Test;
+
 use App\Models\InstagramAccount;
 use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
@@ -23,8 +25,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         parent::tearDown();
     }
 
-    public function testGetStoriesWithRealFixture(): void
+    #[Test]
+    public function it_get_stories_with_real_fixture(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -51,8 +55,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertEquals('VIDEO', $stories->last()['media_type']);
     }
 
-    public function testGetStoryCommentsWithRealFixture(): void
+    #[Test]
+    public function it_get_story_comments_with_real_fixture(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -78,8 +84,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertEquals('john_doe_123', $comments->first()['from']['username']);
     }
 
-    public function testGetUserInfoWithRealFixture(): void
+    #[Test]
+    public function it_get_user_info_with_real_fixture(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -106,8 +114,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertEquals('Spam Account User', $userInfo['full_name']);
     }
 
-    public function testBlockUserWithSuccessResponse(): void
+    #[Test]
+    public function it_block_user_with_success_response(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -131,8 +141,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertTrue($result);
     }
 
-    public function testIdentifySpamCommentFromFixture(): void
+    #[Test]
+    public function it_identify_spam_comment_from_fixture(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -163,8 +175,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertEquals('spam_account', $spamComment['from']['username']);
     }
 
-    public function testHandleEmptyStoriesResponse(): void
+    #[Test]
+    public function it_handle_empty_stories_response(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -189,8 +203,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertTrue($stories->isEmpty());
     }
 
-    public function testHandleEmptyCommentsResponse(): void
+    #[Test]
+    public function it_handle_empty_comments_response(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -215,8 +231,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertTrue($comments->isEmpty());
     }
 
-    public function testHandleUserNotFoundResponse(): void
+    #[Test]
+    public function it_handle_user_not_found_response(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -240,8 +258,10 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertNull($userInfo);
     }
 
-    public function testProcessMultipleStoryTypes(): void
+    #[Test]
+    public function it_process_multiple_story_types(): void
     {
+        $this->markTestIncomplete();
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',

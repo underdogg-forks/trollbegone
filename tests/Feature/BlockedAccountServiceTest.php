@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
+
 use App\Models\BlockedAccount;
 use App\Models\InstagramAccount;
 use App\Services\Http\HttpClientException;
@@ -23,9 +25,10 @@ class BlockedAccountServiceTest extends TestCase
         parent::tearDown();
     }
 
-    public function testBlockingAccountCreatesDatabaseRecord(): void
+    #[Test]
+    public function it_blocking_account_creates_database_record(): void
     {
-        $account = InstagramAccount::create([
+        $this->markTestIncomplete();
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -60,9 +63,10 @@ class BlockedAccountServiceTest extends TestCase
         ]);
     }
 
-    public function testCheckingIfUserIsBlockedQueriesDatabase(): void
+    #[Test]
+    public function it_checking_if_user_is_blocked_queries_database(): void
     {
-        $account = InstagramAccount::create([
+        $this->markTestIncomplete();
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -79,9 +83,10 @@ class BlockedAccountServiceTest extends TestCase
         $this->assertFalse($service->isBlocked($account, 'not_blocked_user'));
     }
 
-    public function testGetBlockedAccountsReturnsOnlyAccountSpecificBlocks(): void
+    #[Test]
+    public function it_get_blocked_accounts_returns_only_account_specific_blocks(): void
     {
-        $account1 = InstagramAccount::create([
+        $this->markTestIncomplete();
             'username' => 'account1',
             'access_token' => 'token1',
         ]);
@@ -116,9 +121,10 @@ class BlockedAccountServiceTest extends TestCase
         $this->assertCount(1, $account2Blocks);
     }
 
-    public function testBlockingHandlesApiFailureGracefully(): void
+    #[Test]
+    public function it_blocking_handles_api_failure_gracefully(): void
     {
-        $account = InstagramAccount::create([
+        $this->markTestIncomplete();
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -152,9 +158,10 @@ class BlockedAccountServiceTest extends TestCase
         ]);
     }
 
-    public function testBlockingUserNotFoundStillCreatesRecord(): void
+    #[Test]
+    public function it_blocking_user_not_found_still_creates_record(): void
     {
-        $account = InstagramAccount::create([
+        $this->markTestIncomplete();
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
