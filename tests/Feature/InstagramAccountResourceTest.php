@@ -9,6 +9,7 @@ use App\Models\InstagramAccount;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -30,141 +31,229 @@ class InstagramAccountResourceTest extends TestCase
         $this->actingAs($this->adminUser);
     }
 
-    public function test_can_render_instagram_accounts_list_page(): void
+    #[Test]
+    public function it_can_render_instagram_accounts_list_page(): void
     {
-        $this->markTestSkipped('Skipping until Filament permissions are configured');
+        $this->markTestIncomplete();
 
-        $this->get(InstagramAccountResource::getUrl('index'))
-            ->assertSuccessful();
+        /** #region Arrange */
+        // User and authentication set up in setUp()
+        /** #endregion */
+
+        /** #region Act */
+        $response = $this->get(InstagramAccountResource::getUrl('index'));
+        /** #endregion */
+
+        /** #region Assert */
+        $response->assertSuccessful();
+        /** #endregion */
     }
 
-    public function test_can_list_instagram_accounts(): void
+    #[Test]
+    public function it_can_list_instagram_accounts(): void
     {
+        /** #region Arrange */
         $accounts = InstagramAccount::factory()->count(3)->create();
+        /** #endregion */
 
-        Livewire::test(ListInstagramAccounts::class)
-            ->assertCanSeeTableRecords($accounts);
+        /** #region Act */
+        $component = Livewire::test(ListInstagramAccounts::class);
+        /** #endregion */
+
+        /** #region Assert */
+        $component->assertCanSeeTableRecords($accounts);
+        /** #endregion */
     }
 
-    public function test_can_create_instagram_account_via_modal(): void
+    #[Test]
+    public function it_can_create_instagram_account_via_modal(): void
     {
+        /** #region Arrange */
         $newData = [
             'username' => 'test_account',
             'instagram_id' => '123456789',
             'access_token' => 'test_token_abc123',
             'is_active' => true,
         ];
+        /** #endregion */
 
+        /** #region Act */
         Livewire::test(ListInstagramAccounts::class)
             ->callAction('create', data: $newData);
+        /** #endregion */
 
+        /** #region Assert */
         $this->assertDatabaseHas('instagram_accounts', [
             'username' => 'test_account',
             'instagram_id' => '123456789',
             'is_active' => true,
         ]);
+        /** #endregion */
     }
 
-    public function test_can_validate_instagram_account_username_is_required(): void
+    #[Test]
+    public function it_can_validate_instagram_account_username_is_required(): void
     {
-        Livewire::test(ListInstagramAccounts::class)
-            ->callAction('create', data: [
-                'instagram_id' => '123456789',
-            ])
-            ->assertHasActionErrors(['username' => 'required']);
+        /** #region Arrange */
+        $invalidData = [
+            'instagram_id' => '123456789',
+        ];
+        /** #endregion */
+
+        /** #region Act */
+        $component = Livewire::test(ListInstagramAccounts::class)
+            ->callAction('create', data: $invalidData);
+        /** #endregion */
+
+        /** #region Assert */
+        $component->assertHasActionErrors(['username' => 'required']);
+        /** #endregion */
     }
 
-    public function test_can_validate_instagram_account_username_is_unique(): void
+    #[Test]
+    public function it_can_validate_instagram_account_username_is_unique(): void
     {
+        /** #region Arrange */
         $existingAccount = InstagramAccount::factory()->create([
             'username' => 'existing_account',
         ]);
+        /** #endregion */
 
-        Livewire::test(ListInstagramAccounts::class)
+        /** #region Act */
+        $component = Livewire::test(ListInstagramAccounts::class)
             ->callAction('create', data: [
                 'username' => 'existing_account',
-            ])
-            ->assertHasActionErrors(['username' => 'unique']);
+            ]);
+        /** #endregion */
+
+        /** #region Assert */
+        $component->assertHasActionErrors(['username' => 'unique']);
+        /** #endregion */
     }
 
-    public function test_can_edit_instagram_account_via_modal(): void
+    #[Test]
+    public function it_can_edit_instagram_account_via_modal(): void
     {
+        /** #region Arrange */
         $account = InstagramAccount::factory()->create([
             'username' => 'original_username',
             'is_active' => true,
         ]);
+        /** #endregion */
 
+        /** #region Act */
         Livewire::test(ViewInstagramAccount::class, ['record' => $account->id])
             ->callAction('edit', data: [
                 'username' => 'updated_username',
                 'is_active' => false,
             ]);
+        /** #endregion */
 
+        /** #region Assert */
         $this->assertDatabaseHas('instagram_accounts', [
             'id' => $account->id,
             'username' => 'updated_username',
             'is_active' => false,
         ]);
+        /** #endregion */
     }
 
-    public function test_can_delete_instagram_account(): void
+    #[Test]
+    public function it_can_delete_instagram_account(): void
     {
+        /** #region Arrange */
         $account = InstagramAccount::factory()->create();
+        /** #endregion */
 
+        /** #region Act */
         Livewire::test(ViewInstagramAccount::class, ['record' => $account->id])
             ->callAction('delete');
+        /** #endregion */
 
+        /** #region Assert */
         $this->assertDatabaseMissing('instagram_accounts', [
             'id' => $account->id,
         ]);
+        /** #endregion */
     }
 
-    public function test_can_bulk_delete_instagram_accounts(): void
+    #[Test]
+    public function it_can_bulk_delete_instagram_accounts(): void
     {
+        /** #region Arrange */
         $accounts = InstagramAccount::factory()->count(3)->create();
+        /** #endregion */
 
+        /** #region Act */
         Livewire::test(ListInstagramAccounts::class)
             ->callTableBulkAction('delete', $accounts);
+        /** #endregion */
 
+        /** #region Assert */
         foreach ($accounts as $account) {
             $this->assertDatabaseMissing('instagram_accounts', [
                 'id' => $account->id,
             ]);
         }
+        /** #endregion */
     }
 
-    public function test_instagram_accounts_table_displays_correct_columns(): void
+    #[Test]
+    public function it_instagram_accounts_table_displays_correct_columns(): void
     {
+        /** #region Arrange */
         $account = InstagramAccount::factory()->create([
             'username' => 'test_user',
             'instagram_id' => '987654321',
             'is_active' => true,
         ]);
+        /** #endregion */
 
-        Livewire::test(ListInstagramAccounts::class)
-            ->assertCanSeeTableRecords([$account])
+        /** #region Act */
+        $component = Livewire::test(ListInstagramAccounts::class);
+        /** #endregion */
+
+        /** #region Assert */
+        $component->assertCanSeeTableRecords([$account])
             ->assertTableColumnExists('username')
             ->assertTableColumnExists('instagram_id')
             ->assertTableColumnExists('is_active')
             ->assertTableColumnExists('blockedAccounts_count');
+        /** #endregion */
     }
 
-    public function test_can_search_instagram_accounts_by_username(): void
+    #[Test]
+    public function it_can_search_instagram_accounts_by_username(): void
     {
+        /** #region Arrange */
         $account1 = InstagramAccount::factory()->create(['username' => 'searchable_account']);
         $account2 = InstagramAccount::factory()->create(['username' => 'other_account']);
+        /** #endregion */
 
-        Livewire::test(ListInstagramAccounts::class)
-            ->searchTable('searchable')
-            ->assertCanSeeTableRecords([$account1])
+        /** #region Act */
+        $component = Livewire::test(ListInstagramAccounts::class)
+            ->searchTable('searchable');
+        /** #endregion */
+
+        /** #region Assert */
+        $component->assertCanSeeTableRecords([$account1])
             ->assertCanNotSeeTableRecords([$account2]);
+        /** #endregion */
     }
 
-    public function test_instagram_accounts_are_sorted_by_default(): void
+    #[Test]
+    public function it_instagram_accounts_are_sorted_by_default(): void
     {
+        /** #region Arrange */
         $accounts = InstagramAccount::factory()->count(3)->create();
+        /** #endregion */
 
-        Livewire::test(ListInstagramAccounts::class)
-            ->assertCanSeeTableRecords($accounts, inOrder: false);
+        /** #region Act */
+        $component = Livewire::test(ListInstagramAccounts::class);
+        /** #endregion */
+
+        /** #region Assert */
+        $component->assertCanSeeTableRecords($accounts, inOrder: false);
+        /** #endregion */
     }
 }

@@ -10,6 +10,7 @@ use App\Services\Instagram\BlockedAccountService;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Mockery;
+use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
@@ -39,85 +40,112 @@ class BlockedAccountsRelationManagerTest extends TestCase
         ]);
     }
 
-    public function test_can_render_blocked_accounts_relation_manager(): void
+    #[Test]
+    public function it_can_render_blocked_accounts_relation_manager(): void
     {
-        $this->markTestSkipped('Skipping until Filament permissions are configured');
+        $this->markTestIncomplete();
 
-        $this->get(
+        /** #region Arrange */
+        // User and Instagram account set up in setUp()
+        /** #endregion */
+
+        /** #region Act */
+        $response = $this->get(
             InstagramAccountResource::getUrl('view', ['record' => $this->instagramAccount])
-        )->assertSuccessful();
+        );
+        /** #endregion */
+
+        /** #region Assert */
+        $response->assertSuccessful();
+        /** #endregion */
     }
 
-    public function test_can_list_blocked_accounts_in_relation_manager(): void
+    #[Test]
+    public function it_can_list_blocked_accounts_in_relation_manager(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_can_create_blocked_account_via_modal_with_service(): void
+    #[Test]
+    public function it_can_create_blocked_account_via_modal_with_service(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_blocked_account_creation_uses_transaction(): void
+    #[Test]
+    public function it_blocked_account_creation_uses_transaction(): void
     {
-        // Test the service directly to verify transaction usage
+        /** #region Arrange */
         $mockApiService = Mockery::mock(InstagramApiService::class);
         $mockApiService->shouldReceive('getUserInfo')
             ->andReturn(null); // Simulate getUserInfo succeeding but returning null
 
         $service = new BlockedAccountService($mockApiService);
+        /** #endregion */
 
+        /** #region Act */
         $result = $service->blockAccount(
             $this->instagramAccount,
             'test_user',
             'Test reason'
         );
+        /** #endregion */
 
+        /** #region Assert */
         $this->assertInstanceOf(BlockedAccount::class, $result);
         $this->assertDatabaseHas('blocked_accounts', [
             'instagram_account_id' => $this->instagramAccount->id,
             'blocked_username' => 'test_user',
         ]);
+        /** #endregion */
     }
 
-    public function test_can_validate_blocked_username_is_required(): void
+    #[Test]
+    public function it_can_validate_blocked_username_is_required(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_can_edit_blocked_account_via_modal(): void
+    #[Test]
+    public function it_can_edit_blocked_account_via_modal(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_can_delete_blocked_account(): void
+    #[Test]
+    public function it_can_delete_blocked_account(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_can_bulk_delete_blocked_accounts(): void
+    #[Test]
+    public function it_can_bulk_delete_blocked_accounts(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_blocked_accounts_table_displays_correct_columns(): void
+    #[Test]
+    public function it_blocked_accounts_table_displays_correct_columns(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_can_search_blocked_accounts_by_username(): void
+    #[Test]
+    public function it_can_search_blocked_accounts_by_username(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_blocked_accounts_sorted_by_created_at_desc(): void
+    #[Test]
+    public function it_blocked_accounts_sorted_by_created_at_desc(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
-    public function test_only_shows_blocked_accounts_for_current_instagram_account(): void
+    #[Test]
+    public function it_only_shows_blocked_accounts_for_current_instagram_account(): void
     {
-        $this->markTestSkipped('Testing relation manager requires integration test setup');
+        $this->markTestIncomplete();
     }
 
     protected function tearDown(): void
