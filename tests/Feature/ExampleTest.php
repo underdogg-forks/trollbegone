@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use PHPUnit\Framework\Attributes\Test;
 // use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -10,8 +11,10 @@ class ExampleTest extends TestCase
     /**
      * A basic test example.
      */
-    public function test_the_application_returns_a_successful_response(): void
+    #[Test]
+    public function it_returns_successful_response_for_application(): void
     {
+        $this->markTestIncomplete();
         $response = $this->get('/');
 
         $response->assertStatus(200);

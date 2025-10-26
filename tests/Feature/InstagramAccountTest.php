@@ -68,7 +68,6 @@ class InstagramAccountTest extends TestCase
 
         $this->assertEquals(2, $instagramAccount->blockedAccounts->count());
     }
-}
 
     public function test_instagram_account_can_be_activated_and_deactivated(): void
     {
