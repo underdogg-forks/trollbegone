@@ -5,6 +5,7 @@ namespace App\Services\Instagram;
 use App\Models\InstagramAccount;
 use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Http\HttpClientException;
+use Exception;
 use Illuminate\Http\Client\Response;
 
 /**
@@ -27,7 +28,7 @@ abstract class InstagramBaseClient
      * @param array $queryParams Optional query parameters
      * @return Response
      * @throws HttpClientException
-     * @throws \Exception If no access token is available
+     * @throws Exception If no access token is available
      */
     protected function get(InstagramAccount $account, string $endpoint, array $queryParams = []): Response
     {
@@ -53,7 +54,7 @@ abstract class InstagramBaseClient
      * @param array $data The data to send in the request body
      * @return Response
      * @throws HttpClientException
-     * @throws \Exception If no access token is available
+     * @throws Exception If no access token is available
      */
     protected function post(InstagramAccount $account, string $endpoint, array $data = []): Response
     {
@@ -79,7 +80,7 @@ abstract class InstagramBaseClient
      * @param array $data The data to send in the request body
      * @return Response
      * @throws HttpClientException
-     * @throws \Exception If no access token is available
+     * @throws Exception If no access token is available
      */
     protected function put(InstagramAccount $account, string $endpoint, array $data = []): Response
     {
@@ -104,7 +105,7 @@ abstract class InstagramBaseClient
      * @param string $endpoint The API endpoint (will be appended to BASE_URI)
      * @return Response
      * @throws HttpClientException
-     * @throws \Exception If no access token is available
+     * @throws Exception If no access token is available
      */
     protected function delete(InstagramAccount $account, string $endpoint): Response
     {
@@ -123,12 +124,12 @@ abstract class InstagramBaseClient
      *
      * @param InstagramAccount $account
      * @return void
-     * @throws \Exception If no access token is available
+     * @throws Exception If no access token is available
      */
     protected function ensureAccessToken(InstagramAccount $account): void
     {
         if (!$account->access_token) {
-            throw new \Exception("No access token available for account: {$account->username}");
+            throw new Exception("No access token available for account: {$account->username}");
         }
     }
 }

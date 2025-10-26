@@ -2,8 +2,9 @@
 
 namespace App\Services\Http;
 
-use Illuminate\Http\Client\Response;
+use BadMethodCallException;
 use Illuminate\Http\Client\RequestException;
+use Illuminate\Http\Client\Response;
 
 /**
  * HttpClientExceptionDecorator wraps ExternalClient to provide consistent exception handling.
@@ -64,7 +65,7 @@ class HttpClientExceptionDecorator
         $allowedMethods = ['get', 'post', 'put', 'delete', 'patch', 'head', 'options'];
         
         if (!in_array(strtolower($method), $allowedMethods)) {
-            throw new \BadMethodCallException("Method {$method} is not supported");
+            throw new BadMethodCallException("Method {$method} is not supported");
         }
 
         $url = $arguments[0] ?? '';

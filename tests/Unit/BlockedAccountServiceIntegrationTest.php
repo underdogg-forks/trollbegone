@@ -7,6 +7,7 @@ use App\Models\BlockedAccount;
 use App\Services\Instagram\BlockedAccountService;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Exception;
 use Mockery;
 use Tests\Fixtures\InstagramApiFixtures;
 use Tests\TestCase;
@@ -211,7 +212,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         // Simulate API block failure
         $mockInstagramApi->shouldReceive('blockUser')
             ->once()
-            ->andThrow(new \Exception('API Error'));
+            ->andThrow(new Exception('API Error'));
 
         $service = new BlockedAccountService($mockInstagramApi);
         

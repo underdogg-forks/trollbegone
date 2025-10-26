@@ -35,12 +35,21 @@ class InstagramOAuthController extends Controller
         try {
             $instagramUser = Socialite::driver('instagram')->user();
 
+            $userId = Auth::id();
+
+            if (!$userId) {
+                return redirect()
+                    ->route('login')
+                    ->with('error', 'Unable to link Instagram account: no authenticated user.');
+            }
+
             // Create or update the Instagram account
             $account = InstagramAccount::updateOrCreate(
                 [
                     'instagram_id' => $instagramUser->getId(),
                 ],
                 [
+                    'user_id' => $userId,
                     'username' => $instagramUser->getNickname() ?? $instagramUser->getName(),
                     'access_token' => $instagramUser->token,
                     'is_active' => true,
