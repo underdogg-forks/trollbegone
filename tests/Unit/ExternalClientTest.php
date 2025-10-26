@@ -17,7 +17,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->get('https://example.com/test');
+        $response = $client->request('GET', 'https://example.com/test');
 
         $this->assertEquals(200, $response->status());
         $this->assertTrue($response->json('success'));
@@ -33,7 +33,7 @@ class ExternalClientTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
 
         $this->expectException(HttpClientException::class);
-        $decorator->get('https://example.com/error');
+        $decorator->request('GET', 'https://example.com/error');
     }
 
     public function test_external_client_supports_different_http_methods(): void
@@ -46,13 +46,13 @@ class ExternalClientTest extends TestCase
 
         $client = new ExternalClient();
 
-        $postResponse = $client->post('https://example.com/post');
+        $postResponse = $client->request('POST', 'https://example.com/post');
         $this->assertEquals('POST', $postResponse->json('method'));
 
-        $putResponse = $client->put('https://example.com/put');
+        $putResponse = $client->request('PUT', 'https://example.com/put');
         $this->assertEquals('PUT', $putResponse->json('method'));
 
-        $deleteResponse = $client->delete('https://example.com/delete');
+        $deleteResponse = $client->request('DELETE', 'https://example.com/delete');
         $this->assertEquals('DELETE', $deleteResponse->json('method'));
     }
 
@@ -63,7 +63,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->patch('https://example.com/patch');
+        $response = $client->request('PATCH', 'https://example.com/patch');
 
         $this->assertEquals(200, $response->status());
         $this->assertEquals('PATCH', $response->json('method'));
@@ -76,7 +76,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->get('https://example.com/test', ['timeout' => 60]);
+        $response = $client->request('GET', 'https://example.com/test', ['timeout' => 60]);
 
         $this->assertEquals(200, $response->status());
     }
@@ -88,7 +88,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->get('https://example.com/test', [
+        $response = $client->request('GET', 'https://example.com/test', [
             'headers' => [
                 'X-Custom-Header' => 'CustomValue',
                 'Accept' => 'application/json',
@@ -105,7 +105,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->get('https://example.com/secure', [
+        $response = $client->request('GET', 'https://example.com/secure', [
             'token' => 'bearer_token_123',
         ]);
 
@@ -119,7 +119,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->get('https://api.example.com/users', [
+        $response = $client->request('GET', 'https://api.example.com/users', [
             'base_uri' => 'https://api.example.com',
         ]);
 
@@ -133,7 +133,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->get('https://example.com/test');
+        $response = $client->request('GET', 'https://example.com/test');
 
         $this->assertEquals(200, $response->status());
     }
@@ -145,7 +145,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->get('https://example.com/test', [
+        $response = $client->request('GET', 'https://example.com/test', [
             'connect_timeout' => 5,
         ]);
 
@@ -162,7 +162,7 @@ class ExternalClientTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
 
         try {
-            $decorator->get('https://example.com/forbidden');
+            $decorator->request('GET', 'https://example.com/forbidden');
             $this->fail('Expected HttpClientException to be thrown');
         } catch (HttpClientException $e) {
             $this->assertEquals(403, $e->getCode());
@@ -179,7 +179,7 @@ class ExternalClientTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
 
         try {
-            $decorator->get('https://example.com/error');
+            $decorator->request('GET', 'https://example.com/error');
             $this->fail('Expected HttpClientException to be thrown');
         } catch (HttpClientException $e) {
             $this->assertEquals(500, $e->getCode());
@@ -196,7 +196,7 @@ class ExternalClientTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
 
         $this->expectException(HttpClientException::class);
-        $decorator->post('https://example.com/bad-request');
+        $decorator->request('POST', 'https://example.com/bad-request');
     }
 
     public function test_http_client_exception_decorator_wraps_put_exceptions(): void
@@ -209,7 +209,7 @@ class ExternalClientTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
 
         $this->expectException(HttpClientException::class);
-        $decorator->put('https://example.com/conflict');
+        $decorator->request('PUT', 'https://example.com/conflict');
     }
 
     public function test_http_client_exception_decorator_wraps_delete_exceptions(): void
@@ -222,7 +222,7 @@ class ExternalClientTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
 
         $this->expectException(HttpClientException::class);
-        $decorator->delete('https://example.com/gone');
+        $decorator->request('DELETE', 'https://example.com/gone');
     }
 
     public function test_http_client_exception_decorator_wraps_patch_exceptions(): void
@@ -235,7 +235,7 @@ class ExternalClientTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
 
         $this->expectException(HttpClientException::class);
-        $decorator->patch('https://example.com/unprocessable');
+        $decorator->request('PATCH', 'https://example.com/unprocessable');
     }
 
     public function test_http_client_exception_decorator_wraps_general_exceptions(): void
@@ -248,7 +248,7 @@ class ExternalClientTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
 
         try {
-            $decorator->get('https://example.com/error');
+            $decorator->request('GET', 'https://example.com/error');
             $this->fail('Expected HttpClientException to be thrown');
         } catch (HttpClientException $e) {
             $this->assertStringContainsString('HTTP request failed', $e->getMessage());
@@ -265,7 +265,7 @@ class ExternalClientTest extends TestCase
         $client = new ExternalClient();
         $decorator = new HttpClientExceptionDecorator($client);
 
-        $response = $decorator->get('https://example.com/success');
+        $response = $decorator->request('GET', 'https://example.com/success');
 
         $this->assertEquals(200, $response->status());
         $this->assertTrue($response->json('success'));
@@ -280,7 +280,7 @@ class ExternalClientTest extends TestCase
         $client = new ExternalClient();
         $decorator = new HttpClientExceptionDecorator($client);
 
-        $response = $decorator->post('https://example.com/create');
+        $response = $decorator->request('POST', 'https://example.com/create');
 
         $this->assertEquals(201, $response->status());
         $this->assertTrue($response->json('created'));
@@ -293,7 +293,7 @@ class ExternalClientTest extends TestCase
         ]);
 
         $client = new ExternalClient();
-        $response = $client->get('https://api.example.com/test', [
+        $response = $client->request('GET', 'https://api.example.com/test', [
             'timeout' => 45,
             'connect_timeout' => 15,
             'headers' => ['X-API-Key' => 'test123'],
@@ -302,5 +302,44 @@ class ExternalClientTest extends TestCase
         ]);
 
         $this->assertEquals(200, $response->status());
+    }
+
+    public function test_decorator_call_method_works_for_get(): void
+    {
+        Http::fake([
+            'https://example.com/test' => Http::response(['success' => true], 200),
+        ]);
+
+        $client = new ExternalClient();
+        $decorator = new HttpClientExceptionDecorator($client);
+
+        $response = $decorator->get('https://example.com/test');
+
+        $this->assertEquals(200, $response->status());
+        $this->assertTrue($response->json('success'));
+    }
+
+    public function test_decorator_call_method_works_for_post(): void
+    {
+        Http::fake([
+            'https://example.com/create' => Http::response(['created' => true], 201),
+        ]);
+
+        $client = new ExternalClient();
+        $decorator = new HttpClientExceptionDecorator($client);
+
+        $response = $decorator->post('https://example.com/create');
+
+        $this->assertEquals(201, $response->status());
+        $this->assertTrue($response->json('created'));
+    }
+
+    public function test_decorator_call_method_throws_for_invalid_method(): void
+    {
+        $client = new ExternalClient();
+        $decorator = new HttpClientExceptionDecorator($client);
+
+        $this->expectException(\BadMethodCallException::class);
+        $decorator->invalid('https://example.com/test');
     }
 }
