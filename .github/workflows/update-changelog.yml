@@ -1,0 +1,12 @@
+name: Update Changelog
+
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  update:
+    permissions:
+      contents: write
+    uses: laravel/.github/.github/workflows/update-changelog.yml@main
