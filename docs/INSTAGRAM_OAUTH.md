@@ -63,6 +63,7 @@ Your app needs the following permissions:
 
 Users can connect their Instagram accounts through the Filament admin panel:
 
+
 ```php
 // Navigate to: /admin/instagram-accounts
 // Click: "Connect Instagram Account"

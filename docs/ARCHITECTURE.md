@@ -66,6 +66,7 @@ All API methods now include:
 - Exception documentation
 
 Example:
+
 ```php
 /**
  * Block a user on Instagram.
@@ -127,6 +128,7 @@ Example:
 - Filament action button for easy connection
 
 **Configuration:**
+
 ```env
 INSTAGRAM_CLIENT_ID=your_app_id
 INSTAGRAM_CLIENT_SECRET=your_app_secret
@@ -148,7 +150,7 @@ INSTAGRAM_REDIRECT_URI=https://yourdomain.com/auth/instagram/callback
 
 ## File Structure
 
-```
+```text
 app/
 ├── Http/
 │   └── Controllers/
@@ -188,11 +190,13 @@ routes/
 ## Testing
 
 ### Run All Tests
+
 ```bash
 php artisan test
 ```
 
 ### Run Specific Test Suites
+
 ```bash
 # External client tests
 php artisan test --filter ExternalClient
@@ -214,18 +218,21 @@ php artisan test --filter InstagramApi
 ### For Developers Using ExternalClient
 
 **Before:**
+
 ```php
 $client = new ExternalClient();
 $response = $client->get($url, $options);
 ```
 
 **After (Recommended):**
+
 ```php
 $client = new ExternalClient();
 $response = $client->request('GET', $url, $options);
 ```
 
 **After (Backward Compatible via Decorator):**
+
 ```php
 $decorator = new HttpClientExceptionDecorator($client);
 $response = $decorator->get($url, $options); // Still works!
