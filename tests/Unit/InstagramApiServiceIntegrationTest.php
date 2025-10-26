@@ -26,9 +26,11 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_get_stories_with_real_fixture(): void
+    public function get_stories_with_real_fixture(): void
     {
         $this->markTestIncomplete();
+
+        /** #region Arrange */
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -47,18 +49,26 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($mockResponse);
 
         $service = new InstagramApiService($mockClient);
-        $stories = $service->getStories($account);
+        /** #endregion */
 
+        /** #region Act */
+        $stories = $service->getStories($account);
+        /** #endregion */
+
+        /** #region Assert */
         $this->assertCount(2, $stories);
         $this->assertEquals('17895695668004550', $stories->first()['id']);
         $this->assertEquals('IMAGE', $stories->first()['media_type']);
         $this->assertEquals('VIDEO', $stories->last()['media_type']);
+        /** #endregion */
     }
 
     #[Test]
-    public function it_get_story_comments_with_real_fixture(): void
+    public function get_story_comments_with_real_fixture(): void
     {
         $this->markTestIncomplete();
+
+        /** #region Arrange */
         $account = new InstagramAccount([
             'username' => 'test_account',
             'access_token' => 'test_token',
@@ -77,15 +87,21 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($mockResponse);
 
         $service = new InstagramApiService($mockClient);
-        $comments = $service->getStoryComments($account, '17895695668004550');
+        /** #endregion */
 
+        /** #region Act */
+        $comments = $service->getStoryComments($account, '17895695668004550');
+        /** #endregion */
+
+        /** #region Assert */
         $this->assertCount(3, $comments);
         $this->assertEquals('Great story! Love this content 🔥', $comments->first()['text']);
         $this->assertEquals('john_doe_123', $comments->first()['from']['username']);
+        /** #endregion */
     }
 
     #[Test]
-    public function it_get_user_info_with_real_fixture(): void
+    public function get_user_info_with_real_fixture(): void
     {
         $this->markTestIncomplete();
         $account = new InstagramAccount([
@@ -115,7 +131,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_block_user_with_success_response(): void
+    public function block_user_with_success_response(): void
     {
         $this->markTestIncomplete();
         $account = new InstagramAccount([
@@ -142,7 +158,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_identify_spam_comment_from_fixture(): void
+    public function identify_spam_comment_from_fixture(): void
     {
         $this->markTestIncomplete();
         $account = new InstagramAccount([
@@ -176,7 +192,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_handle_empty_stories_response(): void
+    public function handle_empty_stories_response(): void
     {
         $this->markTestIncomplete();
         $account = new InstagramAccount([
@@ -204,7 +220,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_handle_empty_comments_response(): void
+    public function handle_empty_comments_response(): void
     {
         $this->markTestIncomplete();
         $account = new InstagramAccount([
@@ -232,7 +248,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_handle_user_not_found_response(): void
+    public function handle_user_not_found_response(): void
     {
         $this->markTestIncomplete();
         $account = new InstagramAccount([
@@ -259,7 +275,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_process_multiple_story_types(): void
+    public function process_multiple_story_types(): void
     {
         $this->markTestIncomplete();
         $account = new InstagramAccount([

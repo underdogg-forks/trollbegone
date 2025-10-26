@@ -10,8 +10,6 @@ class InstagramApiFixtures
 {
     /**
      * Get sample stories response from Instagram Graph API.
-     *
-     * @return array
      */
     public static function getStoriesResponse(): array
     {
@@ -45,8 +43,6 @@ class InstagramApiFixtures
 
     /**
      * Get empty stories response (no stories available).
-     *
-     * @return array
      */
     public static function getEmptyStoriesResponse(): array
     {
@@ -57,8 +53,6 @@ class InstagramApiFixtures
 
     /**
      * Get sample story comments response from Instagram Graph API.
-     *
-     * @return array
      */
     public static function getStoryCommentsResponse(): array
     {
@@ -97,8 +91,6 @@ class InstagramApiFixtures
 
     /**
      * Get empty comments response (no comments available).
-     *
-     * @return array
      */
     public static function getEmptyCommentsResponse(): array
     {
@@ -109,8 +101,6 @@ class InstagramApiFixtures
 
     /**
      * Get sample user search response from Instagram Graph API.
-     *
-     * @return array
      */
     public static function getUserSearchResponse(): array
     {
@@ -134,8 +124,6 @@ class InstagramApiFixtures
 
     /**
      * Get empty user search response (user not found).
-     *
-     * @return array
      */
     public static function getEmptyUserSearchResponse(): array
     {
@@ -146,8 +134,6 @@ class InstagramApiFixtures
 
     /**
      * Get successful block user response from Instagram Graph API.
-     *
-     * @return array
      */
     public static function getBlockUserSuccessResponse(): array
     {
@@ -159,8 +145,7 @@ class InstagramApiFixtures
     /**
      * Get error response for various API errors.
      *
-     * @param string $errorType Type of error (not_found, unauthorized, rate_limit, etc.)
-     * @return array
+     * @param  string  $errorType  Type of error (not_found, unauthorized, rate_limit, etc.)
      */
     public static function getErrorResponse(string $errorType = 'generic'): array
     {
@@ -212,8 +197,6 @@ class InstagramApiFixtures
 
     /**
      * Get a single story data.
-     *
-     * @return array
      */
     public static function getSingleStory(): array
     {
@@ -229,8 +212,6 @@ class InstagramApiFixtures
 
     /**
      * Get a single comment data.
-     *
-     * @return array
      */
     public static function getSingleComment(): array
     {
@@ -247,8 +228,6 @@ class InstagramApiFixtures
 
     /**
      * Get a single user data.
-     *
-     * @return array
      */
     public static function getSingleUser(): array
     {

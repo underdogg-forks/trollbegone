@@ -11,7 +11,7 @@ class ExampleTest extends TestCase
      * A basic test example.
      */
     #[Test]
-    public function it_validates_that_true_is_true(): void
+    public function validates_that_true_is_true(): void
     {
         $this->markTestIncomplete();
         $this->assertTrue(true);
