@@ -8,8 +8,8 @@ TrollBeGone is a Laravel 12 application with Filament v4 for managing Instagram 
 
 - **Framework**: Laravel 12 (PHP 8.3+)
 - **Admin Panel**: Filament v4
-- **Database**: SQLite (default) or other database systems
-- **Frontend**: Vite with Laravel Mix
+- **Database**: MariaDB
+- **Frontend**: Vite with TailwindCSS
 - **Testing**: PHPUnit 11.5+
 - **Code Quality**: Laravel Pint (PSR-12)
 - **API Integration**: Instagram Graph API
