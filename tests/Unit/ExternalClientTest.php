@@ -55,7 +55,6 @@ class ExternalClientTest extends TestCase
         $deleteResponse = $client->delete('https://example.com/delete');
         $this->assertEquals('DELETE', $deleteResponse->json('method'));
     }
-}
 
     public function test_external_client_supports_patch_method(): void
     {
