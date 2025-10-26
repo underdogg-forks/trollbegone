@@ -13,8 +13,6 @@ abstract class AbstractTestCase extends TestCase
 {
     /**
      * Get sample stories response from Instagram Graph API.
-     *
-     * @return array
      */
     protected function getStoriesResponse(): array
     {
@@ -23,8 +21,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get empty stories response (no stories available).
-     *
-     * @return array
      */
     protected function getEmptyStoriesResponse(): array
     {
@@ -33,8 +29,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get sample story comments response from Instagram Graph API.
-     *
-     * @return array
      */
     protected function getStoryCommentsResponse(): array
     {
@@ -43,8 +37,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get empty comments response (no comments available).
-     *
-     * @return array
      */
     protected function getEmptyCommentsResponse(): array
     {
@@ -53,8 +45,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get sample user search response from Instagram Graph API.
-     *
-     * @return array
      */
     protected function getUserSearchResponse(): array
     {
@@ -63,8 +53,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get empty user search response (user not found).
-     *
-     * @return array
      */
     protected function getEmptyUserSearchResponse(): array
     {
@@ -73,8 +61,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get successful block user response from Instagram Graph API.
-     *
-     * @return array
      */
     protected function getBlockUserSuccessResponse(): array
     {
@@ -84,8 +70,7 @@ abstract class AbstractTestCase extends TestCase
     /**
      * Get error response for various API errors.
      *
-     * @param string $errorType Type of error (not_found, unauthorized, rate_limit, etc.)
-     * @return array
+     * @param  string  $errorType  Type of error (not_found, unauthorized, rate_limit, etc.)
      */
     protected function getErrorResponse(string $errorType = 'generic'): array
     {
@@ -94,8 +79,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get a single story data.
-     *
-     * @return array
      */
     protected function getSingleStory(): array
     {
@@ -104,8 +87,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get a single comment data.
-     *
-     * @return array
      */
     protected function getSingleComment(): array
     {
@@ -114,8 +95,6 @@ abstract class AbstractTestCase extends TestCase
 
     /**
      * Get a single user data.
-     *
-     * @return array
      */
     protected function getSingleUser(): array
     {
