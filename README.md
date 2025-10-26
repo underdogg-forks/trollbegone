@@ -1,61 +1,146 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# TrollBeGone
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A Laravel 12 application with Filament v4 for managing Instagram story comments and blocking unwanted accounts.
 
-## About Laravel
+## Features
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Instagram Account Management**: Track multiple Instagram accounts
+- **Story Monitoring**: View stories from connected Instagram accounts
+- **Comment Moderation**: Review comments on stories
+- **Account Blocking**: Block users directly from comment review
+- **Blocked Account Tracking**: Maintain a list of blocked accounts with reasons
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## Requirements
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- PHP 8.3+
+- Composer
+- SQLite (default) or other database
+- Instagram Graph API access token
 
-## Learning Laravel
+## Installation
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Clone the repository:
+```bash
+git clone https://github.com/underdogg-forks/trollbegone.git
+cd trollbegone
+```
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+2. Install dependencies:
+```bash
+composer install
+```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+3. Copy the environment file:
+```bash
+cp .env.example .env
+```
 
-## Laravel Sponsors
+4. Generate application key:
+```bash
+php artisan key:generate
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. Run migrations:
+```bash
+php artisan migrate
+```
 
-### Premium Partners
+6. Create an admin user:
+```bash
+php artisan make:filament-user
+```
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+## Usage
 
-## Contributing
+1. Start the development server:
+```bash
+php artisan serve
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+2. Access Filament admin panel at `http://localhost:8000/admin`
 
-## Code of Conduct
+3. Add Instagram accounts with their access tokens in the "Instagram Accounts" section
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+4. View stories and comments by clicking "View Stories" on an account
 
-## Security Vulnerabilities
+5. Block users directly from the comments view
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+## Architecture
+
+### HTTP Client Layer
+
+The application uses a custom HTTP client architecture:
+
+- **ExternalClient**: Single request function using Laravel HTTP client (similar to Guzzle)
+- **HttpClientExceptionDecorator**: Wraps the ExternalClient to handle exceptions consistently
+
+### Services
+
+- **InstagramApiService**: Handles all Instagram Graph API interactions
+  - Get stories from accounts
+  - Fetch comments from stories
+  - Block users
+  - Search for user information
+
+- **BlockedAccountService**: Manages blocked account logic
+  - Create blocked account records
+  - Check if an account is blocked
+  - Retrieve blocked accounts list
+
+### Models
+
+- **InstagramAccount**: Represents a connected Instagram account
+- **BlockedAccount**: Tracks blocked users with reasons and associated comments
+
+### Filament Resources
+
+- **InstagramAccountResource**: Manage Instagram accounts
+  - CRUD operations for accounts
+  - Custom "View Stories" action
+  
+- **BlockedAccountResource**: View and manage blocked accounts
+  - Filter by Instagram account
+  - View block reasons and triggering comments
+
+## Instagram Graph API Setup
+
+To use this application, you need:
+
+1. A Facebook Developer account
+2. An Instagram Business or Creator account
+3. A Facebook App with Instagram Basic Display API access
+4. Valid access tokens for each Instagram account you want to monitor
+
+Add the access token when creating an Instagram Account in the admin panel.
+
+## Development
+
+### Code Structure
+
+```
+app/
+├── Models/               # Eloquent models
+├── Services/
+│   ├── Http/            # HTTP client layer
+│   └── Instagram/       # Instagram API services
+└── Filament/
+    └── Resources/       # Filament admin resources
+
+database/
+└── migrations/          # Database migrations
+
+resources/
+└── views/
+    └── filament/        # Filament custom views
+```
+
+### Testing
+
+Run tests with:
+```bash
+php artisan test
+```
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This project is open-sourced software.
