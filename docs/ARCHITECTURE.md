@@ -205,8 +205,8 @@ php artisan test --filter InstagramApi
 ```
 
 ### Test Results
-- **75 tests passing**
-- 138 assertions
+- **78 tests passing**
+- 149 assertions
 - Comprehensive coverage of all new features
 
 ## Migration Guide
