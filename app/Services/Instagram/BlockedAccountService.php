@@ -20,10 +20,12 @@ class BlockedAccountService
     ): BlockedAccount {
         $userInfo = $this->instagramApi->getUserInfo($account, $username);
         
+        $normalizedUsername = Str::lower($username);
+
         $blockedAccount = BlockedAccount::firstOrCreate(
             [
                 'instagram_account_id' => $account->id,
-                'blocked_username' => strtolower($username),
+                'blocked_username' => $normalizedUsername,
             ],
             [
                 'blocked_instagram_id' => $userInfo['id'] ?? null,

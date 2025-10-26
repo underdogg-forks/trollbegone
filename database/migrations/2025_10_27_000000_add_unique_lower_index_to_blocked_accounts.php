@@ -30,17 +30,7 @@ return new class extends Migration
             }
         });
 
-        $driver = DB::connection()->getDriverName();
-
-        if ($driver === 'pgsql') {
-            DB::statement('CREATE UNIQUE INDEX blocked_accounts_account_username_unique ON blocked_accounts (instagram_account_id, LOWER(blocked_username))');
-        } elseif ($driver === 'mysql') {
-            DB::statement('CREATE UNIQUE INDEX blocked_accounts_account_username_unique ON blocked_accounts (instagram_account_id, (LOWER(blocked_username)))');
-        } else {
-            Schema::table('blocked_accounts', function (Blueprint $table) {
-                $table->unique(['instagram_account_id', 'blocked_username'], 'blocked_accounts_account_username_unique');
-            });
-        }
+        DB::statement('ALTER TABLE blocked_accounts ADD UNIQUE INDEX blocked_accounts_account_username_unique (instagram_account_id, blocked_username)');
     }
 
     /**
@@ -48,16 +38,5 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $driver = DB::connection()->getDriverName();
-
-        if ($driver === 'pgsql') {
-            DB::statement('DROP INDEX IF EXISTS blocked_accounts_account_username_unique');
-        } elseif ($driver === 'mysql') {
-            DB::statement('DROP INDEX blocked_accounts_account_username_unique ON blocked_accounts');
-        } else {
-            Schema::table('blocked_accounts', function (Blueprint $table) {
-                $table->dropUnique('blocked_accounts_account_username_unique');
-            });
-        }
     }
 };
