@@ -212,7 +212,6 @@ class InstagramAccountModelTest extends TestCase
     }
 
     #[Test]
-    #[Test]
     public function instagram_account_factory_creates_unique_instagram_ids(): void
     {
         $this->markTestIncomplete();
