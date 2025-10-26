@@ -12,16 +12,6 @@ use Tests\Fixtures\InstagramApiFixtures;
 abstract class AbstractTestCase extends TestCase
 {
     /**
-     * Get Instagram API fixtures helper.
-     *
-     * @return InstagramApiFixtures
-     */
-    protected function fixtures(): InstagramApiFixtures
-    {
-        return new InstagramApiFixtures();
-    }
-
-    /**
      * Get sample stories response from Instagram Graph API.
      *
      * @return array

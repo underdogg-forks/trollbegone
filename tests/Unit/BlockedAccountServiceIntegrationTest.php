@@ -31,7 +31,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     #[Test]
     public function it_complete_blocking_workflow_with_fixtures(): void
     {
-        $this->markTestIncomplete();
         $account = InstagramAccount::create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
@@ -70,7 +69,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     #[Test]
     public function it_blocking_workflow_when_user_search_fails(): void
     {
-        $this->markTestIncomplete();
         $account = InstagramAccount::create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
@@ -103,7 +101,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     #[Test]
     public function it_blocking_multiple_users_from_comments(): void
     {
-        $this->markTestIncomplete();
         $account = InstagramAccount::create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
@@ -148,7 +145,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     #[Test]
     public function it_is_blocked_with_fixture_data(): void
     {
-        $this->markTestIncomplete();
         $account = InstagramAccount::create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
@@ -175,7 +171,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     #[Test]
     public function it_get_blocked_accounts_returns_latest_first(): void
     {
-        $this->markTestIncomplete();
         $account = InstagramAccount::create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
@@ -208,7 +203,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     #[Test]
     public function it_blocking_workflow_when_api_block_fails(): void
     {
-        $this->markTestIncomplete();
         $account = InstagramAccount::create([
             'username' => 'test_account',
             'instagram_id' => '123456789',

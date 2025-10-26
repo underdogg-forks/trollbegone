@@ -25,7 +25,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_preserves_original_exception_message(): void
     {
-        $this->markTestIncomplete();
         Http::fake([
             'https://example.com/error' => Http::response(['message' => 'Resource not found'], 404),
         ]);
@@ -44,7 +43,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_chains_previous_exception(): void
     {
-        $this->markTestIncomplete();
         Http::fake([
             'https://example.com/error' => Http::response(['error' => 'Unauthorized'], 401),
         ]);
@@ -63,7 +61,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_handles_network_timeout_exceptions(): void
     {
-        $this->markTestIncomplete();
         $mockClient = Mockery::mock(ExternalClient::class);
         $mockClient->shouldReceive('request')
             ->andThrow(new Exception('Connection timeout'));
@@ -81,7 +78,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_handles_dns_resolution_failures(): void
     {
-        $this->markTestIncomplete();
         $mockClient = Mockery::mock(ExternalClient::class);
         $mockClient->shouldReceive('request')
             ->andThrow(new Exception('Could not resolve host'));
@@ -99,7 +95,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_passes_through200_responses(): void
     {
-        $this->markTestIncomplete();
         Http::fake([
             'https://example.com/ok' => Http::response(['status' => 'ok'], 200),
         ]);
@@ -116,7 +111,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_passes_through201_created_responses(): void
     {
-        $this->markTestIncomplete();
         Http::fake([
             'https://example.com/created' => Http::response(['id' => 123], 201),
         ]);
@@ -133,7 +127,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_passes_through204_no_content_responses(): void
     {
-        $this->markTestIncomplete();
         Http::fake([
             'https://example.com/deleted' => Http::response(null, 204),
         ]);
@@ -149,7 +142,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_wraps_all4xx_errors(): void
     {
-        $this->markTestIncomplete();
         $statusCodes = [400, 401, 403, 404, 405, 409, 422, 429];
 
         foreach ($statusCodes as $statusCode) {
@@ -172,7 +164,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_wraps_all5xx_errors(): void
     {
-        $this->markTestIncomplete();
         $statusCodes = [500, 502, 503, 504];
 
         foreach ($statusCodes as $statusCode) {
@@ -195,7 +186,6 @@ class HttpClientExceptionDecoratorTest extends TestCase
     #[Test]
     public function it_decorator_handles_missing_response_in_exception(): void
     {
-        $this->markTestIncomplete();
         $mockClient = Mockery::mock(ExternalClient::class);
 
         $mockException = Mockery::mock(RequestException::class);

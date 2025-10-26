@@ -23,7 +23,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__block_account_creates_blocked_account_record_with_user_info(): void
+    public function it_block_account_creates_blocked_account_record_with_user_info(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -64,7 +64,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__block_account_handles_null_user_info(): void
+    public function it_block_account_handles_null_user_info(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -96,7 +96,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__block_account_handles_user_info_without_id(): void
+    public function it_block_account_handles_user_info_without_id(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -123,7 +123,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__block_account_creates_record_without_optional_fields(): void
+    public function it_block_account_creates_record_without_optional_fields(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -150,7 +150,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__is_blocked_returns_true_for_blocked_username(): void
+    public function it_is_blocked_returns_true_for_blocked_username(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -170,7 +170,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__is_blocked_returns_false_for_non_blocked_username(): void
+    public function it_is_blocked_returns_false_for_non_blocked_username(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -185,7 +185,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__is_blocked_is_case_sensitive(): void
+    public function it_is_blocked_is_case_sensitive(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -205,7 +205,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__is_blocked_checks_specific_instagram_account(): void
+    public function it_is_blocked_checks_specific_instagram_account(): void
     {
         $this->markTestIncomplete();
         $account1 = InstagramAccount::create([
@@ -231,7 +231,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__get_blocked_accounts_returns_all_blocked_accounts_for_instagram_account(): void
+    public function it_get_blocked_accounts_returns_all_blocked_accounts_for_instagram_account(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -263,7 +263,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__get_blocked_accounts_returns_latest_first(): void
+    public function it_get_blocked_accounts_returns_latest_first(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -293,7 +293,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__get_blocked_accounts_returns_empty_collection_when_no_blocks(): void
+    public function it_get_blocked_accounts_returns_empty_collection_when_no_blocks(): void
     {
         $this->markTestIncomplete();
         $instagramAccount = InstagramAccount::create([
@@ -310,7 +310,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function it__get_blocked_accounts_only_returns_accounts_for_specific_instagram_account(): void
+    public function it_get_blocked_accounts_only_returns_accounts_for_specific_instagram_account(): void
     {
         $this->markTestIncomplete();
         $account1 = InstagramAccount::create([
