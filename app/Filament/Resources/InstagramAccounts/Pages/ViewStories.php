@@ -11,6 +11,11 @@ use Filament\Resources\Pages\Page;
 use Filament\Forms\Components\Textarea;
 use Filament\Notifications\Notification;
 
+/**
+ * View Stories Page
+ *
+ * Custom Filament page for browsing Instagram stories and their comments.
+ */
 class ViewStories extends Page
 {
     protected static string $resource = InstagramAccountResource::class;
@@ -23,18 +28,24 @@ class ViewStories extends Page
     public array $comments = [];
     public ?string $selectedStoryId = null;
 
+    /**
+     * Initialize the page with the Instagram account record and load stories.
+     */
     public function mount(InstagramAccount $record): void
     {
         $this->record = $record;
         $this->loadStories();
     }
 
+    /**
+     * Load all stories for the Instagram account via the API.
+     */
     public function loadStories(): void
     {
         try {
             $instagramApi = app(InstagramApiService::class);
             $this->stories = $instagramApi->getStories($this->record)->toArray();
-            
+
             $this->record->update(['last_synced_at' => now()]);
             
             Notification::make()
@@ -50,6 +61,9 @@ class ViewStories extends Page
         }
     }
 
+    /**
+     * Load comments for a specific story.
+     */
     public function loadComments(string $storyId): void
     {
         try {
@@ -70,6 +84,9 @@ class ViewStories extends Page
         }
     }
 
+    /**
+     * Block a user from the comment section.
+     */
     public function blockUser(string $username, ?string $commentText = null): void
     {
         try {
@@ -94,6 +111,11 @@ class ViewStories extends Page
         }
     }
 
+    /**
+     * Get the header actions for this page.
+     *
+     * @return array<Action>
+     */
     protected function getHeaderActions(): array
     {
         return [

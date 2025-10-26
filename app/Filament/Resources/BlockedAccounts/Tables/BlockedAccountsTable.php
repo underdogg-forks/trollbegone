@@ -9,8 +9,16 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Tables\Filters\SelectFilter;
 
+/**
+ * Blocked Accounts Table Configuration
+ *
+ * Defines the table structure for listing blocked accounts in Filament.
+ */
 class BlockedAccountsTable
 {
+    /**
+     * Configure the table with columns, filters, and actions.
+     */
     public static function configure(Table $table): Table
     {
         return $table
