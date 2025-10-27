@@ -1,44 +1,59 @@
 # TrollBeGone
 
-A Laravel 12 API-only application for managing Instagram story comments and blocking unwanted accounts via the Instagram Graph API.
+A Laravel 12 application with Filament v4 admin panel for managing Instagram accounts, browsing users you follow, viewing posts and comments, and blocking unwanted accounts via the Instagram Graph API.
 
 ## 🎯 Overview
 
-TrollBeGone is built on an **Advanced API Client** architecture with **client-per-endpoint** classes, enabling precise Instagram Graph API integration for reading posts, fetching comments, and blocking offending users.
+TrollBeGone helps "Grandma" easily manage her Instagram account by providing a user-friendly interface to:
+- View users she follows on Instagram
+- Browse posts from specific users
+- View comments on posts
+- Select and block multiple users from comments with a single click
+
+Built on a clean **API Client** architecture using a single `request()` method pattern, TrollBeGone integrates seamlessly with the Instagram Graph API while maintaining code simplicity and consistency.
 
 ### Key Features
 
+- ✅ **Filament Admin Panel**: Beautiful, intuitive UI for managing Instagram interactions
 - ✅ **Multi-Account Support**: Manage unlimited Instagram accounts independently
-- ✅ **Client-Per-Endpoint**: Focused API clients (Stories, Moderation, Users)
+- ✅ **API-Driven UI**: View following, posts, and comments without database tables
+- ✅ **Bulk Blocking**: Select multiple comments and block users in one action
+- ✅ **Job Queue Support**: Async processing for blocking operations
 - ✅ **Single Request Pattern**: All HTTP calls use one `request()` method
-- ✅ **Multi-Tenant Safe**: 10+ users can operate concurrently without conflicts
 - ✅ **Per-Account Tokens**: No global API keys - each account has its own credentials
-- ✅ **Audit Trail**: Track blocked accounts with reasons and context
+- ✅ **Audit Trail**: Track blocked accounts with reasons and comment context
 
 ## Architecture
 
-### Advanced API Client Flow
+### API Client Flow
 
 ```
-[Service Layer (BlockedAccountService)]
-          ↓
-[Endpoint Clients (StoriesClient, ModerationClient)]
-          ↓
-[InstagramBaseClient (withToken)]
-          ↓
-[HttpExceptionHandler (wraps exceptions)]
-          ↓
+[Grandma's Browser]
+         ↓
+[Filament UI (Following → Posts → Comments)]
+         ↓
+[BlockUserJob (async queue)]
+         ↓
+[BlockedAccountService]
+         ↓
+[InstagramApiService (extends InstagramBaseClient)]
+         ↓
+[InstagramBaseClient (single request() method)]
+         ↓
+[HttpClientExceptionDecorator (error handling)]
+         ↓
 [ExternalClient (Laravel Http facade)]
-          ↓
+         ↓
 [Instagram Graph API]
 ```
 
 ### Core Principles
 
-1. **Single `request()` Method**: No `get()`/`post()` wrappers - only `request(method, url, options)`
-2. **Client-Per-Endpoint**: One class per API endpoint group (e.g., `InstagramStoriesClient`)
-3. **Per-Account Authentication**: Each `InstagramAccount` has its own access token
-4. **Concurrent Safety**: Multiple users can manage different accounts simultaneously
+1. **Single `request()` Method**: All API calls use `request(method, account, endpoint, options)` - no `get()`/`post()` wrappers
+2. **API as Data Source**: Filament pages fetch data directly from Instagram API (no database caching)
+3. **Per-Account Authentication**: Each `Account` has its own access token
+4. **Async Job Processing**: Blocking operations run in background via Laravel queues
+5. **Consistent Code Style**: Looks like one person coded it in one day
 
 ## Requirements
 
@@ -72,30 +87,44 @@ TrollBeGone is built on an **Advanced API Client** architecture with **client-pe
    php artisan migrate
    ```
 
-5. **Create admin user (if using Filament):**
+5. **Create admin user:**
    ```bash
    php artisan make:filament-user
    ```
 
+6. **Run queue worker** (for blocking jobs):
+   ```bash
+   php artisan queue:work
+   ```
+
 ## Usage
 
-### Start Development Server
+### For Grandma: Using the Admin Panel
 
-```bash
-php artisan serve
-```
+1. **Login**: Access Filament admin at `http://localhost:8000/admin`
 
-Access at `http://localhost:8000`
+2. **View Your Accounts**: See all your connected Instagram accounts
 
-### Managing Instagram Accounts
+3. **View Following**: Click "View Following" to see users you follow on Instagram
+
+4. **Browse Posts**: Click on any user to see their posts
+
+5. **Review Comments**: Click "View Comments" on any post to see all comments
+
+6. **Block Users**: 
+   - Click comments to select them
+   - Click "Block Selected Users" button
+   - Users will be blocked asynchronously via job queue
+
+### For Developers: Managing Accounts Programmatically
 
 Each Instagram account operates independently with its own access token:
 
 ```php
-use App\Models\InstagramAccount;
+use App\Models\Account;
 
-// Create a new Instagram account
-$account = InstagramAccount::create([
+// Create a new account
+$account = Account::create([
     'username' => 'myaccount',
     'instagram_id' => '123456789',
     'is_active' => true,
@@ -109,114 +138,132 @@ $account->save();
 ### Blocking Users
 
 ```php
-use App\Services\Instagram\BlockedAccountService;
-use App\Models\InstagramAccount;
+use App\Jobs\BlockUserJob;
+use App\Models\Account;
 
-$account = InstagramAccount::find(1);
-$service = app(BlockedAccountService::class);
+$account = Account::find(1);
 
-// Block a user by username
-$blocked = $service->blockByUsername(
+// Dispatch blocking job (async)
+BlockUserJob::dispatch(
     account: $account,
     username: 'trolluser',
     reason: 'Spam comments',
     commentText: 'Buy followers now!'
 );
+
+// Or use service directly (sync)
+$service = app(\App\Services\Instagram\BlockedAccountService::class);
+$blocked = $service->blockAccount(
+    account: $account,
+    username: 'trolluser',
+    reason: 'Spam',
+    commentText: 'Offensive comment'
+);
 ```
 
-### Fetching Stories
+### Fetching Data from Instagram API
 
 ```php
-use App\Services\Instagram\InstagramStoriesClient;
-use App\Models\InstagramAccount;
+use App\Services\Instagram\InstagramApiService;
+use App\Models\Account;
+use App\Enums\RequestMethod;
 
-$account = InstagramAccount::find(1);
-$storiesClient = app(InstagramStoriesClient::class);
+$account = Account::find(1);
+$api = app(InstagramApiService::class);
 
-// Get all stories for this account
-$stories = $storiesClient->list($account);
+// Get stories
+$stories = $api->getStories($account);
 
-foreach ($stories as $story) {
-    echo "Story ID: {$story['id']}\n";
-}
+// Get comments on a story
+$comments = $api->getStoryComments($account, $storyId);
+
+// Search for user
+$userInfo = $api->getUserInfo($account, 'username');
+
+// Block user
+$api->blockUser($account, $instagramUserId);
+
+// Use raw request() method for any endpoint
+$response = $api->request(
+    method: RequestMethod::GET,
+    account: $account,
+    endpoint: '/me/following',
+    options: ['query' => ['fields' => 'id,username']]
+);
 ```
 
 ## API Client Architecture
 
-### Base Client Pattern
+### The Single Request Pattern
 
-All Instagram API calls flow through a base client:
+All Instagram API calls flow through one method:
 
 ```php
-abstract class InstagramBaseClient extends BaseClient
+abstract class InstagramBaseClient
 {
-    protected const BASE_URI = 'https://graph.instagram.com';
+    /**
+     * Make authenticated requests to Instagram API.
+     * 
+     * @param RequestMethod|string $method HTTP method (GET, POST, PUT, DELETE)
+     * @param Account $account Account with access token
+     * @param string $endpoint API endpoint (e.g., '/me/stories')
+     * @param array $options Request options (query, json, etc.)
+     */
+    protected function request(
+        RequestMethod|string $method,
+        Account $account,
+        string $endpoint,
+        array $options = []
+    ): Response;
+}
+```
 
-    protected function withToken(InstagramAccount $account, array $options = []): array
+### Service Layer
+
+**InstagramApiService**: High-level methods for common operations
+
+```php
+class InstagramApiService extends InstagramBaseClient
+{
+    public function getStories(Account $account): Collection
     {
-        if (empty($account->access_token)) {
-            throw new \RuntimeException('Missing access token');
+        $response = $this->request(RequestMethod::GET, $account, '/me/stories');
+        return collect($response->json('data', []));
+    }
+    
+    public function blockUser(Account $account, string $userId): bool
+    {
+        try {
+            $this->request(RequestMethod::POST, $account, '/me/blocked', [
+                'json' => ['user_id' => $userId],
+            ]);
+            return true;
+        } catch (\Exception $e) {
+            \Log::warning('Block failed', ['error' => $e->getMessage()]);
+            return false;
         }
-
-        $options['query'] = array_merge(
-            ['access_token' => $account->access_token],
-            $options['query'] ?? []
-        );
-
-        return $options;
     }
 }
 ```
 
-### Endpoint Clients
-
-Each endpoint group has its own dedicated client:
-
-**InstagramStoriesClient**: Fetches stories
-```php
-public function list(InstagramAccount $account): Collection
-{
-    $opts = $this->withToken($account);
-    $res = $this->request('GET', self::BASE_URI . '/me/stories', $opts);
-    return collect($res->json('data', []));
-}
-```
-
-**InstagramModerationClient**: Blocks users
-```php
-public function block(InstagramAccount $account, string $instagramUserId): bool
-{
-    $opts = $this->withToken($account, ['query' => ['user_id' => $instagramUserId]]);
-    $this->request('POST', self::BASE_URI . '/me/blocked', $opts);
-    return true;
-}
-```
-
-**InstagramUsersClient**: Searches for users
-```php
-public function findFirst(InstagramAccount $account, string $username): ?array
-{
-    $opts = $this->withToken($account, ['query' => ['q' => $username, 'type' => 'user']]);
-    $res = $this->request('GET', self::BASE_URI . '/search', $opts);
-    $users = $res->json('data', []);
-    return $users[0] ?? null;
-}
-```
-
-### HTTP Exception Handling
-
-The `HttpExceptionHandler` wraps all HTTP calls and ensures exceptions are thrown:
+**BlockedAccountService**: Business logic for blocking workflow
 
 ```php
-class HttpExceptionHandler
+class BlockedAccountService
 {
-    public function __construct(protected ExternalClient $client) {}
-
-    public function request(string $method, string $url, array $options = []): Response
-    {
-        $response = $this->client->request($method, $url, $options);
-        $response->throw();
-        return $response;
+    public function blockAccount(
+        Account $account,
+        string $username,
+        ?string $reason = null,
+        ?string $commentText = null
+    ): BlockedAccount {
+        // Search user, create DB record, call Instagram API
+        return DB::transaction(function () use ($account, $username, $reason, $commentText) {
+            $userInfo = $this->instagramApi->getUserInfo($account, $username);
+            $blockedAccount = BlockedAccount::create([...]);
+            $this->instagramApi->blockUser($account, $userInfo['id']);
+            return $blockedAccount;
+        });
     }
 }
 ```
