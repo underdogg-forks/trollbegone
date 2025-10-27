@@ -44,7 +44,7 @@ class ViewFollowing extends Page implements HasTable
     public function table(Table $table): Table
     {
         return $table
-            ->query(static::getEloquentQuery())
+            ->records($this->getFollowing())
             ->columns([
                 ImageColumn::make('profile_picture_url')
                     ->label('Avatar')
@@ -68,7 +68,6 @@ class ViewFollowing extends Page implements HasTable
                         'username' => $record['username'],
                     ])),
             ]);
-    }
 
 
     protected function getFollowingFromApi(): array
