@@ -30,7 +30,7 @@
                         <div class="flex-1 min-w-0">
                             <div class="flex items-center justify-between">
                                 <h3 class="font-bold text-gray-900 dark:text-white">
-                                    @{{ $comment['username'] ?? 'Unknown User' }}
+                                    {{ $comment['username'] ?? 'Unknown User' }}
                                 </h3>
                                 @if(isset($comment['timestamp']))
                                     <span class="text-xs text-gray-500 dark:text-gray-400">
