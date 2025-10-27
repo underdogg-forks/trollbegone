@@ -39,6 +39,7 @@ class Account extends Model
         'user_id',
         'username',
         'instagram_id',
+        'access_token',
         'is_active',
         'last_synced_at',
     ];
@@ -50,6 +51,7 @@ class Account extends Model
     protected $casts = [
         'is_active' => 'boolean',
         'last_synced_at' => 'datetime',
+        'access_token' => 'encrypted',
     ];
 
     /**

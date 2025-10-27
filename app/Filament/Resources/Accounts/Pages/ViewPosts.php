@@ -76,7 +76,7 @@ class ViewPosts extends Page
             Action::make('back')
                 ->label('Back to Following')
                 ->icon('heroicon-o-arrow-left')
-                ->url(ViewFollowing::getUrl(['record' => $this->record])),
+                ->url(AccountResource::getUrl('following', ['record' => $this->record])),
             Action::make('refresh')
                 ->label('Refresh')
                 ->icon('heroicon-o-arrow-path')

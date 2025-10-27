@@ -9,6 +9,8 @@ use Illuminate\Support\Collection;
 /**
  * FakeInstagramApiService provides a fake implementation of InstagramApiService for testing.
  * This allows tests to define predictable responses without needing Mockery.
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class FakeInstagramApiService extends InstagramApiService
 {

@@ -44,12 +44,18 @@ abstract class InstagramBaseClient
             throw new Exception("No access token available for account: {$account->username}");
         }
 
+        // Normalize method to string value
+        $httpMethod = $method instanceof RequestMethod ? $method->value : (string) $method;
+
+        // Normalize endpoint to ensure leading slash
+        $endpoint = '/'.ltrim($endpoint, '/');
+
         // Build options with authentication token
         $options = array_merge([
             'base_uri' => self::BASE_URI,
             'token' => $account->access_token,
         ], $options);
 
-        return $this->httpClient->request($method, self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request($httpMethod, self::BASE_URI.$endpoint, $options);
     }
 }

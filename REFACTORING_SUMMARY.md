@@ -6,12 +6,14 @@ Successfully refactored TrollBeGone to provide a streamlined, "Grandma-friendly"
 ## Key Changes Implemented
 
 ### 1. Model Simplification
+
 - Renamed `InstagramAccount` → `Account` throughout codebase
 - Simplified naming while maintaining Instagram context
 - Database table remains `instagram_accounts` for compatibility
 - Updated 254 references across 73 files
 
 ### 2. API Client Refactoring
+
 **Before:**
 ```php
 protected function get(Account $account, string $endpoint, array $queryParams = []): Response
