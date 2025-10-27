@@ -253,7 +253,7 @@ class InstagramAccountResourceTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $component->assertCanSeeTableRecords($accounts, inOrder: false);
+        $component->assertCanSeeTableRecords($accounts, inOrder: true);
         /** #endregion */
     }
 }

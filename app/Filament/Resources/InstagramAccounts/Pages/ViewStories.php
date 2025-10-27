@@ -54,9 +54,10 @@ class ViewStories extends Page
                 ->success()
                 ->send();
         } catch (\Exception $e) {
+            report($e);
             Notification::make()
                 ->title('Failed to load stories')
-                ->body($e->getMessage())
+                ->body('Please try again or contact support.')
                 ->danger()
                 ->send();
         }
@@ -77,9 +78,10 @@ class ViewStories extends Page
                 ->success()
                 ->send();
         } catch (\Exception $e) {
+            report($e);
             Notification::make()
                 ->title('Failed to load comments')
-                ->body($e->getMessage())
+                ->body('Please try again or contact support.')
                 ->danger()
                 ->send();
         }
@@ -104,9 +106,10 @@ class ViewStories extends Page
                 ->success()
                 ->send();
         } catch (\Exception $e) {
+            report($e);
             Notification::make()
                 ->title('Failed to block user')
-                ->body($e->getMessage())
+                ->body('Please try again or contact support.')
                 ->danger()
                 ->send();
         }

@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Providers\InstagramProvider;
 use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\BlockedAccountService;
