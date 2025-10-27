@@ -43,7 +43,7 @@ abstract class InstagramBaseClient
             $options['query'] = $queryParams;
         }
 
-        return $this->httpClient->get(self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request('GET', self::BASE_URI.$endpoint, $options);
     }
 
     /**
@@ -69,7 +69,7 @@ abstract class InstagramBaseClient
             $options['json'] = $data;
         }
 
-        return $this->httpClient->post(self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request('POST', self::BASE_URI.$endpoint, $options);
     }
 
     /**
@@ -95,7 +95,7 @@ abstract class InstagramBaseClient
             $options['json'] = $data;
         }
 
-        return $this->httpClient->put(self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request('PUT', self::BASE_URI.$endpoint, $options);
     }
 
     /**
@@ -116,7 +116,7 @@ abstract class InstagramBaseClient
             'token' => $account->access_token,
         ];
 
-        return $this->httpClient->delete(self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request('DELETE', self::BASE_URI.$endpoint, $options);
     }
 
     /**

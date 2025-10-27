@@ -12,11 +12,8 @@ use Tests\TestCase;
 class ExternalClientTest extends TestCase
 {
     #[Test]
-    public function can_make_get_request(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_can_make_get_request(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -34,11 +31,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_wraps_exceptions(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_wraps_exceptions_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/error' => Http::response(['error' => 'Not Found'], 404),
         ]);
@@ -56,11 +50,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function supports_different_http_methods(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_supports_different_http_methods(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/post' => Http::response(['method' => 'POST'], 200),
             'https://example.com/put' => Http::response(['method' => 'PUT'], 200),
@@ -83,11 +74,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function supports_patch_method(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_supports_patch_method(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/patch' => Http::response(['method' => 'PATCH'], 200),
         ]);
@@ -105,11 +93,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function can_send_request_with_timeout(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_can_send_request_with_timeout(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -126,11 +111,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function can_send_request_with_custom_headers(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_can_send_request_with_custom_headers(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -152,11 +134,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function can_send_request_with_bearer_token(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_can_send_request_with_bearer_token(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/secure' => Http::response(['authenticated' => true], 200),
         ]);
@@ -175,11 +154,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function can_use_base_uri(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_can_use_base_uri(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://api.example.com/users' => Http::response(['users' => []], 200),
         ]);
@@ -198,11 +174,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function uses_default_timeout_values(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_uses_default_timeout_values(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -219,11 +192,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function can_override_connect_timeout(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_can_override_connect_timeout(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -242,11 +212,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_preserves_status_code(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_preserves_status_code_in_decorator_exceptions(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/forbidden' => Http::response(['error' => 'Forbidden'], 403),
         ]);
@@ -270,11 +237,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_handles_server_errors(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_handles_server_errors_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/error' => Http::response(['error' => 'Internal Server Error'], 500),
         ]);
@@ -298,11 +262,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_wraps_post_exceptions(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_wraps_post_exceptions_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/bad-request' => Http::response(['error' => 'Bad Request'], 400),
         ]);
@@ -320,11 +281,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_wraps_put_exceptions(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_wraps_put_exceptions_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/conflict' => Http::response(['error' => 'Conflict'], 409),
         ]);
@@ -342,11 +300,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_wraps_delete_exceptions(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_wraps_delete_exceptions_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/gone' => Http::response(['error' => 'Gone'], 410),
         ]);
@@ -364,11 +319,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_wraps_patch_exceptions(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_wraps_patch_exceptions_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/unprocessable' => Http::response(['error' => 'Unprocessable'], 422),
         ]);
@@ -386,11 +338,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_wraps_general_exceptions(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_wraps_general_exceptions_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake(function () {
             throw new \RuntimeException('Network error');
             /** #endregion */
@@ -417,11 +366,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_allows_successful_requests(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_allows_successful_requests_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/success' => Http::response(['success' => true], 200),
         ]);
@@ -440,11 +386,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function exception_decorator_allows_successful_post(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_allows_successful_post_in_decorator(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/create' => Http::response(['created' => true], 201),
         ]);
@@ -463,11 +406,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function applies_all_options(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_applies_all_options(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://api.example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -490,11 +430,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function call_method_works_for_get(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_supports_magic_call_method_for_get(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -513,11 +450,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function call_method_works_for_post(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_supports_magic_call_method_for_post(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/create' => Http::response(['created' => true], 201),
         ]);
@@ -536,11 +470,8 @@ class ExternalClientTest extends TestCase
     }
 
     #[Test]
-    public function call_method_throws_for_invalid_method(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_throws_exception_for_invalid_magic_method(): void
+    {        /** #region Arrange */
         $client = new ExternalClient;
         /** #endregion */
 
