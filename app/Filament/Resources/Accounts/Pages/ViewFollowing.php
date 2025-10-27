@@ -68,7 +68,7 @@ class ViewFollowing extends Page implements HasTable
                         'username' => $record['username'],
                     ])),
             ]);
-
+    }
 
     protected function getFollowingFromApi(): array
     {
