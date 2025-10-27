@@ -48,9 +48,9 @@ class BlockedAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $blockedAccount->instagramAccount());
-        $this->assertInstanceOf(Account::class, $blockedAccount->instagramAccount);
-        $this->assertEquals($account->id, $blockedAccount->instagramAccount->id);
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $blockedAccount->account());
+        $this->assertInstanceOf(Account::class, $blockedAccount->account);
+        $this->assertEquals($account->id, $blockedAccount->account->id);
         /** #endregion */
     }
 

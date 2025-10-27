@@ -43,10 +43,6 @@ class Account extends Model
         'last_synced_at',
     ];
 
-    protected $guarded = [
-        'access_token',
-    ];
-
     protected $hidden = [
         'access_token',
     ];

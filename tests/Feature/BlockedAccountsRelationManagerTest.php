@@ -24,7 +24,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
 
     protected User $adminUser;
 
-    protected Account $instagramAccount;
+    protected Account $account;
 
     protected function setUp(): void
     {
@@ -33,7 +33,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
         $this->adminUser = User::factory()->create();
         $this->actingAs($this->adminUser);
 
-        $this->instagramAccount = Account::factory()->create([
+        $this->account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -50,7 +50,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
 
         /** #region Act */
         $response = $this->get(
-            AccountResource::getUrl('view', ['record' => $this->instagramAccount])
+            AccountResource::getUrl('view', ['record' => $this->account])
         );
         /** #endregion */
 
@@ -83,7 +83,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
 
         /** #region Act */
         $result = $service->blockAccount(
-            $this->instagramAccount,
+            $this->account,
             'test_user',
             'Test reason'
         );
@@ -92,7 +92,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
         /** #region Assert */
         $this->assertInstanceOf(BlockedAccount::class, $result);
         $this->assertDatabaseHas('blocked_accounts', [
-            'instagram_account_id' => $this->instagramAccount->id,
+            'instagram_account_id' => $this->account->id,
             'blocked_username' => 'test_user',
         ]);
         /** #endregion */

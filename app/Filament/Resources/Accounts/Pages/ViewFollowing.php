@@ -33,7 +33,7 @@ class ViewFollowing extends Page implements HasTable
 
     public Account $record;
 
-    protected $following = [];
+    protected array $following = [];
 
     public function mount(int|string $record): void
     {

@@ -6,7 +6,7 @@ use App\Models\Account;
 use App\Services\Instagram\BlockedAccountService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Log;
+use Psr\Log\LoggerInterface;
 
 /**
  * Job to block a user on Instagram and record it in the database.
@@ -38,31 +38,20 @@ class BlockUserJob implements ShouldQueue
      * Execute the job.
      *
      * Delegates to BlockedAccountService to perform the block operation.
-     * Logs any errors that occur during execution.
+     * Laravel's queue handles failures, logging, and retries automatically.
      */
-    public function handle(BlockedAccountService $service): void
+    public function handle(BlockedAccountService $service, LoggerInterface $logger): void
     {
-        try {
-            $service->blockAccount(
-                account: $this->account,
-                username: $this->username,
-                reason: $this->reason,
-                commentText: $this->commentText
-            );
+        $service->blockAccount(
+            account: $this->account,
+            username: $this->username,
+            reason: $this->reason,
+            commentText: $this->commentText
+        );
 
-            Log::info('User blocked successfully', [
-                'account_id' => $this->account->id,
-                'username' => $this->username,
-            ]);
-        } catch (\Exception $e) {
-            Log::error('Failed to block user in job', [
-                'account_id' => $this->account->id,
-                'username' => $this->username,
-                'error' => $e->getMessage(),
-            ]);
-
-            // Re-throw to mark job as failed
-            throw $e;
-        }
+        $logger->info('User blocked successfully', [
+            'account_id' => $this->account->id,
+            'username' => $this->username,
+        ]);
     }
 }
