@@ -53,7 +53,9 @@ class InstagramAccountResourceTest extends TestCase
     public function it_can_list_instagram_accounts(): void
     {
         /** #region Arrange */
-        $accounts = InstagramAccount::factory()->count(3)->create();
+        $accounts = InstagramAccount::factory()->count(3)->create([
+            'user_id' => $this->adminUser->id,
+        ]);
         /** #endregion */
 
         /** #region Act */
@@ -116,6 +118,7 @@ class InstagramAccountResourceTest extends TestCase
         /** #region Arrange */
         $existingAccount = InstagramAccount::factory()->create([
             'username' => 'existing_account',
+            'user_id' => $this->adminUser->id,
         ]);
         /** #endregion */
 
@@ -138,6 +141,7 @@ class InstagramAccountResourceTest extends TestCase
         $account = InstagramAccount::factory()->create([
             'username' => 'original_username',
             'is_active' => true,
+            'user_id' => $this->adminUser->id,
         ]);
         /** #endregion */
 
@@ -162,7 +166,7 @@ class InstagramAccountResourceTest extends TestCase
     public function it_can_delete_instagram_account(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create();
+        $account = InstagramAccount::factory()->create(['user_id' => $this->adminUser->id]);
         /** #endregion */
 
         /** #region Act */
@@ -181,7 +185,7 @@ class InstagramAccountResourceTest extends TestCase
     public function it_can_bulk_delete_instagram_accounts(): void
     {
         /** #region Arrange */
-        $accounts = InstagramAccount::factory()->count(3)->create();
+        $accounts = InstagramAccount::factory()->count(3)->create(['user_id' => $this->adminUser->id]);
         /** #endregion */
 
         /** #region Act */
@@ -206,6 +210,7 @@ class InstagramAccountResourceTest extends TestCase
             'username' => 'test_user',
             'instagram_id' => '987654321',
             'is_active' => true,
+            'user_id' => $this->adminUser->id,
         ]);
         /** #endregion */
 
@@ -226,8 +231,14 @@ class InstagramAccountResourceTest extends TestCase
     public function it_can_search_instagram_accounts_by_username(): void
     {
         /** #region Arrange */
-        $account1 = InstagramAccount::factory()->create(['username' => 'searchable_account']);
-        $account2 = InstagramAccount::factory()->create(['username' => 'other_account']);
+        $account1 = InstagramAccount::factory()->create([
+            'username' => 'searchable_account',
+            'user_id' => $this->adminUser->id,
+        ]);
+        $account2 = InstagramAccount::factory()->create([
+            'username' => 'other_account',
+            'user_id' => $this->adminUser->id,
+        ]);
         /** #endregion */
 
         /** #region Act */
@@ -245,7 +256,7 @@ class InstagramAccountResourceTest extends TestCase
     public function it_instagram_accounts_are_sorted_by_default(): void
     {
         /** #region Arrange */
-        $accounts = InstagramAccount::factory()->count(3)->create();
+        $accounts = InstagramAccount::factory()->count(3)->create(['user_id' => $this->adminUser->id]);
         /** #endregion */
 
         /** #region Act */
