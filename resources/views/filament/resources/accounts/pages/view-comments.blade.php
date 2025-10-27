@@ -22,7 +22,7 @@
                         <div class="flex-shrink-0">
                             <input 
                                 type="checkbox" 
-                                checked="{{ in_array($comment['id'], $selectedComments) }}"
+                                @checked(in_array($comment['id'], $selectedComments))
                                 class="w-5 h-5 text-primary-600 rounded focus:ring-primary-500"
                             />
                         </div>
