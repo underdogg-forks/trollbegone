@@ -13,7 +13,7 @@ class AccountTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_can_create_instagram_account(): void
+    public function it_can_create_account(): void
     {
         $this->markTestIncomplete();
 
@@ -23,10 +23,11 @@ class AccountTest extends TestCase
             'instagram_id' => '123456',
             'access_token' => 'test_token',
             'is_active' => true,
+        ]);
         /** #endregion */
 
         /** #region Act */
-        ]);
+        // No action needed
         /** #endregion */
 
         /** #region Assert */
@@ -129,6 +130,7 @@ class AccountTest extends TestCase
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
+        $syncTime = now();
         /** #endregion */
 
         /** #region Act */
@@ -137,7 +139,6 @@ class AccountTest extends TestCase
 
         /** #region Assert */
         $this->assertNull($account->last_synced_at);
-        $syncTime = now();
         $this->assertNotNull($account->fresh()->last_synced_at);
         $this->assertTrue($account->fresh()->last_synced_at->equalTo($syncTime));
         /** #endregion */
@@ -177,15 +178,16 @@ class AccountTest extends TestCase
         $blockedAccount = BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'blocked_user',
-        /** #endregion */
-
-        /** #region Act */
         ]);
         /** #endregion */
 
+        /** #region Act */
+        // No action needed
+        /** #endregion */
+
         /** #region Assert */
-        $this->assertInstanceOf(Account::class, $blockedAccount->instagramAccount);
-        $this->assertEquals($instagramAccount->id, $blockedAccount->instagramAccount->id);
+        $this->assertInstanceOf(Account::class, $blockedAccount->account);
+        $this->assertEquals($instagramAccount->id, $blockedAccount->account->id);
         /** #endregion */
     }
 
@@ -316,18 +318,16 @@ class AccountTest extends TestCase
                 'instagram_account_id' => $account->id,
                 'blocked_username' => "user{$i}",
             ]);
-            /** #endregion */
-
-            /** #region Act */
-            // No action needed
-            /** #endregion */
-
-            /** #region Assert */
-            // No assertions
-            /** #endregion */
         }
+        /** #endregion */
 
+        /** #region Act */
+        // No action needed
+        /** #endregion */
+
+        /** #region Assert */
         $this->assertEquals(10, $account->blockedAccounts()->count());
+        /** #endregion */
     }
 
     #[Test]

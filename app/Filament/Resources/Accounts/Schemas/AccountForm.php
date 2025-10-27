@@ -8,9 +8,9 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Schema;
 
 /**
- * Instagram Account Form Schema
+ * Account Form Schema
  *
- * Defines the form fields for creating and editing Instagram accounts in the
+ * Defines the form fields for creating and editing accounts in the
  * Filament admin panel.
  */
 class AccountForm

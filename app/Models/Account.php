@@ -47,6 +47,10 @@ class Account extends Model
         'access_token',
     ];
 
+    protected $hidden = [
+        'access_token',
+    ];
+
     protected $casts = [
         'is_active' => 'boolean',
         'last_synced_at' => 'datetime',
