@@ -20,8 +20,8 @@ return new class extends Migration
             $table->text('comment_text')->nullable();
             $table->timestamps();
 
-            $table->unique(['instagram_account_id', 'blocked_instagram_id']);
-            $table->unique(['instagram_account_id', 'blocked_username']);
+            $table->unique(['instagram_account_id', 'blocked_instagram_id'], 'unique_account_blocked_id');
+            $table->unique(['instagram_account_id', 'blocked_username'], 'unique_account_blocked_username');
         });
     }
 
