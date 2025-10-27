@@ -13,7 +13,7 @@ class BlockedAccountModelTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function blocked_account_has_fillable_attributes(): void
+    public function it_has_fillable_attributes(): void
     {
         $this->markTestIncomplete();
 
@@ -35,7 +35,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_belongs_to_instagram_account(): void
+    public function it_belongs_to_instagram_account(): void
     {
         $this->markTestIncomplete();
 
@@ -55,7 +55,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_can_have_null_blocked_instagram_id(): void
+    public function it_can_have_null_blocked_instagram_id(): void
     {
         $this->markTestIncomplete();
 
@@ -73,7 +73,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_can_have_null_reason(): void
+    public function it_can_have_null_reason(): void
     {
         $this->markTestIncomplete();
 
@@ -92,7 +92,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_can_have_null_comment_text(): void
+    public function it_can_have_null_comment_text(): void
     {
         $this->markTestIncomplete();
 
@@ -111,7 +111,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_stores_reason_correctly(): void
+    public function it_stores_reason_correctly(): void
     {
         $this->markTestIncomplete();
 
@@ -129,7 +129,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_stores_comment_text_correctly(): void
+    public function it_stores_comment_text_correctly(): void
     {
         $this->markTestIncomplete();
 
@@ -147,7 +147,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_can_be_updated(): void
+    public function it_can_be_updated(): void
     {
         $this->markTestIncomplete();
 
@@ -167,7 +167,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_has_created_at_timestamp(): void
+    public function it_has_created_at_timestamp(): void
     {
         $this->markTestIncomplete();
 
@@ -186,7 +186,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_has_updated_at_timestamp(): void
+    public function it_has_updated_at_timestamp(): void
     {
         $this->markTestIncomplete();
 
@@ -205,7 +205,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_factory_generates_valid_data(): void
+    public function it_factory_generates_valid_data(): void
     {
         $this->markTestIncomplete();
 
@@ -225,7 +225,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function multiple_blocked_accounts_can_exist_for_same_instagram_account(): void
+    public function it_multiple_blocked_accounts_can_exist_for_same_instagram_account(): void
     {
         $this->markTestIncomplete();
 
@@ -246,7 +246,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_username_can_be_duplicated_across_different_accounts(): void
+    public function it_username_can_be_duplicated_across_different_accounts(): void
     {
         $this->markTestIncomplete();
 

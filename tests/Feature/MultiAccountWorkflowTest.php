@@ -79,7 +79,7 @@ class MultiAccountWorkflowTest extends TestCase
     }
 
     #[Test]
-    public function multiple_users_have_isolated_instagram_accounts(): void
+    public function it_multiple_users_have_isolated_instagram_accounts(): void
     {
         /** #region Arrange */
         $user1 = User::factory()->create(['name' => 'User 1']);

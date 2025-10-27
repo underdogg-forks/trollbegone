@@ -29,7 +29,7 @@ class ViewFollowing extends Page implements HasTable
 
     protected static string $resource = AccountResource::class;
 
-    protected static string $view = 'filament.resources.accounts.pages.view-following';
+    protected string $view = 'filament.resources.accounts.pages.view-following';
 
     public Account $record;
 

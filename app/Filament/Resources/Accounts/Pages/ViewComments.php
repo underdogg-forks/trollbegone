@@ -25,7 +25,7 @@ class ViewComments extends Page
 
     protected static string $resource = AccountResource::class;
 
-    protected static string $view = 'filament.resources.accounts.pages.view-comments';
+    protected string $view = 'filament.resources.accounts.pages.view-comments';
 
     public Account $record;
 

@@ -13,7 +13,7 @@ class AccountModelTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function instagram_account_has_fillable_attributes(): void
+    public function it_has_fillable_attributes(): void
     {
         $this->markTestIncomplete();
 
@@ -37,7 +37,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_casts_attributes_correctly(): void
+    public function it_casts_attributes_correctly(): void
     {
         $this->markTestIncomplete();
 
@@ -59,7 +59,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_has_blocked_accounts_relationship(): void
+    public function it_has_blocked_accounts_relationship(): void
     {
         $this->markTestIncomplete();
 
@@ -77,7 +77,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_can_have_null_instagram_id(): void
+    public function it_can_have_null_instagram_id(): void
     {
         $this->markTestIncomplete();
 
@@ -101,7 +101,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_can_have_null_access_token(): void
+    public function it_can_have_null_access_token(): void
     {
         $this->markTestIncomplete();
 
@@ -119,7 +119,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_defaults_to_active(): void
+    public function it_defaults_to_active(): void
     {
         $this->markTestIncomplete();
 
@@ -137,7 +137,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_can_be_inactive(): void
+    public function it_can_be_inactive(): void
     {
         $this->markTestIncomplete();
 
@@ -155,7 +155,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_last_synced_at_is_nullable(): void
+    public function it_last_synced_at_is_nullable(): void
     {
         $this->markTestIncomplete();
 
@@ -175,7 +175,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_can_be_updated(): void
+    public function it_can_be_updated(): void
     {
         $this->markTestIncomplete();
 
@@ -195,7 +195,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_factory_creates_unique_usernames(): void
+    public function it_factory_creates_unique_usernames(): void
     {
         $this->markTestIncomplete();
 
@@ -214,7 +214,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_factory_creates_unique_instagram_ids(): void
+    public function it_factory_creates_unique_instagram_ids(): void
     {
         $this->markTestIncomplete();
 
@@ -233,7 +233,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_factory_creates_unique_access_tokens(): void
+    public function it_factory_creates_unique_access_tokens(): void
     {
         $this->markTestIncomplete();
 
@@ -252,7 +252,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_relationship_loads_blocked_accounts_correctly(): void
+    public function it_relationship_loads_blocked_accounts_correctly(): void
     {
         $this->markTestIncomplete();
 

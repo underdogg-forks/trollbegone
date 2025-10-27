@@ -23,7 +23,7 @@ class ViewPosts extends Page
 
     protected static string $resource = AccountResource::class;
 
-    protected static string $view = 'filament.resources.accounts.pages.view-posts';
+    protected string $view = 'filament.resources.accounts.pages.view-posts';
 
     public Account $record;
 
