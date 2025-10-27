@@ -2,6 +2,7 @@
 
 namespace App\Services\Http;
 
+use App\Enums\RequestMethod;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -15,7 +16,7 @@ class ExternalClient
     /**
      * Send an HTTP request to an external API.
      *
-     * @param  string  $method  HTTP method (GET, POST, PUT, DELETE, PATCH, etc.)
+     * @param  RequestMethod|string  $method  HTTP method (enum or string for backward compatibility)
      * @param  string  $url  The URL to send the request to
      * @param  array  $options  Request options including:
      *                          - headers: array of HTTP headers
@@ -27,13 +28,15 @@ class ExternalClient
      *                          - query: Query parameters for the request
      */
     public function request(
-        string $method,
+        RequestMethod|string $method,
         string $url,
         array $options = []
     ): Response {
         $client = $this->buildClient($options);
 
-        return $client->send($method, $url, $options);
+        $methodValue = $method instanceof RequestMethod ? $method->value : $method;
+
+        return $client->send($methodValue, $url, $options);
     }
 
     /**
