@@ -2,6 +2,7 @@
 
 namespace Tests\Unit;
 
+use App\Enums\RequestMethod;
 use App\Models\InstagramAccount;
 use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
@@ -152,7 +153,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
         $mockClient->shouldReceive('request')
             ->once()
-            ->with('POST', 'https://graph.instagram.com/me/blocked', [
+            ->with(Mockery::anyOf('POST', RequestMethod::POST), 'https://graph.instagram.com/me/blocked', [
                 'base_uri' => 'https://graph.instagram.com',
                 'token' => 'test_token',
                 'json' => ['user_id' => '17841401234567892'],

@@ -60,7 +60,7 @@ class InstagramOAuthController extends Controller
         } catch (\Exception $e) {
             return redirect()
                 ->route('filament.admin.resources.instagram-accounts.index')
-                ->with('error', 'Failed to connect Instagram account: '.$e->getMessage());
+                ->with('error', 'Failed to connect Instagram account: ' . $e->getMessage());
         }
     }
 
@@ -84,7 +84,7 @@ class InstagramOAuthController extends Controller
         } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->with('error', 'Failed to disconnect Instagram account: '.$e->getMessage());
+                ->with('error', 'Failed to disconnect Instagram account: ' . $e->getMessage());
         }
     }
 }
