@@ -47,7 +47,7 @@ class BlockedAccountService
 
         // Create database record first - ensures audit trail even if API fails
         $blockedAccount = DB::transaction(function () use ($account, $username, $reason, $commentText, $userInfo) {
-            return BlockedAccount::updateOrCreate(
+            return BlockedAccount::firstOrCreate(
                 [
                     'instagram_account_id' => $account->id,
                     'blocked_username' => $username,
