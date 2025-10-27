@@ -283,8 +283,8 @@ $token = config('services.instagram.api_key');
 ✅ **Per-Account Tokens**
 ```php
 // GOOD - Each account has its own token
-$account = InstagramAccount::find(1);
-$stories = $storiesClient->list($account); // Uses $account->access_token
+$account = \App\Models\Account::find(1);
+$stories = app(\App\Services\Instagram\InstagramApiService::class)->getStories($account);
 ```
 
 ### Concurrent User Workflow
@@ -357,7 +357,7 @@ CREATE TABLE blocked_accounts (
 );
 ```
 
-**Note**: Deleting an `InstagramAccount` does **NOT** cascade delete `BlockedAccount` records (audit trail preservation).
+**Note**: Deleting an `Account` does **NOT** cascade delete `BlockedAccount` records (audit trail preservation).
 
 ## Development
 
@@ -372,12 +372,10 @@ app/
 │   │   └── HttpClientException.php     # Custom exception
 │   └── Instagram/
 │       ├── InstagramBaseClient.php     # Abstract base client
-│       ├── InstagramStoriesClient.php  # Stories endpoint
-│       ├── InstagramModerationClient.php # Moderation endpoint
-│       ├── InstagramUsersClient.php    # Users endpoint
+│       ├── InstagramApiService.php     # Instagram API service
 │       └── BlockedAccountService.php   # Business logic
 ├── Models/
-│   ├── InstagramAccount.php
+│   ├── Account.php
 │   └── BlockedAccount.php
 └── Filament/ (optional)
     └── Resources/
@@ -456,15 +454,14 @@ use PHPUnit\Framework\Attributes\Test;
 #[Test]
 public function it_blocks_and_persists(): void
 {
-    $account = InstagramAccount::factory()->create(['access_token' => 'token']);
-    $mod = \Mockery::mock(InstagramModerationClient::class);
-    $users = \Mockery::mock(InstagramUsersClient::class);
+    $account = \App\Models\Account::factory()->create(['access_token' => 'token']);
+    $api = \Mockery::mock(\App\Services\Instagram\InstagramApiService::class);
     
-    $users->shouldReceive('findFirst')->once()->andReturn(['id' => '123']);
-    $mod->shouldReceive('block')->once()->andReturnTrue();
+    $api->shouldReceive('getUserInfo')->once()->andReturn(['id' => '123']);
+    $api->shouldReceive('blockUser')->once()->with($account, '123')->andReturnTrue();
     
-    $service = new BlockedAccountService($mod, $users);
-    $result = $service->blockByUsername($account, 'troll', 'spam', 'bad comment');
+    $service = app(\App\Services\Instagram\BlockedAccountService::class);
+    $result = $service->blockAccount($account, 'troll', 'spam', 'bad comment');
     
     $this->assertDatabaseHas('blocked_accounts', [
         'instagram_account_id' => $account->id,
