@@ -324,8 +324,8 @@ TrollBeGone strictly adheres to these principles:
 - ✅ #region pattern for test organization (Arrange/Act/Assert)
 
 For complete guidelines, see:
-- `.github/copilot-guidelines.md` - Full development standards
-- `.junie/guidelines.md` - Core architectural patterns
+- `.github/copilot-guidelines.md` - Full development standards (coding style, testing patterns, Laravel/Filament conventions)
+- `.junie/guidelines.md` - Core architectural patterns (BaseClient, multi-account, service layer design)
 
 ## License
 

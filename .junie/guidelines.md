@@ -695,11 +695,81 @@ Access tokens expire. Future implementation should:
 
 ### Rate Limiting
 
-Instagram has rate limits. Implementation should:
-- Track API calls per account
-- Implement exponential backoff
-- Queue heavy operations
-- Handle 429 responses gracefully
+Instagram has strict rate limits. Future implementation should:
+
+**Instagram Graph API Rate Limits** (as of 2024):
+- **Standard calls**: 200 requests per hour per user
+- **Business Discovery**: 200 requests per hour
+- **User token**: 4800 requests per hour (if using app + user token)
+
+**Implementation Strategy**:
+
+```php
+// Detect rate limiting
+try {
+    $response = $this->httpClient->request($method, $url, $options);
+} catch (HttpClientException $e) {
+    if ($e->getCode() === 429) {
+        // Rate limited - get retry-after header
+        $retryAfter = $e->getResponse()->header('Retry-After', 3600);
+        
+        // Queue for later or throw specific exception
+        throw new RateLimitException(
+            "Rate limit exceeded. Retry after {$retryAfter} seconds",
+            $e->getCode()
+        );
+    }
+    throw $e;
+}
+
+// Track API calls per account
+Cache::increment("instagram_api_calls:{$account->id}", 1, now()->addHour());
+
+// Implement exponential backoff
+$attempt = 0;
+$maxAttempts = 3;
+$baseDelay = 2; // seconds
+
+while ($attempt < $maxAttempts) {
+    try {
+        return $this->httpClient->request($method, $url, $options);
+    } catch (RateLimitException $e) {
+        $attempt++;
+        if ($attempt >= $maxAttempts) {
+            throw $e;
+        }
+        
+        // Exponential backoff: 2s, 4s, 8s
+        $delay = $baseDelay * pow(2, $attempt - 1);
+        sleep($delay);
+    }
+}
+
+// Queue heavy operations
+dispatch(new FetchStoriesJob($account))
+    ->onQueue('instagram-api')
+    ->delay(now()->addSeconds(5)); // Spread requests over time
+```
+
+**Handle 429 Gracefully**:
+
+```php
+public function getStories(InstagramAccount $account): Collection
+{
+    try {
+        $response = $this->get($account, '/me/stories');
+        return collect($response->json('data', []));
+    } catch (RateLimitException $e) {
+        Log::warning('Rate limit hit for account', [
+            'account_id' => $account->id,
+            'retry_after' => $e->getRetryAfter(),
+        ]);
+        
+        // Return cached data if available
+        return Cache::get("stories:{$account->id}", collect([]));
+    }
+}
+```
 
 ## Resources
 
