@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Instagram Account Resource
@@ -74,5 +75,14 @@ class InstagramAccountResource extends Resource
             'view' => Pages\ViewInstagramAccount::route('/{record}'),
             'stories' => Pages\ViewStories::route('/{record}/stories'),
         ];
+    }
+
+    /**
+     * Scope queries to only show current user's Instagram accounts.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('user_id', auth()->id());
     }
 }

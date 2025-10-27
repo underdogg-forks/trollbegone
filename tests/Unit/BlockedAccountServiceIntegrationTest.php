@@ -23,7 +23,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     public function complete_blocking_workflow_with_fixtures(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::create([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
             'access_token' => 'test_token',
@@ -61,7 +61,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     public function blocking_workflow_when_user_search_fails(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::create([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
             'access_token' => 'test_token',
@@ -94,7 +94,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     public function blocking_multiple_users_from_comments(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::create([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
             'access_token' => 'test_token',
@@ -143,7 +143,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     public function is_blocked_with_fixture_data(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::create([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
             'access_token' => 'test_token',
@@ -178,7 +178,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     public function get_blocked_accounts_returns_latest_first(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::create([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
             'access_token' => 'test_token',
@@ -220,7 +220,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     public function blocking_workflow_when_api_block_fails(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::create([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'instagram_id' => '123456789',
             'access_token' => 'test_token',
