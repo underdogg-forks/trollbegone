@@ -59,9 +59,9 @@ class InstagramApiServiceTest extends TestCase
                 ['id' => 'story2', 'media_url' => 'https://example.com/2.jpg'],
             ]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
-            ->with('https://graph.instagram.com/me/stories', [
+            ->with('GET', 'https://graph.instagram.com/me/stories', [
                 'base_uri' => 'https://graph.instagram.com',
                 'token' => 'valid_token',
             ])
@@ -94,7 +94,7 @@ class InstagramApiServiceTest extends TestCase
             ->with('data', [])
             ->andReturn([]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
         $service = new InstagramApiService($mockClient);
@@ -148,9 +148,9 @@ class InstagramApiServiceTest extends TestCase
                 ['id' => 'comment2', 'text' => 'Love it!'],
             ]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
-            ->with('https://graph.instagram.com/story123/comments', [
+            ->with('GET', 'https://graph.instagram.com/story123/comments', [
                 'base_uri' => 'https://graph.instagram.com',
                 'token' => 'valid_token',
             ])
@@ -183,7 +183,7 @@ class InstagramApiServiceTest extends TestCase
             ->with('data', [])
             ->andReturn([]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
         $service = new InstagramApiService($mockClient);
@@ -230,9 +230,9 @@ class InstagramApiServiceTest extends TestCase
         ]);
         $mockResponse = Mockery::mock(Response::class);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('post')
+        $mockClient->shouldReceive('request')
             ->once()
-            ->with('https://graph.instagram.com/me/blocked', [
+            ->with('POST', 'https://graph.instagram.com/me/blocked', [
                 'base_uri' => 'https://graph.instagram.com',
                 'token' => 'valid_token',
                 'json' => ['user_id' => 'user123'],
@@ -261,7 +261,7 @@ class InstagramApiServiceTest extends TestCase
             'access_token' => 'valid_token',
         ]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('post')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andThrow(new HttpClientException('API Error', 500));
         $service = new InstagramApiService($mockClient);
@@ -287,7 +287,7 @@ class InstagramApiServiceTest extends TestCase
             'access_token' => 'valid_token',
         ]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('post')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andThrow(new RuntimeException('Network error'));
         $service = new InstagramApiService($mockClient);
@@ -340,9 +340,9 @@ class InstagramApiServiceTest extends TestCase
                 ['id' => 'user456', 'username' => 'another_user'],
             ]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
-            ->with('https://graph.instagram.com/search', [
+            ->with('GET', 'https://graph.instagram.com/search', [
                 'base_uri' => 'https://graph.instagram.com',
                 'token' => 'valid_token',
                 'query' => [
@@ -380,7 +380,7 @@ class InstagramApiServiceTest extends TestCase
             ->with('data', [])
             ->andReturn([]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
         $service = new InstagramApiService($mockClient);
@@ -406,7 +406,7 @@ class InstagramApiServiceTest extends TestCase
             'access_token' => 'valid_token',
         ]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andThrow(new HttpClientException('API Error', 500));
         $service = new InstagramApiService($mockClient);
@@ -432,7 +432,7 @@ class InstagramApiServiceTest extends TestCase
             'access_token' => 'valid_token',
         ]);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andThrow(new RuntimeException('Network timeout'));
         $service = new InstagramApiService($mockClient);
