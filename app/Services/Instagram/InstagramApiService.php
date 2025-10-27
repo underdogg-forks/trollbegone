@@ -41,13 +41,9 @@ class InstagramApiService extends InstagramBaseClient
      */
     public function getStories(InstagramAccount $account): Collection
     {
-        try {
-            $response = $this->get($account, '/me/stories');
+        $response = $this->get($account, '/me/stories');
 
-            return collect($response->json('data', []));
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return collect($response->json('data', []));
     }
 
     /**
@@ -77,13 +73,9 @@ class InstagramApiService extends InstagramBaseClient
      */
     public function getStoryComments(InstagramAccount $account, string $storyId): Collection
     {
-        try {
-            $response = $this->get($account, "/{$storyId}/comments");
+        $response = $this->get($account, "/{$storyId}/comments");
 
-            return collect($response->json('data', []));
-        } catch (\Exception $e) {
-            throw $e;
-        }
+        return collect($response->json('data', []));
     }
 
     /**
