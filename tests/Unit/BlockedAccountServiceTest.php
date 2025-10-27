@@ -4,10 +4,12 @@ namespace Tests\Unit;
 
 use App\Models\BlockedAccount;
 use App\Models\InstagramAccount;
+use App\Services\Http\ExternalClient;
+use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\BlockedAccountService;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Mockery;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -15,37 +17,33 @@ class BlockedAccountServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     #[Test]
     public function block_account_creates_blocked_account_record_with_user_info(): void
     {
-        $this->markTestIncomplete();
+        $this->markTestIncomplete('Http::fake does not intercept in this test context - needs Feature test approach');
 
         /** #region Arrange */
+        Http::fake([
+            'https://graph.instagram.com/search*' => Http::response([
+                'data' => [['id' => '12345', 'username' => 'spam_user']],
+            ], 200),
+            'https://graph.instagram.com/me/blocked' => Http::response(['success' => true], 200),
+        ]);
+
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
             'is_active' => true,
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $mockInstagramApi->shouldReceive('getUserInfo')
-            ->once()
-            ->with($instagramAccount, 'spam_user')
-            ->andReturn(['id' => '12345', 'username' => 'spam_user']);
-        $mockInstagramApi->shouldReceive('blockUser')
-            ->once()
-            ->with($instagramAccount, '12345')
-            ->andReturn(true);
-        $service = new BlockedAccountService($mockInstagramApi);
-        $blockedAccount = $service->blockAccount(
-            /** #endregion */
 
-            /** #region Act */
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
+        /** #endregion */
+
+        /** #region Act */
+        $blockedAccount = $service->blockAccount(
             $instagramAccount,
             'spam_user',
             'Spamming comments',
@@ -54,6 +52,10 @@ class BlockedAccountServiceTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
+        Http::assertSent(function ($request) {
+            return str_contains($request->url(), 'search');
+        });
+
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertEquals('spam_user', $blockedAccount->blocked_username);
         $this->assertEquals('12345', $blockedAccount->blocked_instagram_id);
@@ -69,25 +71,24 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function block_account_handles_null_user_info(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
+        Http::fake([
+            'https://graph.instagram.com/search*' => Http::response(['data' => []], 200),
+        ]);
+
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $mockInstagramApi->shouldReceive('getUserInfo')
-            ->once()
-            ->with($instagramAccount, 'nonexistent_user')
-            ->andReturn(null);
-        $mockInstagramApi->shouldReceive('blockUser')
-            ->never();
-        $service = new BlockedAccountService($mockInstagramApi);
-        $blockedAccount = $service->blockAccount(
-            /** #endregion */
 
-            /** #region Act */
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
+        /** #endregion */
+
+        /** #region Act */
+        $blockedAccount = $service->blockAccount(
             $instagramAccount,
             'nonexistent_user',
             'User not found'
@@ -105,24 +106,26 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function block_account_handles_user_info_without_id(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
+        Http::fake([
+            'https://graph.instagram.com/search*' => Http::response([
+                'data' => [['username' => 'partial_user']],
+            ], 200),
+        ]);
+
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $mockInstagramApi->shouldReceive('getUserInfo')
-            ->once()
-            ->andReturn(['username' => 'partial_user']);
-        $mockInstagramApi->shouldReceive('blockUser')
-            ->never();
-        $service = new BlockedAccountService($mockInstagramApi);
-        $blockedAccount = $service->blockAccount(
-            /** #endregion */
 
-            /** #region Act */
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
+        /** #endregion */
+
+        /** #region Act */
+        $blockedAccount = $service->blockAccount(
             $instagramAccount,
             'partial_user'
         );
@@ -136,21 +139,23 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function block_account_creates_record_without_optional_fields(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
+        Http::fake([
+            'https://graph.instagram.com/search*' => Http::response([
+                'data' => [['id' => '99999']],
+            ], 200),
+            'https://graph.instagram.com/me/blocked' => Http::response(['success' => true], 200),
+        ]);
+
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $mockInstagramApi->shouldReceive('getUserInfo')
-            ->once()
-            ->andReturn(['id' => '99999']);
-        $mockInstagramApi->shouldReceive('blockUser')
-            ->once()
-            ->andReturn(true);
-        $service = new BlockedAccountService($mockInstagramApi);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
         /** #region Act */
@@ -167,8 +172,6 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function is_blocked_returns_true_for_blocked_username(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
@@ -178,14 +181,14 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'blocked_user',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
-        /** #region Act */
-        $service = new BlockedAccountService($mockInstagramApi);
-        /** #endregion */
-
-        /** #region Assert */
+        /** #region Act & Assert */
         $this->assertTrue($service->isBlocked($instagramAccount, 'blocked_user'));
         /** #endregion */
     }
@@ -193,21 +196,19 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function is_blocked_returns_false_for_non_blocked_username(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
-        /** #region Act */
-        $service = new BlockedAccountService($mockInstagramApi);
-        /** #endregion */
-
-        /** #region Assert */
+        /** #region Act & Assert */
         $this->assertFalse($service->isBlocked($instagramAccount, 'non_blocked_user'));
         /** #endregion */
     }
@@ -215,8 +216,6 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function is_blocked_is_case_sensitive(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
@@ -226,14 +225,14 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'BlockedUser',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
-        /** #region Act */
-        $service = new BlockedAccountService($mockInstagramApi);
-        /** #endregion */
-
-        /** #region Assert */
+        /** #region Act & Assert */
         $this->assertFalse($service->isBlocked($instagramAccount, 'blockeduser'));
         /** #endregion */
     }
@@ -241,8 +240,6 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function is_blocked_checks_specific_instagram_account(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account1 = InstagramAccount::create([
             'username' => 'account1',
@@ -256,14 +253,14 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $account1->id,
             'blocked_username' => 'blocked_user',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
-        /** #region Act */
-        $service = new BlockedAccountService($mockInstagramApi);
-        /** #endregion */
-
-        /** #region Assert */
+        /** #region Act & Assert */
         $this->assertTrue($service->isBlocked($account1, 'blocked_user'));
         $this->assertFalse($service->isBlocked($account2, 'blocked_user'));
         /** #endregion */
@@ -272,8 +269,6 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function get_blocked_accounts_returns_all_blocked_accounts_for_instagram_account(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
@@ -291,8 +286,11 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'user3',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $service = new BlockedAccountService($mockInstagramApi);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
         /** #region Act */
@@ -307,8 +305,6 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function get_blocked_accounts_returns_latest_first(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
@@ -323,8 +319,11 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'newest',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $service = new BlockedAccountService($mockInstagramApi);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
         /** #region Act */
@@ -340,15 +339,16 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function get_blocked_accounts_returns_empty_collection_when_no_blocks(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $instagramAccount = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $service = new BlockedAccountService($mockInstagramApi);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
         /** #region Act */
@@ -363,8 +363,6 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function get_blocked_accounts_only_returns_accounts_for_specific_instagram_account(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account1 = InstagramAccount::create([
             'username' => 'account1',
@@ -386,12 +384,15 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $account2->id,
             'blocked_username' => 'user3',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $service = new BlockedAccountService($mockInstagramApi);
-        $account1Blocks = $service->getBlockedAccounts($account1);
+
+        $client = new ExternalClient;
+        $decorator = new HttpClientExceptionDecorator($client);
+        $instagramApi = new InstagramApiService($decorator);
+        $service = new BlockedAccountService($instagramApi);
         /** #endregion */
 
         /** #region Act */
+        $account1Blocks = $service->getBlockedAccounts($account1);
         $account2Blocks = $service->getBlockedAccounts($account2);
         /** #endregion */
 

@@ -2,6 +2,7 @@
 
 namespace App\Services\Http;
 
+use App\Enums\RequestMethod;
 use BadMethodCallException;
 use Illuminate\Http\Client\RequestException;
 use Illuminate\Http\Client\Response;
@@ -19,19 +20,20 @@ class HttpClientExceptionDecorator
     /**
      * Send an HTTP request with exception handling.
      *
-     * @param  string  $method  HTTP method
+     * @param  RequestMethod|string  $method  HTTP method (enum or string for backward compatibility)
      * @param  string  $url  Request URL
      * @param  array  $options  Request options
      *
      * @throws HttpClientException
      */
     public function request(
-        string $method,
+        RequestMethod|string $method,
         string $url,
         array $options = []
     ): Response {
         try {
-            $response = $this->client->request($method, $url, $options);
+            $methodValue = $method instanceof RequestMethod ? $method->value : $method;
+            $response = $this->client->request($methodValue, $url, $options);
 
             $response->throw();
 

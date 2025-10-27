@@ -2,6 +2,7 @@
 
 namespace App\Services\Instagram;
 
+use App\Enums\RequestMethod;
 use App\Models\InstagramAccount;
 use App\Services\Http\HttpClientException;
 use App\Services\Http\HttpClientExceptionDecorator;
@@ -43,7 +44,7 @@ abstract class InstagramBaseClient
             $options['query'] = $queryParams;
         }
 
-        return $this->httpClient->request('GET', self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request(RequestMethod::GET, self::BASE_URI.$endpoint, $options);
     }
 
     /**
@@ -69,7 +70,7 @@ abstract class InstagramBaseClient
             $options['json'] = $data;
         }
 
-        return $this->httpClient->request('POST', self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request(RequestMethod::POST, self::BASE_URI.$endpoint, $options);
     }
 
     /**
@@ -95,7 +96,7 @@ abstract class InstagramBaseClient
             $options['json'] = $data;
         }
 
-        return $this->httpClient->request('PUT', self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request(RequestMethod::PUT, self::BASE_URI.$endpoint, $options);
     }
 
     /**
@@ -116,7 +117,7 @@ abstract class InstagramBaseClient
             'token' => $account->access_token,
         ];
 
-        return $this->httpClient->request('DELETE', self::BASE_URI.$endpoint, $options);
+        return $this->httpClient->request(RequestMethod::DELETE, self::BASE_URI.$endpoint, $options);
     }
 
     /**
