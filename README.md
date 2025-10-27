@@ -1,219 +1,316 @@
 # TrollBeGone
 
-A Laravel 12 application with Filament v4 for managing Instagram story comments and blocking unwanted accounts.
+A Laravel 12 API-only application for managing Instagram story comments and blocking unwanted accounts via the Instagram Graph API.
 
-## 🎯 Core Architecture
+## 🎯 Overview
 
-TrollBeGone is built on a **multi-account, multi-tenant architecture** that supports:
+TrollBeGone is built on an **Advanced API Client** architecture with **client-per-endpoint** classes, enabling precise Instagram Graph API integration for reading posts, fetching comments, and blocking offending users.
 
-- ✅ **Multiple Instagram Accounts**: Each account operates independently with its own access token
-- ✅ **Concurrent Users**: 10+ users can manage their accounts simultaneously without conflicts
-- ✅ **Per-Account Authentication**: No global API keys - each account has its own Instagram Graph API token
-- ✅ **BaseClient Pattern**: Consistent API integration with InstagramBaseClient handling URL, version, endpoints, and authentication
-- ✅ **Specific Endpoint Clients**: Focused service classes (InstagramApiService) with one method per endpoint
+### Key Features
 
-## Features
+- ✅ **Multi-Account Support**: Manage unlimited Instagram accounts independently
+- ✅ **Client-Per-Endpoint**: Focused API clients (Stories, Moderation, Users)
+- ✅ **Single Request Pattern**: All HTTP calls use one `request()` method
+- ✅ **Multi-Tenant Safe**: 10+ users can operate concurrently without conflicts
+- ✅ **Per-Account Tokens**: No global API keys - each account has its own credentials
+- ✅ **Audit Trail**: Track blocked accounts with reasons and context
 
-- **Instagram Account Management**: Track unlimited Instagram accounts, each with independent authentication
-- **Story Monitoring**: View stories from any connected Instagram account
-- **Comment Moderation**: Review comments on stories per account
-- **Account Blocking**: Block users directly from comment review using account-specific tokens
-- **Blocked Account Tracking**: Maintain a list of blocked accounts with reasons (per Instagram account)
+## Architecture
+
+### Advanced API Client Flow
+
+```
+[Service Layer (BlockedAccountService)]
+          ↓
+[Endpoint Clients (StoriesClient, ModerationClient)]
+          ↓
+[InstagramBaseClient (withToken)]
+          ↓
+[HttpExceptionHandler (wraps exceptions)]
+          ↓
+[ExternalClient (Laravel Http facade)]
+          ↓
+[Instagram Graph API]
+```
+
+### Core Principles
+
+1. **Single `request()` Method**: No `get()`/`post()` wrappers - only `request(method, url, options)`
+2. **Client-Per-Endpoint**: One class per API endpoint group (e.g., `InstagramStoriesClient`)
+3. **Per-Account Authentication**: Each `InstagramAccount` has its own access token
+4. **Concurrent Safety**: Multiple users can manage different accounts simultaneously
 
 ## Requirements
 
 - PHP 8.3+
 - Composer
-- SQLite (default) or other database
-- Instagram Graph API access token
+- Laravel 12
+- SQLite (default) or MySQL/PostgreSQL
+- Instagram Graph API access token (per account)
 
 ## Installation
 
-1. Clone the repository:
-```bash
-git clone https://github.com/underdogg-forks/trollbegone.git
-cd trollbegone
-```
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/underdogg-forks/trollbegone.git
+   cd trollbegone
+   ```
 
-2. Install dependencies:
-```bash
-composer install
-```
+2. **Install dependencies:**
+   ```bash
+   composer install
+   ```
 
-3. Copy the environment file:
-```bash
-cp .env.example .env
-```
+3. **Configure environment:**
+   ```bash
+   cp .env.example .env
+   php artisan key:generate
+   ```
 
-4. Generate application key:
-```bash
-php artisan key:generate
-```
+4. **Run migrations:**
+   ```bash
+   php artisan migrate
+   ```
 
-5. Run migrations:
-```bash
-php artisan migrate
-```
-
-6. Create an admin user:
-```bash
-php artisan make:filament-user
-```
+5. **Create admin user (if using Filament):**
+   ```bash
+   php artisan make:filament-user
+   ```
 
 ## Usage
 
-1. Start the development server:
+### Start Development Server
+
 ```bash
 php artisan serve
 ```
 
-2. Access Filament admin panel at `http://localhost:8000/admin`
+Access at `http://localhost:8000`
 
-3. Add Instagram accounts with their access tokens in the "Instagram Accounts" section
+### Managing Instagram Accounts
 
-4. View stories and comments by clicking "View Stories" on an account
+Each Instagram account operates independently with its own access token:
 
-5. Block users directly from the comments view
+```php
+use App\Models\InstagramAccount;
 
-## Architecture
+// Create a new Instagram account
+$account = InstagramAccount::create([
+    'username' => 'myaccount',
+    'instagram_id' => '123456789',
+    'is_active' => true,
+]);
 
-TrollBeGone follows three fundamental architectural principles:
-
-### 1. BaseClient Pattern (ALWAYS)
-
-Every external API integration uses a BaseClient that provides:
-- **API Base URL**: Centralized endpoint configuration (`https://graph.instagram.com`)
-- **API Version**: Version management for the external service
-- **Endpoint Management**: String-based endpoint handling (`/me/stories`, `/{story_id}/comments`)
-- **Request Wrapper**: Unified request function for all HTTP methods (GET, POST, PUT, DELETE)
-- **Authentication**: Per-account token handling (each InstagramAccount has its own `access_token`)
-- **Error Handling**: Consistent exception wrapping via HttpClientExceptionDecorator
-
-**Example**: `InstagramBaseClient` provides protected methods (`get()`, `post()`, etc.) that all Instagram API services extend.
-
-### 2. Specific Clients for Specific Endpoints (ALWAYS)
-
-Never create monolithic API clients. Each service class is focused:
-
-- **InstagramApiService**: Handles Instagram Graph API endpoints
-  - `getStories(InstagramAccount $account)` → `GET /me/stories`
-  - `getStoryComments(InstagramAccount $account, string $storyId)` → `GET /{story_id}/comments`
-  - `blockUser(InstagramAccount $account, string $userId)` → `POST /me/blocked`
-  - `getUserInfo(InstagramAccount $account, string $username)` → `GET /search`
-
-Each method corresponds to **ONE** specific endpoint and has **ONE** responsibility.
-
-### 3. Multi-Account Architecture (ALWAYS)
-
-**CRITICAL**: This application supports **multiple concurrent Instagram accounts** with **multiple concurrent users**.
-
-#### Key Architectural Decisions
-
-- ❌ **No Global API Keys**: Never use config-based API keys or tokens
-- ✅ **Per-Account Tokens**: Each `InstagramAccount` model has its own `access_token` field
-- ✅ **Account-Scoped Operations**: ALL API calls require an `InstagramAccount` instance
-- ✅ **Concurrent Safety**: 10+ users can operate simultaneously without conflicts
-
-#### User Workflow
-
-```
-User A logs in → Manages Account A → Views stories with Account A's token
-                 ↓
-              Sees unwanted comment → Blocks user with Account A's token
-
-User B logs in → Manages Account B → Views stories with Account B's token
-(simultaneously) ↓
-              Blocks different user with Account B's token
+// Set access token (guarded property)
+$account->access_token = 'your_instagram_access_token';
+$account->save();
 ```
 
-Both operations happen **independently** and **concurrently** without any shared state or conflicts.
+### Blocking Users
 
-### HTTP Client Layer
+```php
+use App\Services\Instagram\BlockedAccountService;
+use App\Models\InstagramAccount;
 
-Three-layer HTTP architecture:
+$account = InstagramAccount::find(1);
+$service = app(BlockedAccountService::class);
+
+// Block a user by username
+$blocked = $service->blockByUsername(
+    account: $account,
+    username: 'trolluser',
+    reason: 'Spam comments',
+    commentText: 'Buy followers now!'
+);
+```
+
+### Fetching Stories
+
+```php
+use App\Services\Instagram\InstagramStoriesClient;
+use App\Models\InstagramAccount;
+
+$account = InstagramAccount::find(1);
+$storiesClient = app(InstagramStoriesClient::class);
+
+// Get all stories for this account
+$stories = $storiesClient->list($account);
+
+foreach ($stories as $story) {
+    echo "Story ID: {$story['id']}\n";
+}
+```
+
+## API Client Architecture
+
+### Base Client Pattern
+
+All Instagram API calls flow through a base client:
+
+```php
+abstract class InstagramBaseClient extends BaseClient
+{
+    protected const BASE_URI = 'https://graph.instagram.com';
+
+    protected function withToken(InstagramAccount $account, array $options = []): array
+    {
+        if (empty($account->access_token)) {
+            throw new \RuntimeException('Missing access token');
+        }
+
+        $options['query'] = array_merge(
+            ['access_token' => $account->access_token],
+            $options['query'] ?? []
+        );
+
+        return $options;
+    }
+}
+```
+
+### Endpoint Clients
+
+Each endpoint group has its own dedicated client:
+
+**InstagramStoriesClient**: Fetches stories
+```php
+public function list(InstagramAccount $account): Collection
+{
+    $opts = $this->withToken($account);
+    $res = $this->request('GET', self::BASE_URI . '/me/stories', $opts);
+    return collect($res->json('data', []));
+}
+```
+
+**InstagramModerationClient**: Blocks users
+```php
+public function block(InstagramAccount $account, string $instagramUserId): bool
+{
+    $opts = $this->withToken($account, ['query' => ['user_id' => $instagramUserId]]);
+    $this->request('POST', self::BASE_URI . '/me/blocked', $opts);
+    return true;
+}
+```
+
+**InstagramUsersClient**: Searches for users
+```php
+public function findFirst(InstagramAccount $account, string $username): ?array
+{
+    $opts = $this->withToken($account, ['query' => ['q' => $username, 'type' => 'user']]);
+    $res = $this->request('GET', self::BASE_URI . '/search', $opts);
+    $users = $res->json('data', []);
+    return $users[0] ?? null;
+}
+```
+
+### HTTP Exception Handling
+
+The `HttpExceptionHandler` wraps all HTTP calls and ensures exceptions are thrown:
+
+```php
+class HttpExceptionHandler
+{
+    public function __construct(protected ExternalClient $client) {}
+
+    public function request(string $method, string $url, array $options = []): Response
+    {
+        $response = $this->client->request($method, $url, $options);
+        $response->throw();
+        return $response;
+    }
+}
+```
+
+## Multi-Account Architecture
+
+**CRITICAL**: This application supports **multiple Instagram accounts** with **concurrent users**.
+
+### Why Per-Account Tokens?
+
+❌ **No Global API Keys**
+```php
+// BAD - Don't do this
+$token = config('services.instagram.api_key');
+```
+
+✅ **Per-Account Tokens**
+```php
+// GOOD - Each account has its own token
+$account = InstagramAccount::find(1);
+$stories = $storiesClient->list($account); // Uses $account->access_token
+```
+
+### Concurrent User Workflow
 
 ```
-[InstagramApiService]
-      ↓
-[InstagramBaseClient] - Uses account-specific tokens
-      ↓
-[HttpClientExceptionDecorator] - Wraps exceptions consistently
-      ↓
-[ExternalClient] - Laravel HTTP client wrapper
-      ↓
-[Laravel HTTP/Guzzle]
+User A → Account A → Blocks user X with Account A's token
+User B → Account B → Blocks user Y with Account B's token (simultaneously)
 ```
 
-- **ExternalClient**: Single request function using Laravel HTTP client
-- **HttpClientExceptionDecorator**: Wraps the ExternalClient to handle exceptions consistently
-- **InstagramBaseClient**: Abstract base class providing authenticated request methods
-- **InstagramApiService**: Concrete implementation for Instagram Graph API endpoints
-
-### Services
-
-- **InstagramApiService** (extends InstagramBaseClient): Handles all Instagram Graph API interactions
-  - Get stories from accounts (per-account token)
-  - Fetch comments from stories (per-account token)
-  - Block users (per-account token)
-  - Search for user information (per-account token)
-
-- **BlockedAccountService**: Manages blocked account business logic
-  - Create blocked account records (account-scoped)
-  - Check if an account is blocked (account-scoped)
-  - Retrieve blocked accounts list (account-scoped)
-
-### Models
-
-- **InstagramAccount**: Represents a connected Instagram account
-  - Stores `access_token` (guarded for security)
-  - Each account operates independently
-  - Supports unlimited concurrent accounts
-
-- **BlockedAccount**: Tracks blocked users with reasons and associated comments
-  - Belongs to a specific `InstagramAccount`
-  - Multiple accounts can block the same username independently
-
-### Filament Resources
-
-- **InstagramAccountResource**: Manage Instagram accounts
-  - CRUD operations for accounts
-  - Each account has its own access token
-  - Custom "View Stories" action (uses account-specific token)
-  
-- **BlockedAccountResource**: View and manage blocked accounts
-  - Filter by Instagram account
-  - View block reasons and triggering comments
-  - Account-scoped blocking operations
+Both operations are **independent** and **thread-safe**.
 
 ## Instagram Graph API Setup
 
-### Multi-Account Token Management
-
-TrollBeGone supports **unlimited Instagram accounts**, each with its own access token. This means:
-
-- ✅ Multiple users can connect their Instagram accounts
-- ✅ Each account operates independently
-- ✅ No shared credentials or global API keys
-- ✅ Concurrent operations without conflicts
-
 ### Prerequisites
 
-To connect an Instagram account, you need:
+1. Facebook Developer account
+2. Instagram Business or Creator account
+3. Facebook App with Instagram Graph API access
+4. Access token for each Instagram account
 
-1. A Facebook Developer account
-2. An Instagram Business or Creator account
-3. A Facebook App with Instagram Graph API access (Basic Display)
-4. A valid access token for each Instagram account you want to monitor
+### Getting an Access Token
 
-### Setup per Instagram Account
+1. Create a Facebook App
+2. Add Instagram Graph API permissions
+3. Generate User Access Token via OAuth flow
+4. Store token in `InstagramAccount` model
 
-1. Create a Facebook App with Instagram Graph API permissions
-2. Generate an access token for the Instagram Business account
-3. In TrollBeGone admin panel, create a new Instagram Account
-4. Add the username and paste the access token
-5. The account is now ready to use independently
+```php
+$account->access_token = 'your_long_lived_token';
+$account->save();
+```
 
-**IMPORTANT**: Each `InstagramAccount` model stores its own `access_token`. The application **never** uses a global config-based API key. This architectural decision enables true multi-account, multi-tenant functionality.
+### API Endpoints Used
+
+- `GET /me/stories` - Fetch stories
+- `GET /{story_id}/comments` - Get story comments
+- `POST /me/blocked` - Block a user
+- `GET /search?q={username}&type=user` - Search users
+
+## Database Schema
+
+### `instagram_accounts`
+
+```sql
+CREATE TABLE instagram_accounts (
+    id BIGINT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL,
+    instagram_id VARCHAR(255),
+    access_token TEXT, -- Guarded, encrypted
+    is_active BOOLEAN DEFAULT 1,
+    last_synced_at TIMESTAMP NULL,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP
+);
+```
+
+### `blocked_accounts`
+
+```sql
+CREATE TABLE blocked_accounts (
+    id BIGINT PRIMARY KEY,
+    instagram_account_id BIGINT NOT NULL,
+    blocked_username VARCHAR(255) NOT NULL,
+    blocked_instagram_id VARCHAR(255),
+    reason TEXT,
+    comment_text TEXT,
+    created_at TIMESTAMP,
+    updated_at TIMESTAMP,
+    FOREIGN KEY (instagram_account_id) REFERENCES instagram_accounts(id)
+);
+```
+
+**Note**: Deleting an `InstagramAccount` does **NOT** cascade delete `BlockedAccount` records (audit trail preservation).
 
 ## Development
 
@@ -221,112 +318,144 @@ To connect an Instagram account, you need:
 
 ```
 app/
-├── Models/                    # Eloquent models
-│   ├── InstagramAccount.php  # Multi-account model (each has own token)
-│   ├── BlockedAccount.php    # Account-scoped blocked users
-│   └── User.php              # Filament admin users
 ├── Services/
-│   ├── Http/                 # HTTP client layer (BaseClient pattern)
-│   │   ├── ExternalClient.php
-│   │   ├── HttpClientException.php
-│   │   └── HttpClientExceptionDecorator.php
-│   └── Instagram/            # Instagram API services (specific endpoint clients)
-│       ├── InstagramBaseClient.php      # Abstract base with auth methods
-│       ├── InstagramApiService.php      # Specific endpoint implementations
-│       └── BlockedAccountService.php    # Business logic layer
-└── Filament/
-    └── Resources/            # Filament admin resources
-        ├── InstagramAccounts/    # Multi-account management
-        └── BlockedAccounts/      # Account-scoped blocking
-
-database/
-└── migrations/               # Database migrations
-
-resources/
-└── views/
-    └── filament/            # Filament custom views
+│   ├── Http/
+│   │   ├── ExternalClient.php          # Laravel Http wrapper
+│   │   ├── HttpExceptionHandler.php    # Exception decorator
+│   │   └── HttpClientException.php     # Custom exception
+│   └── Instagram/
+│       ├── InstagramBaseClient.php     # Abstract base client
+│       ├── InstagramStoriesClient.php  # Stories endpoint
+│       ├── InstagramModerationClient.php # Moderation endpoint
+│       ├── InstagramUsersClient.php    # Users endpoint
+│       └── BlockedAccountService.php   # Business logic
+├── Models/
+│   ├── InstagramAccount.php
+│   └── BlockedAccount.php
+└── Filament/ (optional)
+    └── Resources/
 ```
 
-### Key Architectural Files
+### Running Tests
 
-**Most Important Documentation**:
-1. `README.md` (this file) - Project overview and multi-account architecture
-2. `.github/copilot-guidelines.md` - Comprehensive development guidelines
-3. `.junie/guidelines.md` - Core architectural principles and patterns
-
-**Core Services**:
-- `InstagramBaseClient` - BaseClient pattern implementation (API URL, version, endpoints, auth)
-- `InstagramApiService` - Specific endpoint clients (one method per endpoint)
-- `BlockedAccountService` - Business logic (account-scoped operations)
-
-### Testing
-
-Run all tests:
 ```bash
+# All tests
 php artisan test
-```
 
-Run specific test suites:
-```bash
-# Unit tests (service classes, HTTP clients)
+# Unit tests only
 php artisan test --testsuite=Unit
 
-# Feature tests (end-to-end workflows, multi-account scenarios)
+# Feature tests only
 php artisan test --testsuite=Feature
+
+# With coverage
+php artisan test --coverage
 ```
 
-The test suite includes:
-- ✅ Multi-account concurrent operations
-- ✅ Per-account token authentication
-- ✅ BaseClient pattern validation
-- ✅ Specific endpoint client tests
-- ✅ Service layer integration tests
+### Code Quality
 
-## Architectural Principles
+```bash
+# Format code (PSR-12)
+./vendor/bin/pint
 
-TrollBeGone strictly adheres to these principles:
-
-### The Three Pillars
-
-1. **BaseClient Pattern (ALWAYS)**
-   - Every external API has a base client
-   - Handles: API URL, version, endpoint strings, request wrapper, authentication
-   - Example: `InstagramBaseClient` with protected `get()`, `post()`, `put()`, `delete()` methods
-
-2. **Specific Clients for Specific Endpoints (ALWAYS)**
-   - One service class per endpoint group
-   - One method per endpoint
-   - Never create generic "do everything" clients
-   - Example: `InstagramApiService::getStories()` calls only `GET /me/stories`
-
-3. **Multi-Account Architecture (ALWAYS)**
-   - No global API keys or tokens
-   - Each `InstagramAccount` model has its own `access_token`
-   - All API calls are account-scoped (require `InstagramAccount` instance)
-   - Supports 10+ concurrent users managing different accounts
-
-### SOLID Principles
-
-- **Single Responsibility**: Each class has one job (ExternalClient makes requests, InstagramApiService calls endpoints, BlockedAccountService handles business logic)
-- **Open/Closed**: Extend via inheritance (InstagramApiService extends InstagramBaseClient) and decoration (HttpClientExceptionDecorator wraps ExternalClient)
-- **Liskov Substitution**: All implementations are substitutable (mock services in tests)
-- **Interface Segregation**: Small, focused public interfaces (no fat services)
-- **Dependency Inversion**: Inject dependencies via constructor (never instantiate with `new` in business logic)
+# Check formatting
+./vendor/bin/pint --test
+```
 
 ### Coding Standards
 
-- ✅ Early returns and guard clauses (never nest deeply)
-- ✅ Constructor property promotion (PHP 8.0+)
-- ✅ Type hints on all parameters and return types
-- ✅ Named parameters for clarity
-- ✅ PSR-12 code style (enforced by Laravel Pint)
-- ✅ Comprehensive PHPDoc on all public methods
-- ✅ #region pattern for test organization (Arrange/Act/Assert)
+1. **Single `request()` method** - No `get()`/`post()` wrappers
+2. **Constructor DI** - All dependencies injected
+3. **Guard clauses** - Early returns, max nesting depth 2
+4. **Type hints** - Full parameter and return type hints
+5. **Per-account tokens** - No global credentials
 
-For complete guidelines, see:
-- `.github/copilot-guidelines.md` - Full development standards (coding style, testing patterns, Laravel/Filament conventions)
-- `.junie/guidelines.md` - Core architectural patterns (BaseClient, multi-account, service layer design)
+## Security
+
+### Best Practices
+
+- ✅ Never commit `.env` or secrets
+- ✅ Access tokens stored per account (guarded property)
+- ✅ User-facing errors are generic
+- ✅ Detailed errors logged server-side
+- ✅ HTTPS required for OAuth callbacks
+
+### Example: Error Handling
+
+```php
+try {
+    $service->blockByUsername($account, 'trolluser', 'Spam');
+} catch (\Exception $e) {
+    // Log detailed error
+    Log::error('Block failed', [
+        'account' => $account->username,
+        'error' => $e->getMessage(),
+    ]);
+    
+    // Show generic message to user
+    return response()->json(['error' => 'Unable to block user'], 500);
+}
+```
+
+## Testing
+
+### Test Pattern
+
+All tests use the `it_...` naming convention and `#[Test]` attribute:
+
+```php
+use PHPUnit\Framework\Attributes\Test;
+
+#[Test]
+public function it_blocks_and_persists(): void
+{
+    $account = InstagramAccount::factory()->create(['access_token' => 'token']);
+    $mod = \Mockery::mock(InstagramModerationClient::class);
+    $users = \Mockery::mock(InstagramUsersClient::class);
+    
+    $users->shouldReceive('findFirst')->once()->andReturn(['id' => '123']);
+    $mod->shouldReceive('block')->once()->andReturnTrue();
+    
+    $service = new BlockedAccountService($mod, $users);
+    $result = $service->blockByUsername($account, 'troll', 'spam', 'bad comment');
+    
+    $this->assertDatabaseHas('blocked_accounts', [
+        'instagram_account_id' => $account->id,
+        'blocked_username' => 'troll',
+    ]);
+}
+```
+
+## Contributing
+
+### Before Committing
+
+Ensure:
+
+- [ ] Single `request()` usage for all HTTP calls
+- [ ] No global credentials; per-account tokens only
+- [ ] Guard clauses on all public methods
+- [ ] Max nesting depth ≤ 2
+- [ ] Constructor DI everywhere
+- [ ] Full parameter and return type hints
+- [ ] Tests pass: `php artisan test`
+- [ ] Code formatted: `./vendor/bin/pint`
+
+## Resources
+
+- [Laravel Documentation](https://laravel.com/docs/12.x)
+- [Instagram Graph API](https://developers.facebook.com/docs/instagram-api)
+- [Filament Admin](https://filamentphp.com/docs/4.x/admin) (if used)
+- [PSR-12 Coding Standard](https://www.php-fig.org/psr/psr-12/)
 
 ## License
 
-This project is open-sourced software.
+Open-sourced software licensed under the MIT license.
+
+## Support
+
+For issues, questions, or contributions, please visit the [GitHub repository](https://github.com/underdogg-forks/trollbegone).
+
+---
+
+**Remember**: ALWAYS use `request()`, ALWAYS use client-per-endpoint, ALWAYS use per-account tokens.
