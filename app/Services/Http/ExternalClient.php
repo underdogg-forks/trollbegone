@@ -2,6 +2,7 @@
 
 namespace App\Services\Http;
 
+use App\Enums\RequestMethod;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -15,33 +16,33 @@ class ExternalClient
     /**
      * Send an HTTP request to an external API.
      *
-     * @param string $method HTTP method (GET, POST, PUT, DELETE, PATCH, etc.)
-     * @param string $url The URL to send the request to
-     * @param array $options Request options including:
-     *   - headers: array of HTTP headers
-     *   - token: Bearer token for authentication
-     *   - base_uri: Base URL for the request
-     *   - timeout: Request timeout in seconds (default: 30)
-     *   - connect_timeout: Connection timeout in seconds (default: 10)
-     *   - json: JSON data to send in the request body
-     *   - query: Query parameters for the request
-     * @return Response
+     * @param  RequestMethod|string  $method  HTTP method (enum or string for backward compatibility)
+     * @param  string  $url  The URL to send the request to
+     * @param  array  $options  Request options including:
+     *                          - headers: array of HTTP headers
+     *                          - token: Bearer token for authentication
+     *                          - base_uri: Base URL for the request
+     *                          - timeout: Request timeout in seconds (default: 30)
+     *                          - connect_timeout: Connection timeout in seconds (default: 10)
+     *                          - json: JSON data to send in the request body
+     *                          - query: Query parameters for the request
      */
     public function request(
-        string $method,
+        RequestMethod|string $method,
         string $url,
         array $options = []
     ): Response {
         $client = $this->buildClient($options);
 
-        return $client->send($method, $url, $options);
+        $methodValue = $method instanceof RequestMethod ? $method->value : $method;
+
+        return $client->send($methodValue, $url, $options);
     }
 
     /**
      * Build and configure the HTTP client with the provided options.
      *
-     * @param array $options Configuration options for the HTTP client
-     * @return PendingRequest
+     * @param  array  $options  Configuration options for the HTTP client
      */
     protected function buildClient(array $options = []): PendingRequest
     {

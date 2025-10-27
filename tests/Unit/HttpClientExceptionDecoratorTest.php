@@ -6,26 +6,16 @@ use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientException;
 use App\Services\Http\HttpClientExceptionDecorator;
 use Exception;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Fakes\FakeHttpClient;
 use Tests\TestCase;
 
 class HttpClientExceptionDecoratorTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     #[Test]
-    public function decorator_preserves_original_exception_message(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_preserves_original_exception_message(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/error' => Http::response(['message' => 'Resource not found'], 404),
         ]);
@@ -49,11 +39,8 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_chains_previous_exception(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_chains_previous_exception(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/error' => Http::response(['error' => 'Unauthorized'], 401),
         ]);
@@ -77,15 +64,12 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_handles_network_timeout_exceptions(): void
-    {
-        $this->markTestIncomplete();
+    public function it_handles_network_timeout_exceptions(): void
+    {        /** #region Arrange */
+        $fakeClient = new FakeHttpClient;
+        $fakeClient->addException('https://example.com/timeout', new Exception('Connection timeout'));
 
-        /** #region Arrange */
-        $mockClient = Mockery::mock(ExternalClient::class);
-        $mockClient->shouldReceive('request')
-            ->andThrow(new Exception('Connection timeout'));
-        $decorator = new HttpClientExceptionDecorator($mockClient);
+        $decorator = new HttpClientExceptionDecorator($fakeClient);
         try {
             $decorator->get('https://example.com/timeout');
             $this->fail('Expected HttpClientException to be thrown');
@@ -104,15 +88,12 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_handles_dns_resolution_failures(): void
-    {
-        $this->markTestIncomplete();
+    public function it_handles_dns_resolution_failures(): void
+    {        /** #region Arrange */
+        $fakeClient = new FakeHttpClient;
+        $fakeClient->addException('https://nonexistent.example.com/test', new Exception('Could not resolve host'));
 
-        /** #region Arrange */
-        $mockClient = Mockery::mock(ExternalClient::class);
-        $mockClient->shouldReceive('request')
-            ->andThrow(new Exception('Could not resolve host'));
-        $decorator = new HttpClientExceptionDecorator($mockClient);
+        $decorator = new HttpClientExceptionDecorator($fakeClient);
         try {
             $decorator->get('https://nonexistent.example.com/test');
             $this->fail('Expected HttpClientException to be thrown');
@@ -131,11 +112,8 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_passes_through200_responses(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_passes_through_200_responses(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/ok' => Http::response(['status' => 'ok'], 200),
         ]);
@@ -154,11 +132,8 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_passes_through201_created_responses(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_passes_through_201_created_responses(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/created' => Http::response(['id' => 123], 201),
         ]);
@@ -177,11 +152,8 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_passes_through204_no_content_responses(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_passes_through_204_no_content_responses(): void
+    {        /** #region Arrange */
         Http::fake([
             'https://example.com/deleted' => Http::response(null, 204),
         ]);
@@ -199,11 +171,8 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_wraps_all4xx_errors(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_wraps_all_4xx_errors(): void
+    {        /** #region Arrange */
         $statusCodes = [400, 401, 403, 404, 405, 409, 422, 429];
         foreach ($statusCodes as $statusCode) {
             Http::fake([
@@ -230,11 +199,8 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_wraps_all5xx_errors(): void
-    {
-        $this->markTestIncomplete();
-
-        /** #region Arrange */
+    public function it_wraps_all_5xx_errors(): void
+    {        /** #region Arrange */
         $statusCodes = [500, 502, 503, 504];
         foreach ($statusCodes as $statusCode) {
             Http::fake([
@@ -261,19 +227,13 @@ class HttpClientExceptionDecoratorTest extends TestCase
     }
 
     #[Test]
-    public function decorator_handles_missing_response_in_exception(): void
-    {
-        $this->markTestIncomplete();
+    public function it_handles_missing_response_in_exception(): void
+    {        /** #region Arrange */
+        // Create a fake client that throws a generic Exception (no response object)
+        $fakeClient = new FakeHttpClient;
+        $fakeClient->addException('https://example.com/error', new Exception('Request failed'));
 
-        /** #region Arrange */
-        $mockClient = Mockery::mock(ExternalClient::class);
-        $mockException = Mockery::mock(RequestException::class);
-        $mockException->shouldReceive('getMessage')
-            ->andReturn('Request failed');
-        $mockException->response = null;
-        $mockClient->shouldReceive('request')
-            ->andThrow($mockException);
-        $decorator = new HttpClientExceptionDecorator($mockClient);
+        $decorator = new HttpClientExceptionDecorator($fakeClient);
         try {
             $decorator->get('https://example.com/error');
             $this->fail('Expected HttpClientException to be thrown');

@@ -14,13 +14,14 @@ return new class extends Migration
         Schema::create('blocked_accounts', function (Blueprint $table) {
             $table->id();
             $table->foreignId('instagram_account_id')->constrained()->onDelete('cascade');
-            $table->string('blocked_username');
-            $table->string('blocked_instagram_id')->nullable();
+            $table->string('blocked_username', 30);
+            $table->string('blocked_instagram_id', 64)->nullable();
             $table->text('reason')->nullable();
             $table->text('comment_text')->nullable();
             $table->timestamps();
-            
-            $table->unique(['instagram_account_id', 'blocked_instagram_id']);
+
+            $table->unique(['instagram_account_id', 'blocked_instagram_id'], 'unique_account_blocked_id');
+            $table->unique(['instagram_account_id', 'blocked_username'], 'unique_account_blocked_username');
         });
     }
 

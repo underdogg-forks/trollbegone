@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\InstagramAccount;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -20,6 +21,7 @@ class InstagramAccountFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::factory(),
             'username' => fake()->unique()->userName(),
             'instagram_id' => fake()->unique()->numerify('##########'),
             'access_token' => fake()->unique()->sha256(),

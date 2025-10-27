@@ -14,6 +14,30 @@ TrollBeGone is a Laravel 12 application with Filament v4 for managing Instagram 
 - **Code Quality**: Laravel Pint (PSR-12)
 - **API Integration**: Instagram Graph API
 
+## Core Development Philosophy
+
+This application is designed to look like **one person coded it in a single day** with consistent patterns throughout. Our code follows three fundamental principles:
+
+### 1. **SOLID Principles** (Always)
+- **S**ingle Responsibility: Each class has one job and one reason to change
+- **O**pen/Closed: Open for extension, closed for modification (use decorators, inheritance)
+- **L**iskov Substitution: Subtypes must be substitutable for their base types
+- **I**nterface Segregation: Small, focused interfaces over large ones
+- **D**ependency Inversion: Depend on abstractions, not concretions (constructor injection)
+
+### 2. **Dynamic & Flexible** (Always)
+- Use modern PHP 8.3+ features (named parameters, constructor property promotion)
+- Leverage Laravel's dynamic features (collections, facades, helpers)
+- Type hint everything but embrace flexibility where needed
+- Return flexible types (Collection, array, null, bool) based on context
+
+### 3. **Early Returns & Guard Clauses** (Always)
+- Check preconditions first and exit early
+- Avoid deep nesting - flatten your code
+- Fail fast with meaningful exceptions
+- Use guard clauses at the start of methods
+- One happy path through the method
+
 ## Architecture Patterns
 
 ### Layered Architecture
@@ -40,10 +64,19 @@ TrollBeGone is a Laravel 12 application with Filament v4 for managing Instagram 
 
 ### Design Patterns in Use
 
-- **Decorator Pattern**: `HttpClientExceptionDecorator` wraps the HTTP client
-- **Service Pattern**: Business logic separated into service classes
-- **Repository Pattern**: Eloquent models act as repositories
-- **Factory Pattern**: Database factories for testing
+- **Decorator Pattern**: `HttpClientExceptionDecorator` wraps the HTTP client for exception handling
+- **Service Pattern**: Business logic separated into dedicated service classes
+- **Repository Pattern**: Eloquent models act as repositories for data access
+- **Factory Pattern**: Database factories for testing and seeding
+- **Abstract Base Classes**: `InstagramBaseClient` provides shared functionality for API clients
+
+### Architectural Principles
+
+1. **Layered Architecture**: Clear separation between HTTP, Service, Model, and Presentation layers
+2. **Dependency Injection**: All dependencies injected via constructor (never use `new` in business logic)
+3. **Interface Segregation**: Small, focused services over monolithic classes
+4. **Composition over Inheritance**: Prefer composing objects over deep inheritance chains
+5. **Fail Fast**: Validate inputs early, throw exceptions for critical errors, return null/false for graceful degradation
 
 ## Code Style and Conventions
 
@@ -53,6 +86,242 @@ Always follow PSR-12 coding standards. The project uses Laravel Pint for automat
 
 ```bash
 ./vendor/bin/pint
+```
+
+### Coding Style Essentials
+
+#### 1. Early Returns & Guard Clauses (Critical!)
+
+**ALWAYS** check preconditions first and return early. This is our most important pattern.
+
+```php
+// ✅ GOOD - Early returns with guard clauses
+public function blockUser(InstagramAccount $account, string $userId): bool
+{
+    // Guard clause - check preconditions first
+    if (!$account->access_token) {
+        throw new Exception("No access token available for account: {$account->username}");
+    }
+
+    try {
+        $this->post($account, '/me/blocked', ['user_id' => $userId]);
+        return true;
+    } catch (\Exception $e) {
+        // Early return on error
+        return false;
+    }
+}
+
+// ❌ BAD - Deep nesting, late checks
+public function blockUser(InstagramAccount $account, string $userId): bool
+{
+    if ($account->access_token) {
+        try {
+            $this->post($account, '/me/blocked', ['user_id' => $userId]);
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
+    } else {
+        throw new Exception("No access token available for account: {$account->username}");
+    }
+}
+```
+
+#### 2. SOLID in Practice
+
+**Single Responsibility**: Each class does one thing
+
+```php
+// ✅ GOOD - Single responsibility
+class InstagramApiService extends InstagramBaseClient
+{
+    // Only handles Instagram API calls
+    public function getStories(InstagramAccount $account): Collection { }
+    public function blockUser(InstagramAccount $account, string $userId): bool { }
+}
+
+class BlockedAccountService
+{
+    // Only handles blocking business logic
+    public function blockAccount(InstagramAccount $account, string $username): BlockedAccount { }
+    public function isBlocked(InstagramAccount $account, string $username): bool { }
+}
+```
+
+**Dependency Inversion**: Inject dependencies, never instantiate in methods
+
+```php
+// ✅ GOOD - Constructor injection
+public function __construct(
+    protected InstagramApiService $instagramApi
+) {}
+
+public function blockAccount(InstagramAccount $account, string $username): BlockedAccount
+{
+    $userInfo = $this->instagramApi->getUserInfo($account, $username);
+    // ... rest of logic
+}
+
+// ❌ BAD - Direct instantiation
+public function blockAccount(InstagramAccount $account, string $username): BlockedAccount
+{
+    $instagramApi = new InstagramApiService(); // Never do this!
+    // ...
+}
+```
+
+**Open/Closed**: Extend behavior via inheritance or decoration
+
+```php
+// ✅ GOOD - Decorator pattern for extending behavior
+class HttpClientExceptionDecorator
+{
+    public function __construct(
+        protected ExternalClient $client
+    ) {}
+    
+    public function request(string $method, string $url, array $options = []): Response
+    {
+        try {
+            $response = $this->client->request($method, $url, $options);
+            $response->throw();
+            return $response;
+        } catch (RequestException $e) {
+            throw new HttpClientException(...);
+        }
+    }
+}
+```
+
+#### 3. Dynamic & Modern PHP
+
+**Use Constructor Property Promotion** (PHP 8.0+)
+
+```php
+// ✅ GOOD - Constructor property promotion
+public function __construct(
+    protected InstagramApiService $instagramApi,
+    protected HttpClientExceptionDecorator $httpClient
+) {}
+
+// ❌ BAD - Old style
+protected $instagramApi;
+protected $httpClient;
+
+public function __construct(InstagramApiService $instagramApi, HttpClientExceptionDecorator $httpClient)
+{
+    $this->instagramApi = $instagramApi;
+    $this->httpClient = $httpClient;
+}
+```
+
+**Use Named Parameters** (PHP 8.0+)
+
+```php
+// ✅ GOOD - Named parameters for clarity
+$blockedAccount = BlockedAccount::create([
+    'instagram_account_id' => $account->id,
+    'blocked_username' => $username,
+    'blocked_instagram_id' => $userInfo['id'] ?? null,
+    'reason' => $reason,
+    'comment_text' => $commentText,
+]);
+
+// Also good for complex method calls
+throw new HttpClientException(
+    message: $e->getMessage(),
+    code: $e->response?->status() ?? 0,
+    previous: $e
+);
+```
+
+**Leverage Collections**
+
+```php
+// ✅ GOOD - Return collections for flexibility
+public function getStories(InstagramAccount $account): Collection
+{
+    $response = $this->get($account, '/me/stories');
+    return collect($response->json('data', []));
+}
+```
+
+#### 4. Type Hinting & Return Types
+
+**ALWAYS** type hint parameters and return types:
+
+```php
+// ✅ GOOD - Full type hints
+public function blockUser(InstagramAccount $account, string $userId): bool
+public function getUserInfo(InstagramAccount $account, string $username): ?array
+public function getStories(InstagramAccount $account): Collection
+
+// ❌ BAD - No type hints
+public function blockUser($account, $userId)
+public function getUserInfo($account, $username)
+```
+
+**Use Nullable Types When Appropriate**
+
+```php
+// ✅ GOOD - Nullable return for optional data
+public function getUserInfo(InstagramAccount $account, string $username): ?array
+{
+    try {
+        $response = $this->get($account, '/search', ['q' => $username, 'type' => 'user']);
+        $users = $response->json('data', []);
+        return $users[0] ?? null; // Early return if no users
+    } catch (\Exception $e) {
+        return null; // Graceful degradation
+    }
+}
+```
+
+#### 5. Exception Handling Strategy
+
+**Critical Operations**: Throw exceptions
+
+```php
+// ✅ GOOD - Throw exception for critical operation
+protected function ensureAccessToken(InstagramAccount $account): void
+{
+    if (!$account->access_token) {
+        throw new Exception("No access token available for account: {$account->username}");
+    }
+}
+```
+
+**Non-Critical Operations**: Return null/false for graceful degradation
+
+```php
+// ✅ GOOD - Return false for non-critical failure
+public function blockUser(InstagramAccount $account, string $userId): bool
+{
+    try {
+        $this->post($account, '/me/blocked', ['user_id' => $userId]);
+        return true;
+    } catch (\Exception $e) {
+        // Silently fail and return false
+        return false;
+    }
+}
+```
+
+**Transaction Wrapping**: Use DB transactions for multi-step operations
+
+```php
+// ✅ GOOD - Transaction for atomicity
+public function blockAccount(InstagramAccount $account, string $username): BlockedAccount
+{
+    return DB::transaction(function () use ($account, $username, $reason, $commentText) {
+        // Multiple database operations protected by transaction
+        $userInfo = $this->instagramApi->getUserInfo($account, $username);
+        $blockedAccount = BlockedAccount::create([...]);
+        $this->instagramApi->blockUser($account, $userInfo['id']);
+        return $blockedAccount;
+    });
+}
 ```
 
 ### Naming Conventions
@@ -74,15 +343,18 @@ Always follow PSR-12 coding standards. The project uses Laravel Pint for automat
 
 2. **Service Classes**
    - One responsibility per service
-   - Inject dependencies via constructor
-   - Return types should be type-hinted
+   - Inject dependencies via constructor using property promotion
+   - Return types should be type-hinted (Collection, array, ?array, bool, ?Model)
    - Use exceptions for error handling in critical paths
-   - Return `false` or `null` for graceful degradation
+   - Return `false` or `null` for graceful degradation in non-critical operations
+   - **ALWAYS** use guard clauses and early returns
 
 3. **Controllers**
-   - Keep thin - delegate to services
+   - Keep thin - delegate to services immediately
    - Use form requests for validation
    - Return appropriate HTTP status codes
+   - Use early returns for error conditions
+   - Handle exceptions at the controller boundary
 
 4. **Routes**
    - Use named routes for all endpoints
@@ -170,22 +442,54 @@ class InstagramAccount extends Model
 ### Testing Standards
 
 1. **Unit Tests** (`tests/Unit/`)
-   - Mock external dependencies
-   - Test single units of code
-   - Use Mockery for mocking
+   - Mock external dependencies using Mockery
+   - Test single units of code in isolation
+   - Use `#region` comments for Arrange/Act/Assert pattern
    - Test happy paths and edge cases
    - Minimum 13-15 tests per service class
+   - Use early returns in test setup
 
 2. **Feature Tests** (`tests/Feature/`)
    - Use `RefreshDatabase` trait
    - Test actual database interactions
    - Validate complete workflows
    - Test relationships and cascades
+   - Use factories for test data
 
 3. **Factories** (`database/factories/`)
    - Provide realistic test data
    - Include factory states for variations
    - Support flexible configuration
+
+### Test Structure Pattern
+
+**ALWAYS** use the #region pattern for test organization:
+
+```php
+#[Test]
+public function blocking_account_creates_database_record(): void
+{
+    /** #region Arrange */
+    $account = InstagramAccount::create([
+        'username' => 'main_account',
+        'access_token' => 'test_token',
+    ]);
+    $mockHttpClient = Mockery::mock(HttpClientExceptionDecorator::class);
+    // ... setup mocks
+    /** #endregion */
+
+    /** #region Act */
+    $service->blockAccount($account, 'spammer', 'Spam comments');
+    /** #endregion */
+
+    /** #region Assert */
+    $this->assertDatabaseHas('blocked_accounts', [
+        'instagram_account_id' => $account->id,
+        'blocked_username' => 'spammer',
+    ]);
+    /** #endregion */
+}
+```
 
 ### Test Naming
 
@@ -234,22 +538,75 @@ php artisan test --filter test_block_account_creates_blocked_account_record
 
 ### Exception Handling
 
-1. **Wrap external API exceptions**
-   ```php
-   try {
-       $response = $this->client->request('GET', $url);
-       return $response->json();
-   } catch (\Exception $e) {
-       // Log but don't expose sensitive data
-       Log::error('API call failed', ['error' => $e->getMessage()]);
-       return false; // or null for graceful degradation
-   }
-   ```
+**Critical Path Operations** - Throw exceptions:
+```php
+// Configuration errors, missing dependencies, data integrity issues
+protected function ensureAccessToken(InstagramAccount $account): void
+{
+    if (!$account->access_token) {
+        throw new Exception("No access token available for account: {$account->username}");
+    }
+}
+```
 
-2. **Don't expose internal errors to users**
-   - Use custom exception messages
-   - Log detailed errors for debugging
-   - Return user-friendly messages
+**Non-Critical Operations** - Return null/false:
+```php
+// External API calls, optional features, search operations
+public function getUserInfo(InstagramAccount $account, string $username): ?array
+{
+    try {
+        $response = $this->get($account, '/search', ['q' => $username, 'type' => 'user']);
+        $users = $response->json('data', []);
+        return $users[0] ?? null;
+    } catch (\Exception $e) {
+        // Silently fail and return null - user search is non-critical
+        return null;
+    }
+}
+```
+
+**Wrap External Exceptions** - Custom exceptions for external calls:
+```php
+// ✅ GOOD - Wrap and transform exceptions
+try {
+    $response = $this->client->request($method, $url, $options);
+    $response->throw();
+    return $response;
+} catch (RequestException $e) {
+    throw new HttpClientException(
+        message: $e->getMessage(),
+        code: $e->response?->status() ?? 0,
+        previous: $e
+    );
+}
+```
+
+**User-Facing Code** - Never expose internal errors:
+```php
+// ✅ GOOD - User-friendly error messages
+try {
+    $blockedAccountService->blockAccount($account, $username);
+    
+    Notification::make()
+        ->title('User blocked successfully')
+        ->success()
+        ->send();
+} catch (\Exception $e) {
+    // Log detailed error for debugging
+    Log::error('Failed to block user', [
+        'account' => $account->username,
+        'target' => $username,
+        'error' => $e->getMessage(),
+    ]);
+    
+    // Show user-friendly message
+    Notification::make()
+        ->title('Failed to block user')
+        ->body('Please try again later')
+        ->danger()
+        ->send();
+}
+```
 
 ### Input Validation
 
@@ -480,13 +837,113 @@ composer dev
 
 ## When Writing Code
 
-1. **Always** follow PSR-12 standards
-2. **Always** include comprehensive PHPDoc
-3. **Always** write tests for new features
-4. **Always** handle exceptions gracefully
-5. **Always** use type hints for parameters and return types
-6. **Never** commit sensitive data or credentials
-7. **Never** expose internal errors to end users
-8. **Never** use raw SQL queries - use Eloquent/Query Builder
-9. **Prefer** existing Laravel/Filament patterns over custom solutions
-10. **Prefer** small, focused methods over large complex ones
+### Golden Rules (Non-Negotiable)
+
+1. **ALWAYS** use early returns and guard clauses - never nest deeply
+2. **ALWAYS** follow SOLID principles - single responsibility, dependency injection
+3. **ALWAYS** use constructor property promotion for dependencies
+4. **ALWAYS** type hint parameters and return types (including nullable types)
+5. **ALWAYS** follow PSR-12 standards
+6. **ALWAYS** include comprehensive PHPDoc with API examples for service methods
+7. **ALWAYS** write tests for new features using #region pattern
+8. **ALWAYS** handle exceptions gracefully (throw for critical, return null/false for non-critical)
+9. **NEVER** commit sensitive data or credentials
+10. **NEVER** expose internal errors to end users
+11. **NEVER** use raw SQL queries - use Eloquent/Query Builder
+12. **NEVER** instantiate dependencies with `new` in business logic - use injection
+13. **NEVER** nest conditionals more than 2 levels deep - use early returns instead
+14. **PREFER** small, focused methods over large complex ones (max 20 lines)
+15. **PREFER** existing Laravel/Filament patterns over custom solutions
+16. **PREFER** composition over inheritance
+17. **PREFER** immutability - avoid changing passed objects when possible
+
+### Code Quality Checklist
+
+Before committing any code, verify:
+
+- [ ] All methods have guard clauses and early returns
+- [ ] No nesting deeper than 2 levels
+- [ ] All dependencies injected via constructor
+- [ ] All parameters and return types are type-hinted
+- [ ] Comprehensive PHPDoc on all public methods
+- [ ] Each class has a single, clear responsibility
+- [ ] Exceptions thrown for critical errors, null/false returned for non-critical
+- [ ] Tests written with #region Arrange/Act/Assert pattern
+- [ ] Code formatted with `./vendor/bin/pint`
+- [ ] All tests pass with `php artisan test`
+
+### Example: The Perfect Method
+
+```php
+/**
+ * Block a user and record it in the database.
+ *
+ * This method searches for the user on Instagram, creates a local record,
+ * and calls the Instagram API to block them. Returns the created record
+ * or throws an exception if the operation fails.
+ *
+ * @param InstagramAccount $account The Instagram account performing the block
+ * @param string $username The username to block
+ * @param string|null $reason Optional reason for blocking
+ * @param string|null $commentText Optional comment that triggered the block
+ * @return BlockedAccount The created blocked account record
+ *
+ * @throws \Exception If there's an error during the process
+ */
+public function blockAccount(
+    InstagramAccount $account,
+    string $username,
+    ?string $reason = null,
+    ?string $commentText = null
+): BlockedAccount {
+    // Guard clause - validate account has required data
+    if (!$account->id) {
+        throw new \Exception('Account must be saved before blocking users');
+    }
+
+    return DB::transaction(function () use ($account, $username, $reason, $commentText) {
+        // Try to get user info, but don't fail if unavailable
+        try {
+            $userInfo = $this->instagramApi->getUserInfo($account, $username);
+        } catch (\Exception $e) {
+            $userInfo = null; // Early assignment on error
+        }
+
+        // Create local record
+        $blockedAccount = BlockedAccount::create([
+            'instagram_account_id' => $account->id,
+            'blocked_username' => $username,
+            'blocked_instagram_id' => $userInfo['id'] ?? null,
+            'reason' => $reason,
+            'comment_text' => $commentText,
+        ]);
+
+        // Try to block on Instagram (non-critical if it fails)
+        if ($userInfo && isset($userInfo['id'])) {
+            try {
+                $this->instagramApi->blockUser($account, $userInfo['id']);
+            } catch (\Exception $e) {
+                Log::warning('Instagram block failed', [
+                    'account' => $account->username,
+                    'target' => $username,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        return $blockedAccount;
+    });
+}
+```
+
+This method demonstrates:
+- ✅ Guard clause at the start (validate account)
+- ✅ Early assignment on error (userInfo = null)
+- ✅ Type hints on all parameters and return
+- ✅ Comprehensive PHPDoc
+- ✅ Named parameters for clarity
+- ✅ Nullable types (?string)
+- ✅ DB transaction for atomicity
+- ✅ Graceful error handling (try-catch but continue)
+- ✅ Single responsibility (block and record)
+- ✅ No deep nesting

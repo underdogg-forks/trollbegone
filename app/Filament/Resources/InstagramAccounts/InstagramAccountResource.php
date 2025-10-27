@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\InstagramAccounts;
 
-use App\Filament\Resources\InstagramAccounts\Pages\CreateInstagramAccount;
-use App\Filament\Resources\InstagramAccounts\Pages\EditInstagramAccount;
 use App\Filament\Resources\InstagramAccounts\Pages\ListInstagramAccounts;
 use App\Filament\Resources\InstagramAccounts\Schemas\InstagramAccountForm;
 use App\Filament\Resources\InstagramAccounts\Tables\InstagramAccountsTable;
@@ -13,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 /**
  * Instagram Account Resource
@@ -31,8 +30,6 @@ class InstagramAccountResource extends Resource
 
     /**
      * The singular model label.
-     *
-     * @var string|null
      */
     protected static ?string $modelLabel = 'Instagram Account';
 
@@ -62,7 +59,7 @@ class InstagramAccountResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            RelationManagers\BlockedAccountsRelationManager::class,
         ];
     }
 
@@ -75,9 +72,17 @@ class InstagramAccountResource extends Resource
     {
         return [
             'index' => ListInstagramAccounts::route('/'),
-            'create' => CreateInstagramAccount::route('/create'),
-            'edit' => EditInstagramAccount::route('/{record}/edit'),
+            'view' => Pages\ViewInstagramAccount::route('/{record}'),
             'stories' => Pages\ViewStories::route('/{record}/stories'),
         ];
+    }
+
+    /**
+     * Scope queries to only show current user's Instagram accounts.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where('user_id', auth()->id());
     }
 }

@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\InstagramAccounts\Pages;
 
 use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
-use Filament\Actions\CreateAction;
 use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
+use Illuminate\Support\Facades\Auth;
 
 class ListInstagramAccounts extends ListRecords
 {
@@ -20,7 +21,12 @@ class ListInstagramAccounts extends ListRecords
                 ->color('success')
                 ->url(route('instagram.oauth.redirect'))
                 ->openUrlInNewTab(false),
-            CreateAction::make(),
+            CreateAction::make()
+                ->mutateFormDataUsing(function (array $data): array {
+                    $data['user_id'] = Auth::id();
+
+                    return $data;
+                }),
         ];
     }
 }

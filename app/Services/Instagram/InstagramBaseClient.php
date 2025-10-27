@@ -2,9 +2,10 @@
 
 namespace App\Services\Instagram;
 
+use App\Enums\RequestMethod;
 use App\Models\InstagramAccount;
-use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Http\HttpClientException;
+use App\Services\Http\HttpClientExceptionDecorator;
 use Exception;
 use Illuminate\Http\Client\Response;
 
@@ -23,10 +24,10 @@ abstract class InstagramBaseClient
     /**
      * Make an authenticated GET request to the Instagram API.
      *
-     * @param InstagramAccount $account The Instagram account to authenticate with
-     * @param string $endpoint The API endpoint (will be appended to BASE_URI)
-     * @param array $queryParams Optional query parameters
-     * @return Response
+     * @param  InstagramAccount  $account  The Instagram account to authenticate with
+     * @param  string  $endpoint  The API endpoint (will be appended to BASE_URI)
+     * @param  array  $queryParams  Optional query parameters
+     *
      * @throws HttpClientException
      * @throws Exception If no access token is available
      */
@@ -39,20 +40,20 @@ abstract class InstagramBaseClient
             'token' => $account->access_token,
         ];
 
-        if (!empty($queryParams)) {
+        if (! empty($queryParams)) {
             $options['query'] = $queryParams;
         }
 
-        return $this->httpClient->get(self::BASE_URI . $endpoint, $options);
+        return $this->httpClient->request(RequestMethod::GET, self::BASE_URI.$endpoint, $options);
     }
 
     /**
      * Make an authenticated POST request to the Instagram API.
      *
-     * @param InstagramAccount $account The Instagram account to authenticate with
-     * @param string $endpoint The API endpoint (will be appended to BASE_URI)
-     * @param array $data The data to send in the request body
-     * @return Response
+     * @param  InstagramAccount  $account  The Instagram account to authenticate with
+     * @param  string  $endpoint  The API endpoint (will be appended to BASE_URI)
+     * @param  array  $data  The data to send in the request body
+     *
      * @throws HttpClientException
      * @throws Exception If no access token is available
      */
@@ -65,20 +66,20 @@ abstract class InstagramBaseClient
             'token' => $account->access_token,
         ];
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             $options['json'] = $data;
         }
 
-        return $this->httpClient->post(self::BASE_URI . $endpoint, $options);
+        return $this->httpClient->request(RequestMethod::POST, self::BASE_URI.$endpoint, $options);
     }
 
     /**
      * Make an authenticated PUT request to the Instagram API.
      *
-     * @param InstagramAccount $account The Instagram account to authenticate with
-     * @param string $endpoint The API endpoint (will be appended to BASE_URI)
-     * @param array $data The data to send in the request body
-     * @return Response
+     * @param  InstagramAccount  $account  The Instagram account to authenticate with
+     * @param  string  $endpoint  The API endpoint (will be appended to BASE_URI)
+     * @param  array  $data  The data to send in the request body
+     *
      * @throws HttpClientException
      * @throws Exception If no access token is available
      */
@@ -91,19 +92,19 @@ abstract class InstagramBaseClient
             'token' => $account->access_token,
         ];
 
-        if (!empty($data)) {
+        if (! empty($data)) {
             $options['json'] = $data;
         }
 
-        return $this->httpClient->put(self::BASE_URI . $endpoint, $options);
+        return $this->httpClient->request(RequestMethod::PUT, self::BASE_URI.$endpoint, $options);
     }
 
     /**
      * Make an authenticated DELETE request to the Instagram API.
      *
-     * @param InstagramAccount $account The Instagram account to authenticate with
-     * @param string $endpoint The API endpoint (will be appended to BASE_URI)
-     * @return Response
+     * @param  InstagramAccount  $account  The Instagram account to authenticate with
+     * @param  string  $endpoint  The API endpoint (will be appended to BASE_URI)
+     *
      * @throws HttpClientException
      * @throws Exception If no access token is available
      */
@@ -116,19 +117,17 @@ abstract class InstagramBaseClient
             'token' => $account->access_token,
         ];
 
-        return $this->httpClient->delete(self::BASE_URI . $endpoint, $options);
+        return $this->httpClient->request(RequestMethod::DELETE, self::BASE_URI.$endpoint, $options);
     }
 
     /**
      * Ensure the Instagram account has a valid access token.
      *
-     * @param InstagramAccount $account
-     * @return void
      * @throws Exception If no access token is available
      */
     protected function ensureAccessToken(InstagramAccount $account): void
     {
-        if (!$account->access_token) {
+        if (! $account->access_token) {
             throw new Exception("No access token available for account: {$account->username}");
         }
     }

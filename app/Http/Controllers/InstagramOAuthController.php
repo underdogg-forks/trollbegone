@@ -15,8 +15,6 @@ class InstagramOAuthController extends Controller
 {
     /**
      * Redirect the user to the Instagram authentication page.
-     *
-     * @return RedirectResponse
      */
     public function redirectToProvider(): RedirectResponse
     {
@@ -27,8 +25,6 @@ class InstagramOAuthController extends Controller
 
     /**
      * Obtain the user information from Instagram after authentication.
-     *
-     * @return RedirectResponse
      */
     public function handleProviderCallback(): RedirectResponse
     {
@@ -37,7 +33,7 @@ class InstagramOAuthController extends Controller
 
             $userId = Auth::id();
 
-            if (!$userId) {
+            if (! $userId) {
                 return redirect()
                     ->route('login')
                     ->with('error', 'Unable to link Instagram account: no authenticated user.');
@@ -64,15 +60,12 @@ class InstagramOAuthController extends Controller
         } catch (\Exception $e) {
             return redirect()
                 ->route('filament.admin.resources.instagram-accounts.index')
-                ->with('error', 'Failed to connect Instagram account: ' . $e->getMessage());
+                ->with('error', 'Failed to connect Instagram account: '.$e->getMessage());
         }
     }
 
     /**
      * Disconnect an Instagram account by revoking the access token.
-     *
-     * @param InstagramAccount $account
-     * @return RedirectResponse
      */
     public function disconnect(InstagramAccount $account): RedirectResponse
     {
@@ -83,6 +76,7 @@ class InstagramOAuthController extends Controller
                 'access_token' => null,
                 'is_active' => false,
             ]);
+
             return redirect()
                 ->back()
                 ->with('success', "Instagram account @{$account->username} disconnected successfully!");
@@ -90,7 +84,7 @@ class InstagramOAuthController extends Controller
         } catch (\Exception $e) {
             return redirect()
                 ->back()
-                ->with('error', 'Failed to disconnect Instagram account: ' . $e->getMessage());
+                ->with('error', 'Failed to disconnect Instagram account: '.$e->getMessage());
         }
     }
 }

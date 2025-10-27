@@ -17,9 +17,6 @@ class InstagramAccountForm
 {
     /**
      * Configure the form schema with all required fields.
-     *
-     * @param Schema $schema
-     * @return Schema
      */
     public static function configure(Schema $schema): Schema
     {
@@ -31,10 +28,6 @@ class InstagramAccountForm
                     ->maxLength(255),
                 TextInput::make('instagram_id')
                     ->maxLength(255),
-                TextInput::make('access_token')
-                    ->password()
-                    ->maxLength(255)
-                    ->helperText('Instagram Graph API access token'),
                 Toggle::make('is_active')
                     ->default(true),
                 DateTimePicker::make('last_synced_at')

@@ -3,7 +3,6 @@
 namespace App\Services\Instagram;
 
 use App\Models\InstagramAccount;
-use App\Services\Http\HttpClientExceptionDecorator;
 use Illuminate\Support\Collection;
 
 /**
@@ -35,19 +34,16 @@ class InstagramApiService extends InstagramBaseClient
      *   }
      * }
      *
-     * @param InstagramAccount $account The Instagram account to fetch stories for
+     * @param  InstagramAccount  $account  The Instagram account to fetch stories for
      * @return Collection Collection of story objects
+     *
      * @throws \Exception If no access token is available
      */
     public function getStories(InstagramAccount $account): Collection
     {
-        try {
-            $response = $this->get($account, '/me/stories');
-            return collect($response->json('data', []));
-        } catch (\Exception $e) {
-            // Log the error or handle it as needed
-            throw $e;
-        }
+        $response = $this->get($account, '/me/stories');
+
+        return collect($response->json('data', []));
     }
 
     /**
@@ -69,20 +65,17 @@ class InstagramApiService extends InstagramBaseClient
      *   ]
      * }
      *
-     * @param InstagramAccount $account The Instagram account
-     * @param string $storyId The ID of the story
+     * @param  InstagramAccount  $account  The Instagram account
+     * @param  string  $storyId  The ID of the story
      * @return Collection Collection of comment objects
+     *
      * @throws \Exception If no access token is available
      */
     public function getStoryComments(InstagramAccount $account, string $storyId): Collection
     {
-        try {
-            $response = $this->get($account, "/{$storyId}/comments");
-            return collect($response->json('data', []));
-        } catch (\Exception $e) {
-            // Log the error or handle it as needed
-            throw $e;
-        }
+        $response = $this->get($account, "/{$storyId}/comments");
+
+        return collect($response->json('data', []));
     }
 
     /**
@@ -99,9 +92,10 @@ class InstagramApiService extends InstagramBaseClient
      *   "success": true
      * }
      *
-     * @param InstagramAccount $account The Instagram account
-     * @param string $userId The Instagram user ID to block
+     * @param  InstagramAccount  $account  The Instagram account
+     * @param  string  $userId  The Instagram user ID to block
      * @return bool True if successful, false otherwise
+     *
      * @throws \Exception If no access token is available
      */
     public function blockUser(InstagramAccount $account, string $userId): bool
@@ -113,7 +107,12 @@ class InstagramApiService extends InstagramBaseClient
 
             return true;
         } catch (\Exception $e) {
-            // Silently fail and return false
+            \Log::warning('Failed to block user', [
+                'account_id' => $account->id,
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+            ]);
+
             return false;
         }
     }
@@ -138,9 +137,10 @@ class InstagramApiService extends InstagramBaseClient
      *   ]
      * }
      *
-     * @param InstagramAccount $account The Instagram account
-     * @param string $username The username to search for
+     * @param  InstagramAccount  $account  The Instagram account
+     * @param  string  $username  The username to search for
      * @return array|null The first user found, or null if not found or on error
+     *
      * @throws \Exception If no access token is available
      */
     public function getUserInfo(InstagramAccount $account, string $username): ?array
@@ -152,10 +152,15 @@ class InstagramApiService extends InstagramBaseClient
             ]);
 
             $users = $response->json('data', []);
-            
+
             return $users[0] ?? null;
         } catch (\Exception $e) {
-            // Silently fail and return null
+            \Log::warning('Failed to get user info', [
+                'account_id' => $account->id,
+                'username' => $username,
+                'error' => $e->getMessage(),
+            ]);
+
             return null;
         }
     }

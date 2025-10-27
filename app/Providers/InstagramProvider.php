@@ -33,8 +33,7 @@ class InstagramProvider extends AbstractProvider implements ProviderInterface
     /**
      * Get the authentication URL for the provider.
      *
-     * @param string $state
-     * @return string
+     * @param  string  $state
      */
     protected function getAuthUrl($state): string
     {
@@ -43,8 +42,6 @@ class InstagramProvider extends AbstractProvider implements ProviderInterface
 
     /**
      * Get the token URL for the provider.
-     *
-     * @return string
      */
     protected function getTokenUrl(): string
     {
@@ -54,8 +51,7 @@ class InstagramProvider extends AbstractProvider implements ProviderInterface
     /**
      * Get the raw user for the given access token.
      *
-     * @param string $token
-     * @return array
+     * @param  string  $token
      */
     protected function getUserByToken($token): array
     {
@@ -63,7 +59,7 @@ class InstagramProvider extends AbstractProvider implements ProviderInterface
             'https://graph.instagram.com/me',
             [
                 'headers' => [
-                    'Authorization' => 'Bearer ' . $token,
+                    'Authorization' => 'Bearer '.$token,
                 ],
                 'query' => [
                     'fields' => 'id,username,account_type',
@@ -76,13 +72,10 @@ class InstagramProvider extends AbstractProvider implements ProviderInterface
 
     /**
      * Map the raw user array to a Socialite User instance.
-     *
-     * @param array $user
-     * @return User
      */
     protected function mapUserToObject(array $user): User
     {
-        return (new User())->setRaw($user)->map([
+        return (new User)->setRaw($user)->map([
             'id' => $user['id'],
             'nickname' => $user['username'] ?? null,
             'name' => $user['username'] ?? null,
@@ -94,8 +87,7 @@ class InstagramProvider extends AbstractProvider implements ProviderInterface
     /**
      * Get the access token response for the given code.
      *
-     * @param string $code
-     * @return array
+     * @param  string  $code
      */
     public function getAccessTokenResponse($code): array
     {
@@ -109,8 +101,7 @@ class InstagramProvider extends AbstractProvider implements ProviderInterface
     /**
      * Get the POST fields for the token request.
      *
-     * @param string $code
-     * @return array
+     * @param  string  $code
      */
     protected function getTokenFields($code): array
     {

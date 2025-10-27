@@ -23,14 +23,16 @@ class InstagramAccountModelTest extends TestCase
 
         /** #region Act */
         $fillable = $account->getFillable();
+        $guarded = $account->getGuarded();
         /** #endregion */
 
         /** #region Assert */
         $this->assertContains('username', $fillable);
         $this->assertContains('instagram_id', $fillable);
-        $this->assertContains('access_token', $fillable);
         $this->assertContains('is_active', $fillable);
         $this->assertContains('last_synced_at', $fillable);
+        $this->assertNotContains('access_token', $fillable);
+        $this->assertContains('access_token', $guarded);
         /** #endregion */
     }
 

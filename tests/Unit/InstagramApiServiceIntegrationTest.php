@@ -3,10 +3,9 @@
 namespace Tests\Unit;
 
 use App\Models\InstagramAccount;
-use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
-use Illuminate\Http\Client\Response;
-use Mockery;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Fixtures\InstagramApiFixtures;
 use Tests\TestCase;
@@ -17,36 +16,24 @@ use Tests\TestCase;
  */
 class InstagramApiServiceIntegrationTest extends TestCase
 {
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
+    use RefreshDatabase;
 
     #[Test]
     public function get_stories_with_real_fixture(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
         $fixtureData = InstagramApiFixtures::getStoriesResponse();
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn($fixtureData['data']);
+        Http::fake([
+            'https://graph.instagram.com/me/stories*' => Http::response($fixtureData, 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */
@@ -64,27 +51,19 @@ class InstagramApiServiceIntegrationTest extends TestCase
     #[Test]
     public function get_story_comments_with_real_fixture(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
         $fixtureData = InstagramApiFixtures::getStoryCommentsResponse();
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn($fixtureData['data']);
+        Http::fake([
+            'https://graph.instagram.com/17895695668004550/comments*' => Http::response($fixtureData, 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */
@@ -101,27 +80,19 @@ class InstagramApiServiceIntegrationTest extends TestCase
     #[Test]
     public function get_user_info_with_real_fixture(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
         $fixtureData = InstagramApiFixtures::getUserSearchResponse();
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn($fixtureData['data']);
+        Http::fake([
+            'https://graph.instagram.com/search*' => Http::response($fixtureData, 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */
@@ -139,27 +110,17 @@ class InstagramApiServiceIntegrationTest extends TestCase
     #[Test]
     public function block_user_with_success_response(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
-        $mockResponse = Mockery::mock(Response::class);
+        Http::fake([
+            'https://graph.instagram.com/me/blocked*' => Http::response(['success' => true], 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('post')
-            ->once()
-            ->with('https://graph.instagram.com/me/blocked', [
-                'base_uri' => 'https://graph.instagram.com',
-                'token' => 'test_token',
-                'json' => ['user_id' => '17841401234567892'],
-            ])
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */
@@ -174,27 +135,19 @@ class InstagramApiServiceIntegrationTest extends TestCase
     #[Test]
     public function identify_spam_comment_from_fixture(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
         $fixtureData = InstagramApiFixtures::getStoryCommentsResponse();
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn($fixtureData['data']);
+        Http::fake([
+            'https://graph.instagram.com/17895695668004550/comments*' => Http::response($fixtureData, 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */
@@ -216,27 +169,19 @@ class InstagramApiServiceIntegrationTest extends TestCase
     #[Test]
     public function handle_empty_stories_response(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
         $fixtureData = InstagramApiFixtures::getEmptyStoriesResponse();
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn($fixtureData['data']);
+        Http::fake([
+            'https://graph.instagram.com/me/stories*' => Http::response($fixtureData, 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */
@@ -252,27 +197,19 @@ class InstagramApiServiceIntegrationTest extends TestCase
     #[Test]
     public function handle_empty_comments_response(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
         $fixtureData = InstagramApiFixtures::getEmptyCommentsResponse();
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn($fixtureData['data']);
+        Http::fake([
+            'https://graph.instagram.com/17895695668004550/comments*' => Http::response($fixtureData, 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */
@@ -288,27 +225,19 @@ class InstagramApiServiceIntegrationTest extends TestCase
     #[Test]
     public function handle_user_not_found_response(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
         $fixtureData = InstagramApiFixtures::getEmptyUserSearchResponse();
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn($fixtureData['data']);
+        Http::fake([
+            'https://graph.instagram.com/search*' => Http::response($fixtureData, 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */
@@ -323,27 +252,19 @@ class InstagramApiServiceIntegrationTest extends TestCase
     #[Test]
     public function process_multiple_story_types(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
+        $account = InstagramAccount::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
 
         $fixtureData = InstagramApiFixtures::getStoriesResponse();
 
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn($fixtureData['data']);
+        Http::fake([
+            'https://graph.instagram.com/me/stories*' => Http::response($fixtureData, 200),
+        ]);
 
-        $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-
-        $service = new InstagramApiService($mockClient);
+        $service = app(InstagramApiService::class);
         /** #endregion */
 
         /** #region Act */

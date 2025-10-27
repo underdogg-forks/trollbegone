@@ -2,7 +2,9 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
@@ -13,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * token for Instagram Graph API authentication.
  *
  * @property int $id
+ * @property int $user_id User who owns this Instagram account
  * @property string $username Instagram username
  * @property string|null $instagram_id Instagram user ID from the API
  * @property string|null $access_token Instagram Graph API access token
@@ -20,7 +23,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property \Carbon\Carbon|null $last_synced_at Last time stories were fetched
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- *
+ * @property-read \App\Models\User $user
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BlockedAccount> $blockedAccounts
  * @property-read int|null $blocked_accounts_count
  *
@@ -30,18 +33,36 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class InstagramAccount extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
+        'user_id',
         'username',
         'instagram_id',
-        'access_token',
         'is_active',
         'last_synced_at',
+    ];
+
+    protected $guarded = [
+        'access_token',
     ];
 
     protected $casts = [
         'is_active' => 'boolean',
         'last_synced_at' => 'datetime',
     ];
+
+    /**
+     * Get the user who owns this Instagram account.
+     *
+     * Relationship: One InstagramAccount belongs to one User.
+     *
+     * @return BelongsTo<User, InstagramAccount>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     /**
      * Get all blocked accounts for this Instagram account.
