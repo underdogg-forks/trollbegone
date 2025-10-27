@@ -5,50 +5,38 @@ namespace Tests\Feature;
 use App\Models\BlockedAccount;
 use App\Models\InstagramAccount;
 use App\Services\Http\HttpClientException;
-use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\BlockedAccountService;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Client\Response;
-use Mockery;
+use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Fakes\FakeHttpClient;
+use Tests\Fakes\FakeInstagramApiService;
+use Tests\Fixtures\InstagramApiFixtures;
 use Tests\TestCase;
 
 class BlockedAccountServiceTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
-    }
-
     #[Test]
     public function blocking_account_creates_database_record(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
-        $mockHttpClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn([
-                ['id' => '12345', 'username' => 'spammer'],
-            ]);
-        $mockHttpClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-        $mockHttpClient->shouldReceive('post')
-            ->once()
-            ->andReturn(Mockery::mock(Response::class));
-        $instagramApi = new InstagramApiService($mockHttpClient);
-        $service = new BlockedAccountService($instagramApi);
+
+        // Use fake API service with fixture data
+        $fakeApiService = new FakeInstagramApiService;
+        $fakeApiService->setUserInfoResponse('spammer', [
+            'id' => '12345',
+            'username' => 'spammer',
+        ]);
+        $fakeApiService->setBlockUserResult('12345', true);
+
+        $service = new BlockedAccountService($fakeApiService);
         /** #endregion */
 
         /** #region Act */
@@ -68,8 +56,6 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function checking_if_user_is_blocked_queries_database(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account = InstagramAccount::create([
             'username' => 'main_account',
@@ -79,11 +65,13 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $account->id,
             'blocked_username' => 'blocked_user',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
+
+        // Use fake API service (no API calls needed for this test)
+        $fakeApiService = new FakeInstagramApiService;
         /** #endregion */
 
         /** #region Act */
-        $service = new BlockedAccountService($mockInstagramApi);
+        $service = new BlockedAccountService($fakeApiService);
         /** #endregion */
 
         /** #region Assert */
@@ -95,8 +83,6 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function get_blocked_accounts_returns_only_account_specific_blocks(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account1 = InstagramAccount::create([
             'username' => 'account1',
@@ -118,8 +104,10 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $account2->id,
             'blocked_username' => 'user3',
         ]);
-        $mockInstagramApi = Mockery::mock(InstagramApiService::class);
-        $service = new BlockedAccountService($mockInstagramApi);
+
+        // Use fake API service
+        $fakeApiService = new FakeInstagramApiService;
+        $service = new BlockedAccountService($fakeApiService);
         $account1Blocks = $service->getBlockedAccounts($account1);
         /** #endregion */
 
@@ -136,28 +124,21 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function blocking_handles_api_failure_gracefully(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
-        $mockHttpClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn([
-                ['id' => '12345', 'username' => 'target_user'],
-            ]);
-        $mockHttpClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-        $mockHttpClient->shouldReceive('post')
-            ->once()
-            ->andThrow(new HttpClientException('API Error', 500));
-        $instagramApi = new InstagramApiService($mockHttpClient);
-        $service = new BlockedAccountService($instagramApi);
+
+        // Use fake API service with user info but block failure
+        $fakeApiService = new FakeInstagramApiService;
+        $fakeApiService->setUserInfoResponse('target_user', [
+            'id' => '12345',
+            'username' => 'target_user',
+        ]);
+        $fakeApiService->setBlockUserResult('12345', false); // Simulate API failure
+
+        $service = new BlockedAccountService($fakeApiService);
         $blockedAccount = $service->blockAccount($account, 'target_user');
         /** #endregion */
 
@@ -176,23 +157,17 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function blocking_user_not_found_still_creates_record(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account = InstagramAccount::create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
-        $mockHttpClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockResponse = Mockery::mock(Response::class);
-        $mockResponse->shouldReceive('json')
-            ->with('data', [])
-            ->andReturn([]);
-        $mockHttpClient->shouldReceive('get')
-            ->once()
-            ->andReturn($mockResponse);
-        $instagramApi = new InstagramApiService($mockHttpClient);
-        $service = new BlockedAccountService($instagramApi);
+
+        // Use fake API service with no user info (user not found)
+        $fakeApiService = new FakeInstagramApiService;
+        $fakeApiService->setUserInfoResponse('ghost_user', null);
+
+        $service = new BlockedAccountService($fakeApiService);
         /** #endregion */
 
         /** #region Act */
