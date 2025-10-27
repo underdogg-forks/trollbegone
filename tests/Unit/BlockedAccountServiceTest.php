@@ -18,7 +18,7 @@ class BlockedAccountServiceTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function block_account_creates_blocked_account_record_with_user_info(): void
+    public function it_creates_blocked_account_record_with_user_info(): void
     {
         $this->markTestIncomplete('Http::fake does not intercept in this test context - needs Feature test approach');
 
@@ -69,7 +69,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function block_account_handles_null_user_info(): void
+    public function it_handles_null_user_info(): void
     {
         /** #region Arrange */
         Http::fake([
@@ -104,7 +104,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function block_account_handles_user_info_without_id(): void
+    public function it_handles_user_info_without_id(): void
     {
         /** #region Arrange */
         Http::fake([
@@ -137,7 +137,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function block_account_creates_record_without_optional_fields(): void
+    public function it_creates_record_without_optional_fields(): void
     {
         /** #region Arrange */
         Http::fake([
@@ -170,7 +170,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function is_blocked_returns_true_for_blocked_username(): void
+    public function it_returns_true_when_username_is_blocked(): void
     {
         /** #region Arrange */
         $instagramAccount = InstagramAccount::factory()->create([
@@ -194,7 +194,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function is_blocked_returns_false_for_non_blocked_username(): void
+    public function it_returns_false_when_username_is_not_blocked(): void
     {
         /** #region Arrange */
         $instagramAccount = InstagramAccount::factory()->create([
@@ -214,7 +214,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function is_blocked_is_case_sensitive(): void
+    public function it_checks_blocked_status_case_sensitively(): void
     {
         /** #region Arrange */
         $instagramAccount = InstagramAccount::factory()->create([
@@ -238,7 +238,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function is_blocked_checks_specific_instagram_account(): void
+    public function it_checks_blocked_status_for_specific_instagram_account(): void
     {
         /** #region Arrange */
         $account1 = InstagramAccount::factory()->create([
@@ -267,7 +267,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_blocked_accounts_returns_all_blocked_accounts_for_instagram_account(): void
+    public function it_returns_all_blocked_accounts_for_instagram_account(): void
     {
         /** #region Arrange */
         $instagramAccount = InstagramAccount::factory()->create([
@@ -303,7 +303,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_blocked_accounts_returns_latest_first(): void
+    public function it_returns_blocked_accounts_latest_first(): void
     {
         /** #region Arrange */
         $instagramAccount = InstagramAccount::factory()->create([
@@ -337,7 +337,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_blocked_accounts_returns_empty_collection_when_no_blocks(): void
+    public function it_returns_empty_collection_when_no_blocks_exist(): void
     {
         /** #region Arrange */
         $instagramAccount = InstagramAccount::factory()->create([
@@ -361,7 +361,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_blocked_accounts_only_returns_accounts_for_specific_instagram_account(): void
+    public function it_returns_accounts_only_for_specific_instagram_account(): void
     {
         /** #region Arrange */
         $account1 = InstagramAccount::factory()->create([

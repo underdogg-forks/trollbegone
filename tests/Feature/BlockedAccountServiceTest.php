@@ -15,7 +15,7 @@ class BlockedAccountServiceTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function blocking_account_creates_database_record(): void
+    public function it_creates_database_record_when_blocking_account(): void
     {
         /** #region Arrange */
         $account = InstagramAccount::factory()->create([
@@ -48,7 +48,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function checking_if_user_is_blocked_queries_database(): void
+    public function it_queries_database_when_checking_if_user_is_blocked(): void
     {
         /** #region Arrange */
         $account = InstagramAccount::factory()->create([
@@ -74,7 +74,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_blocked_accounts_returns_only_account_specific_blocks(): void
+    public function it_returns_only_account_specific_blocks(): void
     {
         /** #region Arrange */
         $account1 = InstagramAccount::factory()->create([
@@ -113,7 +113,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function blocking_handles_api_failure_gracefully(): void
+    public function it_handles_api_failure_gracefully_when_blocking(): void
     {
         /** #region Arrange */
         $account = InstagramAccount::factory()->create([
@@ -145,7 +145,7 @@ class BlockedAccountServiceTest extends TestCase
     }
 
     #[Test]
-    public function blocking_user_not_found_still_creates_record(): void
+    public function it_creates_record_when_blocking_user_not_found(): void
     {
         /** #region Arrange */
         $account = InstagramAccount::factory()->create([

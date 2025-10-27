@@ -13,7 +13,7 @@ class InstagramAccountTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function can_create_instagram_account(): void
+    public function it_can_create_instagram_account(): void
     {
         $this->markTestIncomplete();
 
@@ -38,7 +38,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function can_create_blocked_account(): void
+    public function it_can_create_blocked_account(): void
     {
         $this->markTestIncomplete();
 
@@ -69,7 +69,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_relationship_with_blocked_accounts(): void
+    public function it_has_relationship_with_blocked_accounts(): void
     {
         $this->markTestIncomplete();
 
@@ -97,7 +97,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_can_be_activated_and_deactivated(): void
+    public function it_can_be_activated_and_deactivated(): void
     {
         $this->markTestIncomplete();
 
@@ -120,7 +120,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_stores_last_synced_at(): void
+    public function it_stores_last_synced_at(): void
     {
         $this->markTestIncomplete();
 
@@ -144,7 +144,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_username_is_required(): void
+    public function it_requires_username(): void
     {
         $this->markTestIncomplete();
 
@@ -165,7 +165,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_belongs_to_instagram_account(): void
+    public function it_blocked_account_belongs_to_instagram_account(): void
     {
         $this->markTestIncomplete();
 
@@ -190,7 +190,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_can_store_reason_and_comment(): void
+    public function it_blocked_account_can_store_reason_and_comment(): void
     {
         $this->markTestIncomplete();
 
@@ -217,7 +217,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_can_store_instagram_id(): void
+    public function it_blocked_account_can_store_instagram_id(): void
     {
         $this->markTestIncomplete();
 
@@ -242,7 +242,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_reason_and_comment_are_optional(): void
+    public function it_blocked_account_reason_and_comment_are_optional(): void
     {
         $this->markTestIncomplete();
 
@@ -268,7 +268,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function multiple_instagram_accounts_can_block_same_username(): void
+    public function it_allows_multiple_instagram_accounts_to_block_same_username(): void
     {
         $this->markTestIncomplete();
 
@@ -302,7 +302,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_can_have_many_blocked_accounts(): void
+    public function it_can_have_many_blocked_accounts(): void
     {
         $this->markTestIncomplete();
 
@@ -331,7 +331,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function deleting_instagram_account_does_not_cascade_delete_blocked_accounts(): void
+    public function it_does_not_cascade_delete_blocked_accounts_when_deleted(): void
     {
         $this->markTestIncomplete();
 
@@ -363,7 +363,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_casts_is_active_to_boolean(): void
+    public function it_casts_is_active_to_boolean(): void
     {
         $this->markTestIncomplete();
 
@@ -385,7 +385,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_casts_last_synced_at_to_datetime(): void
+    public function it_casts_last_synced_at_to_datetime(): void
     {
         $this->markTestIncomplete();
 
@@ -406,7 +406,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function blocked_account_has_timestamps(): void
+    public function it_blocked_account_has_timestamps(): void
     {
         $this->markTestIncomplete();
 
@@ -431,7 +431,7 @@ class InstagramAccountTest extends TestCase
     }
 
     #[Test]
-    public function instagram_account_has_timestamps(): void
+    public function it_has_timestamps(): void
     {
         $this->markTestIncomplete();
 

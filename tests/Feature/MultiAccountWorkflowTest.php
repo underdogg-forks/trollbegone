@@ -25,7 +25,7 @@ class MultiAccountWorkflowTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function grandma_can_manage_her_instagram_account_independently(): void
+    public function it_allows_grandma_to_manage_her_instagram_account_independently(): void
     {
         /** #region Arrange */
         // Grandma creates her account in the system
@@ -79,7 +79,7 @@ class MultiAccountWorkflowTest extends TestCase
     }
 
     #[Test]
-    public function multiple_users_have_isolated_instagram_accounts(): void
+    public function it_ensures_multiple_users_have_isolated_instagram_accounts(): void
     {
         /** #region Arrange */
         $user1 = User::factory()->create(['name' => 'User 1']);
@@ -117,7 +117,7 @@ class MultiAccountWorkflowTest extends TestCase
     }
 
     #[Test]
-    public function user_can_block_multiple_trolls_from_different_comments(): void
+    public function it_allows_user_to_block_multiple_trolls_from_different_comments(): void
     {
         /** #region Arrange */
         $user = User::factory()->create();
@@ -177,7 +177,7 @@ class MultiAccountWorkflowTest extends TestCase
     }
 
     #[Test]
-    public function blocked_accounts_are_isolated_between_different_instagram_accounts(): void
+    public function it_ensures_blocked_accounts_are_isolated_between_different_instagram_accounts(): void
     {
         /** #region Arrange */
         $user = User::factory()->create();
@@ -216,7 +216,7 @@ class MultiAccountWorkflowTest extends TestCase
     }
 
     #[Test]
-    public function concurrent_users_can_block_different_trolls_simultaneously(): void
+    public function it_allows_concurrent_users_to_block_different_trolls_simultaneously(): void
     {
         /** #region Arrange */
         // Two grandmas using the system at the same time
