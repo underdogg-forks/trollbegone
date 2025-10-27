@@ -2,16 +2,16 @@
 
 namespace Database\Factories;
 
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\InstagramAccount>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Account>
  */
-class InstagramAccountFactory extends Factory
+class AccountFactory extends Factory
 {
-    protected $model = InstagramAccount::class;
+    protected $model = Account::class;
 
     /**
      * Define the model's default state.

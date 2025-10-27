@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\BlockedAccountService;
@@ -30,7 +30,7 @@ class BlockedAccountServiceTest extends TestCase
             'https://graph.instagram.com/me/blocked' => Http::response(['success' => true], 200),
         ]);
 
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
             'is_active' => true,
@@ -76,7 +76,7 @@ class BlockedAccountServiceTest extends TestCase
             'https://graph.instagram.com/search*' => Http::response(['data' => []], 200),
         ]);
 
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -113,7 +113,7 @@ class BlockedAccountServiceTest extends TestCase
             ], 200),
         ]);
 
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -147,7 +147,7 @@ class BlockedAccountServiceTest extends TestCase
             'https://graph.instagram.com/me/blocked' => Http::response(['success' => true], 200),
         ]);
 
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -173,7 +173,7 @@ class BlockedAccountServiceTest extends TestCase
     public function is_blocked_returns_true_for_blocked_username(): void
     {
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -197,7 +197,7 @@ class BlockedAccountServiceTest extends TestCase
     public function is_blocked_returns_false_for_non_blocked_username(): void
     {
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -217,7 +217,7 @@ class BlockedAccountServiceTest extends TestCase
     public function is_blocked_is_case_sensitive(): void
     {
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -241,11 +241,11 @@ class BlockedAccountServiceTest extends TestCase
     public function is_blocked_checks_specific_instagram_account(): void
     {
         /** #region Arrange */
-        $account1 = InstagramAccount::factory()->create([
+        $account1 = Account::factory()->create([
             'username' => 'account1',
             'access_token' => 'token1',
         ]);
-        $account2 = InstagramAccount::factory()->create([
+        $account2 = Account::factory()->create([
             'username' => 'account2',
             'access_token' => 'token2',
         ]);
@@ -270,7 +270,7 @@ class BlockedAccountServiceTest extends TestCase
     public function get_blocked_accounts_returns_all_blocked_accounts_for_instagram_account(): void
     {
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -306,7 +306,7 @@ class BlockedAccountServiceTest extends TestCase
     public function get_blocked_accounts_returns_latest_first(): void
     {
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -340,7 +340,7 @@ class BlockedAccountServiceTest extends TestCase
     public function get_blocked_accounts_returns_empty_collection_when_no_blocks(): void
     {
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
         ]);
@@ -364,11 +364,11 @@ class BlockedAccountServiceTest extends TestCase
     public function get_blocked_accounts_only_returns_accounts_for_specific_instagram_account(): void
     {
         /** #region Arrange */
-        $account1 = InstagramAccount::factory()->create([
+        $account1 = Account::factory()->create([
             'username' => 'account1',
             'access_token' => 'token1',
         ]);
-        $account2 = InstagramAccount::factory()->create([
+        $account2 = Account::factory()->create([
             'username' => 'account2',
             'access_token' => 'token2',
         ]);

@@ -2,28 +2,28 @@
 
 namespace Tests\Unit;
 
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Models\User;
-use App\Policies\InstagramAccountPolicy;
+use App\Policies\AccountPolicy;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
- * Test InstagramAccount policy for multi-account isolation.
+ * Test Account policy for multi-account isolation.
  *
  * Ensures users can only access their own Instagram accounts.
  */
-class InstagramAccountPolicyTest extends TestCase
+class AccountPolicyTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected InstagramAccountPolicy $policy;
+    protected AccountPolicy $policy;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->policy = new InstagramAccountPolicy;
+        $this->policy = new AccountPolicy;
     }
 
     #[Test]
@@ -47,7 +47,7 @@ class InstagramAccountPolicyTest extends TestCase
     {
         /** #region Arrange */
         $user = User::factory()->create();
-        $account = InstagramAccount::factory()->create(['user_id' => $user->id]);
+        $account = Account::factory()->create(['user_id' => $user->id]);
         /** #endregion */
 
         /** #region Act */
@@ -65,7 +65,7 @@ class InstagramAccountPolicyTest extends TestCase
         /** #region Arrange */
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
-        $account = InstagramAccount::factory()->create(['user_id' => $user2->id]);
+        $account = Account::factory()->create(['user_id' => $user2->id]);
         /** #endregion */
 
         /** #region Act */
@@ -98,7 +98,7 @@ class InstagramAccountPolicyTest extends TestCase
     {
         /** #region Arrange */
         $user = User::factory()->create();
-        $account = InstagramAccount::factory()->create(['user_id' => $user->id]);
+        $account = Account::factory()->create(['user_id' => $user->id]);
         /** #endregion */
 
         /** #region Act */
@@ -116,7 +116,7 @@ class InstagramAccountPolicyTest extends TestCase
         /** #region Arrange */
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
-        $account = InstagramAccount::factory()->create(['user_id' => $user2->id]);
+        $account = Account::factory()->create(['user_id' => $user2->id]);
         /** #endregion */
 
         /** #region Act */
@@ -133,7 +133,7 @@ class InstagramAccountPolicyTest extends TestCase
     {
         /** #region Arrange */
         $user = User::factory()->create();
-        $account = InstagramAccount::factory()->create(['user_id' => $user->id]);
+        $account = Account::factory()->create(['user_id' => $user->id]);
         /** #endregion */
 
         /** #region Act */
@@ -151,7 +151,7 @@ class InstagramAccountPolicyTest extends TestCase
         /** #region Arrange */
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
-        $account = InstagramAccount::factory()->create(['user_id' => $user2->id]);
+        $account = Account::factory()->create(['user_id' => $user2->id]);
         /** #endregion */
 
         /** #region Act */
@@ -169,8 +169,8 @@ class InstagramAccountPolicyTest extends TestCase
         /** #region Arrange */
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
-        $account1 = InstagramAccount::factory()->create(['user_id' => $user1->id]);
-        $account2 = InstagramAccount::factory()->create(['user_id' => $user2->id]);
+        $account1 = Account::factory()->create(['user_id' => $user1->id]);
+        $account2 = Account::factory()->create(['user_id' => $user2->id]);
         /** #endregion */
 
         /** #region Act */

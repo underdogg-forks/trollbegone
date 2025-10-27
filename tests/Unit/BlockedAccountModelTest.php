@@ -3,7 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -40,16 +40,16 @@ class BlockedAccountModelTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create();
+        $account = Account::factory()->create();
         /** #endregion */
 
         /** #region Act */
-        $blockedAccount = BlockedAccount::factory()->forInstagramAccount($account)->create();
+        $blockedAccount = BlockedAccount::factory()->forAccount($account)->create();
         /** #endregion */
 
         /** #region Assert */
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $blockedAccount->instagramAccount());
-        $this->assertInstanceOf(InstagramAccount::class, $blockedAccount->instagramAccount);
+        $this->assertInstanceOf(Account::class, $blockedAccount->instagramAccount);
         $this->assertEquals($account->id, $blockedAccount->instagramAccount->id);
         /** #endregion */
     }
@@ -230,12 +230,12 @@ class BlockedAccountModelTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create();
-        $blocked1 = BlockedAccount::factory()->forInstagramAccount($account)->create();
+        $account = Account::factory()->create();
+        $blocked1 = BlockedAccount::factory()->forAccount($account)->create();
         /** #endregion */
 
         /** #region Act */
-        $blocked2 = BlockedAccount::factory()->forInstagramAccount($account)->create();
+        $blocked2 = BlockedAccount::factory()->forAccount($account)->create();
         /** #endregion */
 
         /** #region Assert */
@@ -251,12 +251,12 @@ class BlockedAccountModelTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account1 = InstagramAccount::factory()->create();
-        $account2 = InstagramAccount::factory()->create();
-        $blocked1 = BlockedAccount::factory()->forInstagramAccount($account1)->create([
+        $account1 = Account::factory()->create();
+        $account2 = Account::factory()->create();
+        $blocked1 = BlockedAccount::factory()->forAccount($account1)->create([
             'blocked_username' => 'same_user',
         ]);
-        $blocked2 = BlockedAccount::factory()->forInstagramAccount($account2)->create([
+        $blocked2 = BlockedAccount::factory()->forAccount($account2)->create([
             'blocked_username' => 'same_user',
         /** #endregion */
 

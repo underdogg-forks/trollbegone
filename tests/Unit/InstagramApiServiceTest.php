@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
@@ -16,7 +16,7 @@ class InstagramApiServiceTest extends TestCase
     public function it_throws_exception_when_getting_stories_without_access_token(): void
     {
         /** #region Arrange */
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
@@ -42,7 +42,7 @@ class InstagramApiServiceTest extends TestCase
             ], 200),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -68,7 +68,7 @@ class InstagramApiServiceTest extends TestCase
             'https://graph.instagram.com/me/stories' => Http::response(['data' => []], 200),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -89,7 +89,7 @@ class InstagramApiServiceTest extends TestCase
     public function it_throws_exception_when_getting_story_comments_without_access_token(): void
     {
         /** #region Arrange */
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
@@ -115,7 +115,7 @@ class InstagramApiServiceTest extends TestCase
             ], 200),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -141,7 +141,7 @@ class InstagramApiServiceTest extends TestCase
             'https://graph.instagram.com/story123/comments' => Http::response(['data' => []], 200),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -162,7 +162,7 @@ class InstagramApiServiceTest extends TestCase
     public function it_returns_false_when_blocking_user_without_access_token(): void
     {
         /** #region Arrange */
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
@@ -185,7 +185,7 @@ class InstagramApiServiceTest extends TestCase
             'https://graph.instagram.com/me/blocked' => Http::response(['success' => true], 200),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -210,7 +210,7 @@ class InstagramApiServiceTest extends TestCase
             'https://graph.instagram.com/me/blocked' => Http::response(['error' => 'API Error'], 500),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -235,7 +235,7 @@ class InstagramApiServiceTest extends TestCase
             'https://graph.instagram.com/me/blocked' => Http::response(['error' => 'Network error'], 503),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -256,7 +256,7 @@ class InstagramApiServiceTest extends TestCase
     public function it_returns_null_when_getting_user_info_without_access_token(): void
     {
         /** #region Arrange */
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
@@ -284,7 +284,7 @@ class InstagramApiServiceTest extends TestCase
             ], 200),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -311,7 +311,7 @@ class InstagramApiServiceTest extends TestCase
             'https://graph.instagram.com/search*' => Http::response(['data' => []], 200),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -336,7 +336,7 @@ class InstagramApiServiceTest extends TestCase
             'https://graph.instagram.com/search*' => Http::response(['error' => 'API Error'], 500),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;
@@ -361,7 +361,7 @@ class InstagramApiServiceTest extends TestCase
             'https://graph.instagram.com/search*' => Http::response(['error' => 'Network timeout'], 503),
         ]);
 
-        $account = new InstagramAccount(['username' => 'test']);
+        $account = new Account(['username' => 'test']);
         $account->access_token = 'valid_token';
 
         $client = new ExternalClient;

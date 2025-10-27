@@ -2,16 +2,16 @@
 
 namespace App\Policies;
 
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Models\User;
 
 /**
- * InstagramAccount Policy
+ * Account Policy
  *
  * Ensures users can only access their own Instagram accounts.
  * Implements multi-tenant security for Instagram account management.
  */
-class InstagramAccountPolicy
+class AccountPolicy
 {
     /**
      * Determine whether the user can view any models.
@@ -25,7 +25,7 @@ class InstagramAccountPolicy
     /**
      * Determine whether the user can view the model.
      */
-    public function view(User $user, InstagramAccount $instagramAccount): bool
+    public function view(User $user, Account $instagramAccount): bool
     {
         // User can only view their own Instagram accounts
         return $user->id === $instagramAccount->user_id;
@@ -43,7 +43,7 @@ class InstagramAccountPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, InstagramAccount $instagramAccount): bool
+    public function update(User $user, Account $instagramAccount): bool
     {
         // User can only update their own Instagram accounts
         return $user->id === $instagramAccount->user_id;
@@ -52,7 +52,7 @@ class InstagramAccountPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, InstagramAccount $instagramAccount): bool
+    public function delete(User $user, Account $instagramAccount): bool
     {
         // User can only delete their own Instagram accounts
         return $user->id === $instagramAccount->user_id;
@@ -61,7 +61,7 @@ class InstagramAccountPolicy
     /**
      * Determine whether the user can restore the model.
      */
-    public function restore(User $user, InstagramAccount $instagramAccount): bool
+    public function restore(User $user, Account $instagramAccount): bool
     {
         // User can only restore their own Instagram accounts
         return $user->id === $instagramAccount->user_id;
@@ -70,7 +70,7 @@ class InstagramAccountPolicy
     /**
      * Determine whether the user can permanently delete the model.
      */
-    public function forceDelete(User $user, InstagramAccount $instagramAccount): bool
+    public function forceDelete(User $user, Account $instagramAccount): bool
     {
         // User can only force delete their own Instagram accounts
         return $user->id === $instagramAccount->user_id;

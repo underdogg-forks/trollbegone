@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Blocked Account Model
  *
- * Represents a blocked Instagram user, tracking which Instagram account
+ * Represents a blocked Instagram user, tracking which account
  * performed the block, the reason, and the triggering comment (if any).
  *
  * @property int $id
@@ -20,7 +20,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property string|null $comment_text The comment that triggered the block
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \App\Models\InstagramAccount $instagramAccount
+ * @property-read \App\Models\Account $account
  *
  * @method static \Illuminate\Database\Eloquent\Builder|BlockedAccount newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|BlockedAccount newQuery()
@@ -39,14 +39,14 @@ class BlockedAccount extends Model
     ];
 
     /**
-     * Get the Instagram account that blocked this user.
+     * Get the account that blocked this user.
      *
-     * Relationship: Many BlockedAccounts belong to one InstagramAccount.
+     * Relationship: Many BlockedAccounts belong to one Account.
      *
-     * @return BelongsTo<InstagramAccount, BlockedAccount>
+     * @return BelongsTo<Account, BlockedAccount>
      */
-    public function instagramAccount(): BelongsTo
+    public function account(): BelongsTo
     {
-        return $this->belongsTo(InstagramAccount::class);
+        return $this->belongsTo(Account::class, 'instagram_account_id');
     }
 }

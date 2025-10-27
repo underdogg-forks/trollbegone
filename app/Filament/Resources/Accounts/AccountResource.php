@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Resources\InstagramAccounts;
+namespace App\Filament\Resources\Accounts;
 
-use App\Filament\Resources\InstagramAccounts\Pages\ListInstagramAccounts;
-use App\Filament\Resources\InstagramAccounts\Schemas\InstagramAccountForm;
-use App\Filament\Resources\InstagramAccounts\Tables\InstagramAccountsTable;
-use App\Models\InstagramAccount;
+use App\Filament\Resources\Accounts\Pages\ListAccounts;
+use App\Filament\Resources\Accounts\Schemas\AccountForm;
+use App\Filament\Resources\Accounts\Tables\AccountsTable;
+use App\Models\Account;
 use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
@@ -20,9 +20,9 @@ use Illuminate\Database\Eloquent\Builder;
  * CRUD operations and a custom "View Stories" action for browsing stories and
  * their comments.
  */
-class InstagramAccountResource extends Resource
+class AccountResource extends Resource
 {
-    protected static ?string $model = InstagramAccount::class;
+    protected static ?string $model = Account::class;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserGroup;
 
@@ -40,7 +40,7 @@ class InstagramAccountResource extends Resource
      */
     public static function form(Schema $schema): Schema
     {
-        return InstagramAccountForm::configure($schema);
+        return AccountForm::configure($schema);
     }
 
     /**
@@ -48,7 +48,7 @@ class InstagramAccountResource extends Resource
      */
     public static function table(Table $table): Table
     {
-        return InstagramAccountsTable::configure($table);
+        return AccountsTable::configure($table);
     }
 
     /**
@@ -71,8 +71,8 @@ class InstagramAccountResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => ListInstagramAccounts::route('/'),
-            'view' => Pages\ViewInstagramAccount::route('/{record}'),
+            'index' => ListAccounts::route('/'),
+            'view' => Pages\ViewAccount::route('/{record}'),
             'stories' => Pages\ViewStories::route('/{record}/stories'),
         ];
     }

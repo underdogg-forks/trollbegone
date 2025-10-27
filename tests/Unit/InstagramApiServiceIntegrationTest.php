@@ -2,7 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -22,7 +22,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function get_stories_with_real_fixture(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -52,7 +52,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function get_story_comments_with_real_fixture(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -81,7 +81,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function get_user_info_with_real_fixture(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -111,7 +111,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function block_user_with_success_response(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -136,7 +136,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function identify_spam_comment_from_fixture(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -170,7 +170,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function handle_empty_stories_response(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -198,7 +198,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function handle_empty_comments_response(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -226,7 +226,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function handle_user_not_found_response(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -253,7 +253,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     public function process_multiple_story_types(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);

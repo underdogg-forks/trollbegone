@@ -2,7 +2,7 @@
 
 namespace App\Services\Instagram;
 
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use Illuminate\Support\Collection;
 
 /**
@@ -34,12 +34,12 @@ class InstagramApiService extends InstagramBaseClient
      *   }
      * }
      *
-     * @param  InstagramAccount  $account  The Instagram account to fetch stories for
+     * @param  Account  $account  The Instagram account to fetch stories for
      * @return Collection Collection of story objects
      *
      * @throws \Exception If no access token is available
      */
-    public function getStories(InstagramAccount $account): Collection
+    public function getStories(Account $account): Collection
     {
         $response = $this->get($account, '/me/stories');
 
@@ -65,13 +65,13 @@ class InstagramApiService extends InstagramBaseClient
      *   ]
      * }
      *
-     * @param  InstagramAccount  $account  The Instagram account
+     * @param  Account  $account  The Instagram account
      * @param  string  $storyId  The ID of the story
      * @return Collection Collection of comment objects
      *
      * @throws \Exception If no access token is available
      */
-    public function getStoryComments(InstagramAccount $account, string $storyId): Collection
+    public function getStoryComments(Account $account, string $storyId): Collection
     {
         $response = $this->get($account, "/{$storyId}/comments");
 
@@ -92,13 +92,13 @@ class InstagramApiService extends InstagramBaseClient
      *   "success": true
      * }
      *
-     * @param  InstagramAccount  $account  The Instagram account
+     * @param  Account  $account  The Instagram account
      * @param  string  $userId  The Instagram user ID to block
      * @return bool True if successful, false otherwise
      *
      * @throws \Exception If no access token is available
      */
-    public function blockUser(InstagramAccount $account, string $userId): bool
+    public function blockUser(Account $account, string $userId): bool
     {
         try {
             $this->post($account, '/me/blocked', [
@@ -137,13 +137,13 @@ class InstagramApiService extends InstagramBaseClient
      *   ]
      * }
      *
-     * @param  InstagramAccount  $account  The Instagram account
+     * @param  Account  $account  The Instagram account
      * @param  string  $username  The username to search for
      * @return array|null The first user found, or null if not found or on error
      *
      * @throws \Exception If no access token is available
      */
-    public function getUserInfo(InstagramAccount $account, string $username): ?array
+    public function getUserInfo(Account $account, string $username): ?array
     {
         try {
             $response = $this->get($account, '/search', [

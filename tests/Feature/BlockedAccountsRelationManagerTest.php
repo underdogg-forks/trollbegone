@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
+use App\Filament\Resources\Accounts\AccountResource;
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Models\User;
 use App\Services\Instagram\BlockedAccountService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,7 +24,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
 
     protected User $adminUser;
 
-    protected InstagramAccount $instagramAccount;
+    protected Account $instagramAccount;
 
     protected function setUp(): void
     {
@@ -33,7 +33,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
         $this->adminUser = User::factory()->create();
         $this->actingAs($this->adminUser);
 
-        $this->instagramAccount = InstagramAccount::factory()->create([
+        $this->instagramAccount = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -50,7 +50,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
 
         /** #region Act */
         $response = $this->get(
-            InstagramAccountResource::getUrl('view', ['record' => $this->instagramAccount])
+            AccountResource::getUrl('view', ['record' => $this->instagramAccount])
         );
         /** #endregion */
 

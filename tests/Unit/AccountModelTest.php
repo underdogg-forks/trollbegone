@@ -3,12 +3,12 @@
 namespace Tests\Unit;
 
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class InstagramAccountModelTest extends TestCase
+class AccountModelTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -18,7 +18,7 @@ class InstagramAccountModelTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = new InstagramAccount;
+        $account = new Account;
         /** #endregion */
 
         /** #region Act */
@@ -46,7 +46,7 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'is_active' => 1,
             'last_synced_at' => '2024-01-01 12:00:00',
         ]);
@@ -64,7 +64,7 @@ class InstagramAccountModelTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create();
+        $account = Account::factory()->create();
         /** #endregion */
 
         /** #region Act */
@@ -86,7 +86,7 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'instagram_id' => null,
         ]);
         /** #endregion */
@@ -110,7 +110,7 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account = InstagramAccount::factory()->withoutAccessToken()->create();
+        $account = Account::factory()->withoutAccessToken()->create();
         /** #endregion */
 
         /** #region Assert */
@@ -128,7 +128,7 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account = InstagramAccount::factory()->create();
+        $account = Account::factory()->create();
         /** #endregion */
 
         /** #region Assert */
@@ -146,7 +146,7 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account = InstagramAccount::factory()->inactive()->create();
+        $account = Account::factory()->inactive()->create();
         /** #endregion */
 
         /** #region Assert */
@@ -164,7 +164,7 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'last_synced_at' => null,
         ]);
         /** #endregion */
@@ -180,7 +180,7 @@ class InstagramAccountModelTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'original_username',
         ]);
         /** #endregion */
@@ -204,8 +204,8 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account1 = InstagramAccount::factory()->create();
-        $account2 = InstagramAccount::factory()->create();
+        $account1 = Account::factory()->create();
+        $account2 = Account::factory()->create();
         /** #endregion */
 
         /** #region Assert */
@@ -223,8 +223,8 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account1 = InstagramAccount::factory()->create();
-        $account2 = InstagramAccount::factory()->create();
+        $account1 = Account::factory()->create();
+        $account2 = Account::factory()->create();
         /** #endregion */
 
         /** #region Assert */
@@ -242,8 +242,8 @@ class InstagramAccountModelTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $account1 = InstagramAccount::factory()->create();
-        $account2 = InstagramAccount::factory()->create();
+        $account1 = Account::factory()->create();
+        $account2 = Account::factory()->create();
         /** #endregion */
 
         /** #region Assert */
@@ -257,8 +257,8 @@ class InstagramAccountModelTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create();
-        BlockedAccount::factory()->count(3)->forInstagramAccount($account)->create();
+        $account = Account::factory()->create();
+        BlockedAccount::factory()->count(3)->forAccount($account)->create();
         /** #endregion */
 
         /** #region Act */

@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Services\Instagram\BlockedAccountService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -18,7 +18,7 @@ class BlockedAccountServiceTest extends TestCase
     public function blocking_account_creates_database_record(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'access_token' => 'test_token',
         ]);
 
@@ -51,7 +51,7 @@ class BlockedAccountServiceTest extends TestCase
     public function checking_if_user_is_blocked_queries_database(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'access_token' => 'test_token',
         ]);
         BlockedAccount::create([
@@ -77,10 +77,10 @@ class BlockedAccountServiceTest extends TestCase
     public function get_blocked_accounts_returns_only_account_specific_blocks(): void
     {
         /** #region Arrange */
-        $account1 = InstagramAccount::factory()->create([
+        $account1 = Account::factory()->create([
             'access_token' => 'token1',
         ]);
-        $account2 = InstagramAccount::factory()->create([
+        $account2 = Account::factory()->create([
             'access_token' => 'token2',
         ]);
         BlockedAccount::create([
@@ -116,7 +116,7 @@ class BlockedAccountServiceTest extends TestCase
     public function blocking_handles_api_failure_gracefully(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'access_token' => 'test_token',
         ]);
 
@@ -148,7 +148,7 @@ class BlockedAccountServiceTest extends TestCase
     public function blocking_user_not_found_still_creates_record(): void
     {
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'access_token' => 'test_token',
         ]);
 

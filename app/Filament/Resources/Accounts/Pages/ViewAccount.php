@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Filament\Resources\InstagramAccounts\Pages;
+namespace App\Filament\Resources\Accounts\Pages;
 
-use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
+use App\Filament\Resources\Accounts\AccountResource;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 
-class ViewInstagramAccount extends ViewRecord
+class ViewAccount extends ViewRecord
 {
-    protected static string $resource = InstagramAccountResource::class;
+    protected static string $resource = AccountResource::class;
 
     protected function getHeaderActions(): array
     {

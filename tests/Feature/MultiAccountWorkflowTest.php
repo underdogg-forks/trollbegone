@@ -3,7 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Models\User;
 use App\Services\Instagram\BlockedAccountService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -35,7 +35,7 @@ class MultiAccountWorkflowTest extends TestCase
         ]);
 
         // Grandma connects her Instagram account
-        $grandmaInstagram = InstagramAccount::factory()->create([
+        $grandmaInstagram = Account::factory()->create([
             'user_id' => $grandma->id,
             'username' => 'grandma_account',
             'access_token' => 'grandma_token',
@@ -85,12 +85,12 @@ class MultiAccountWorkflowTest extends TestCase
         $user1 = User::factory()->create(['name' => 'User 1']);
         $user2 = User::factory()->create(['name' => 'User 2']);
 
-        $account1 = InstagramAccount::factory()->create([
+        $account1 = Account::factory()->create([
             'user_id' => $user1->id,
             'username' => 'user1_instagram',
         ]);
 
-        $account2 = InstagramAccount::factory()->create([
+        $account2 = Account::factory()->create([
             'user_id' => $user2->id,
             'username' => 'user2_instagram',
         ]);
@@ -121,7 +121,7 @@ class MultiAccountWorkflowTest extends TestCase
     {
         /** #region Arrange */
         $user = User::factory()->create();
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'user_id' => $user->id,
             'access_token' => 'test_token',
         ]);
@@ -183,12 +183,12 @@ class MultiAccountWorkflowTest extends TestCase
         $user = User::factory()->create();
 
         // User has 2 Instagram accounts
-        $account1 = InstagramAccount::factory()->create([
+        $account1 = Account::factory()->create([
             'user_id' => $user->id,
             'username' => 'account_1',
         ]);
 
-        $account2 = InstagramAccount::factory()->create([
+        $account2 = Account::factory()->create([
             'user_id' => $user->id,
             'username' => 'account_2',
         ]);
@@ -223,13 +223,13 @@ class MultiAccountWorkflowTest extends TestCase
         $grandma1 = User::factory()->create(['name' => 'Grandma 1']);
         $grandma2 = User::factory()->create(['name' => 'Grandma 2']);
 
-        $account1 = InstagramAccount::factory()->create([
+        $account1 = Account::factory()->create([
             'user_id' => $grandma1->id,
             'username' => 'grandma1_insta',
             'access_token' => 'token1',
         ]);
 
-        $account2 = InstagramAccount::factory()->create([
+        $account2 = Account::factory()->create([
             'user_id' => $grandma2->id,
             'username' => 'grandma2_insta',
             'access_token' => 'token2',

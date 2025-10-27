@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\InstagramAccounts\Schemas;
+namespace App\Filament\Resources\Accounts\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\TextInput;
@@ -13,7 +13,7 @@ use Filament\Schemas\Schema;
  * Defines the form fields for creating and editing Instagram accounts in the
  * Filament admin panel.
  */
-class InstagramAccountForm
+class AccountForm
 {
     /**
      * Configure the form schema with all required fields.

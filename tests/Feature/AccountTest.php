@@ -3,12 +3,12 @@
 namespace Tests\Feature;
 
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
-class InstagramAccountTest extends TestCase
+class AccountTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -18,7 +18,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_user',
             'instagram_id' => '123456',
             'access_token' => 'test_token',
@@ -43,7 +43,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'test_token',
         ]);
@@ -74,7 +74,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'test_token',
         ]);
@@ -102,7 +102,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
             'is_active' => true,
@@ -125,7 +125,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
@@ -158,7 +158,7 @@ class InstagramAccountTest extends TestCase
 
         /** #region Assert */
         $this->expectException(\Illuminate\Database\QueryException::class);
-        InstagramAccount::factory()->create([
+        Account::factory()->create([
             'access_token' => 'token',
         ]);
         /** #endregion */
@@ -170,7 +170,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
@@ -184,7 +184,7 @@ class InstagramAccountTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertInstanceOf(InstagramAccount::class, $blockedAccount->instagramAccount);
+        $this->assertInstanceOf(Account::class, $blockedAccount->instagramAccount);
         $this->assertEquals($instagramAccount->id, $blockedAccount->instagramAccount->id);
         /** #endregion */
     }
@@ -195,7 +195,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
@@ -222,7 +222,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
@@ -247,7 +247,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
@@ -273,11 +273,11 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account1 = InstagramAccount::factory()->create([
+        $account1 = Account::factory()->create([
             'username' => 'account1',
             'access_token' => 'token1',
         ]);
-        $account2 = InstagramAccount::factory()->create([
+        $account2 = Account::factory()->create([
             'username' => 'account2',
             'access_token' => 'token2',
         ]);
@@ -307,7 +307,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
@@ -336,7 +336,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
@@ -368,7 +368,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
             'is_active' => 1,
@@ -390,7 +390,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
             'last_synced_at' => now(),
@@ -411,7 +411,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $instagramAccount = InstagramAccount::factory()->create([
+        $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
@@ -436,7 +436,7 @@ class InstagramAccountTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        $account = InstagramAccount::factory()->create([
+        $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         /** #endregion */

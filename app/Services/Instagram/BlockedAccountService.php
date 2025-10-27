@@ -3,7 +3,7 @@
 namespace App\Services\Instagram;
 
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -24,7 +24,7 @@ class BlockedAccountService
      * 2. Creates a local database record
      * 3. Calls the Instagram API to block the user
      *
-     * @param  InstagramAccount  $account  The Instagram account performing the block
+     * @param  Account  $account  The Instagram account performing the block
      * @param  string  $username  The username to block
      * @param  string|null  $reason  Optional reason for blocking
      * @param  string|null  $commentText  Optional comment text that triggered the block
@@ -33,7 +33,7 @@ class BlockedAccountService
      * @throws \Exception If there's an error during the process
      */
     public function blockAccount(
-        InstagramAccount $account,
+        Account $account,
         string $username,
         ?string $reason = null,
         ?string $commentText = null
@@ -74,11 +74,11 @@ class BlockedAccountService
     /**
      * Check if a username is blocked for a specific Instagram account.
      *
-     * @param  InstagramAccount  $account  The Instagram account
+     * @param  Account  $account  The Instagram account
      * @param  string  $username  The username to check
      * @return bool True if the username is blocked, false otherwise
      */
-    public function isBlocked(InstagramAccount $account, string $username): bool
+    public function isBlocked(Account $account, string $username): bool
     {
         return BlockedAccount::where('instagram_account_id', $account->id)
             ->where('blocked_username', $username)
@@ -88,10 +88,10 @@ class BlockedAccountService
     /**
      * Get all blocked accounts for a specific Instagram account.
      *
-     * @param  InstagramAccount  $account  The Instagram account
+     * @param  Account  $account  The Instagram account
      * @return \Illuminate\Database\Eloquent\Collection Collection of blocked accounts
      */
-    public function getBlockedAccounts(InstagramAccount $account)
+    public function getBlockedAccounts(Account $account)
     {
         return $account->blockedAccounts()->latest()->get();
     }
