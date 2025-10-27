@@ -5,6 +5,7 @@ namespace App\Services\Instagram;
 use App\Models\BlockedAccount;
 use App\Models\InstagramAccount;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 /**
  * BlockedAccountService manages blocking functionality for Instagram accounts.
@@ -60,7 +61,11 @@ class BlockedAccountService
                         $this->instagramApi->blockUser($account, $userInfo['id']);
                     } catch (\Exception $e) {
                         // Block failed on Instagram but we keep the local record
-                        // Could log this error
+                        Log::warning('Instagram API block failed', [
+                            'account_id' => $account->id,
+                            'username' => $username,
+                            'error' => $e->getMessage(),
+                        ]);
                     }
                 }
 
