@@ -7,10 +7,9 @@ use App\Models\BlockedAccount;
 use App\Models\InstagramAccount;
 use App\Models\User;
 use App\Services\Instagram\BlockedAccountService;
-use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Mockery;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Fakes\FakeInstagramApiService;
 use Tests\TestCase;
 
 /**
@@ -76,11 +75,10 @@ class BlockedAccountsRelationManagerTest extends TestCase
     public function it_blocked_account_creation_uses_transaction(): void
     {
         /** #region Arrange */
-        $mockApiService = Mockery::mock(InstagramApiService::class);
-        $mockApiService->shouldReceive('getUserInfo')
-            ->andReturn(null); // Simulate getUserInfo succeeding but returning null
+        $fakeApiService = new FakeInstagramApiService;
+        $fakeApiService->setUserInfoResponse('test_user', null); // Simulate getUserInfo returning null
 
-        $service = new BlockedAccountService($mockApiService);
+        $service = new BlockedAccountService($fakeApiService);
         /** #endregion */
 
         /** #region Act */
@@ -146,11 +144,5 @@ class BlockedAccountsRelationManagerTest extends TestCase
     public function it_only_shows_blocked_accounts_for_current_instagram_account(): void
     {
         $this->markTestIncomplete();
-    }
-
-    protected function tearDown(): void
-    {
-        Mockery::close();
-        parent::tearDown();
     }
 }
