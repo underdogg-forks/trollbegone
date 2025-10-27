@@ -116,7 +116,12 @@ public function blockUser(Account $account, string $userId): bool
     }
 
     try {
-        $this->post($account, '/me/blocked', ['user_id' => $userId]);
+        $this->request(
+            RequestMethod::POST,
+            $account,
+            '/me/blocked',
+            ['json' => ['user_id' => $userId]]
+        );
         return true;
     } catch (\Exception $e) {
         // Early return on error
@@ -129,7 +134,12 @@ public function blockUser(Account $account, string $userId): bool
 {
     if ($account->access_token) {
         try {
-            $this->post($account, '/me/blocked', ['user_id' => $userId]);
+            $this->request(
+                RequestMethod::POST,
+                $account,
+                '/me/blocked',
+                ['json' => ['user_id' => $userId]]
+            );
             return true;
         } catch (\Exception $e) {
             return false;
@@ -254,7 +264,7 @@ throw new HttpClientException(
 // ✅ GOOD - Return collections for flexibility
 public function getStories(Account $account): Collection
 {
-    $response = $this->get($account, '/me/stories');
+    $response = $this->request(RequestMethod::GET, $account, '/me/stories');
     return collect($response->json('data', []));
 }
 ```
@@ -281,7 +291,12 @@ public function getUserInfo($account, $username)
 public function getUserInfo(Account $account, string $username): ?array
 {
     try {
-        $response = $this->get($account, '/search', ['q' => $username, 'type' => 'user']);
+        $response = $this->request(
+            RequestMethod::GET,
+            $account,
+            '/search',
+            ['query' => ['q' => $username, 'type' => 'user']]
+        );
         $users = $response->json('data', []);
         return $users[0] ?? null; // Early return if no users
     } catch (\Exception $e) {
@@ -311,7 +326,12 @@ protected function ensureAccessToken(Account $account): void
 public function blockUser(Account $account, string $userId): bool
 {
     try {
-        $this->post($account, '/me/blocked', ['user_id' => $userId]);
+        $this->request(
+            RequestMethod::POST,
+            $account,
+            '/me/blocked',
+            ['json' => ['user_id' => $userId]]
+        );
         return true;
     } catch (\Exception $e) {
         // Silently fail and return false

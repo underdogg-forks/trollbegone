@@ -131,6 +131,7 @@ class AccountTest extends TestCase
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
+        $this->assertNull($account->last_synced_at);
         $syncTime = now();
         /** #endregion */
 
@@ -139,7 +140,6 @@ class AccountTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertNull($account->last_synced_at);
         $this->assertNotNull($account->fresh()->last_synced_at);
         $this->assertTrue($account->fresh()->last_synced_at->equalTo($syncTime));
         /** #endregion */

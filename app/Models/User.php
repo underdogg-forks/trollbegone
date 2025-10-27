@@ -25,6 +25,7 @@ use Illuminate\Notifications\Notifiable;
  * @property \Carbon\Carbon $updated_at
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Account> $instagramAccounts
  * @property-read int|null $instagram_accounts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Account> $accounts
  */
 class User extends Authenticatable
 {
@@ -75,5 +76,17 @@ class User extends Authenticatable
     public function instagramAccounts(): HasMany
     {
         return $this->hasMany(\App\Models\Account::class);
+    }
+
+    /**
+     * Alias for instagramAccounts() for convenience.
+     *
+     * Relationship: One User has many Accounts.
+     *
+     * @return HasMany<\App\Models\Account>
+     */
+    public function accounts(): HasMany
+    {
+        return $this->instagramAccounts();
     }
 }

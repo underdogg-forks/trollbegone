@@ -76,7 +76,7 @@ class ViewPosts extends Page
             Action::make('back')
                 ->label('Back to Following')
                 ->icon('heroicon-o-arrow-left')
-                ->url(ViewFollowing::getUrl(['record' => $this->record])),
+                ->url(AccountResource::getUrl('following', ['record' => $this->record])),
             Action::make('refresh')
                 ->label('Refresh')
                 ->icon('heroicon-o-arrow-path')
@@ -89,5 +89,13 @@ class ViewPosts extends Page
     public function getPosts(): Collection
     {
         return collect($this->posts);
+    }
+
+    /**
+     * Format a timestamp for display.
+     */
+    public function formatTimestamp(string $timestamp): string
+    {
+        return \Carbon\Carbon::parse($timestamp)->diffForHumans();
     }
 }
