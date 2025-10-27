@@ -46,7 +46,6 @@ class InstagramApiService extends InstagramBaseClient
 
             return collect($response->json('data', []));
         } catch (\Exception $e) {
-            // Log the error or handle it as needed
             throw $e;
         }
     }
@@ -83,7 +82,6 @@ class InstagramApiService extends InstagramBaseClient
 
             return collect($response->json('data', []));
         } catch (\Exception $e) {
-            // Log the error or handle it as needed
             throw $e;
         }
     }
@@ -117,7 +115,12 @@ class InstagramApiService extends InstagramBaseClient
 
             return true;
         } catch (\Exception $e) {
-            // Silently fail and return false
+            \Log::warning('Failed to block user', [
+                'account_id' => $account->id,
+                'user_id' => $userId,
+                'error' => $e->getMessage(),
+            ]);
+
             return false;
         }
     }
@@ -160,7 +163,12 @@ class InstagramApiService extends InstagramBaseClient
 
             return $users[0] ?? null;
         } catch (\Exception $e) {
-            // Silently fail and return null
+            \Log::warning('Failed to get user info', [
+                'account_id' => $account->id,
+                'username' => $username,
+                'error' => $e->getMessage(),
+            ]);
+
             return null;
         }
     }

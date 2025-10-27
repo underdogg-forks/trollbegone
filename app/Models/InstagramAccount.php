@@ -35,9 +35,12 @@ class InstagramAccount extends Model
     protected $fillable = [
         'username',
         'instagram_id',
-        'access_token',
         'is_active',
         'last_synced_at',
+    ];
+
+    protected $guarded = [
+        'access_token',
     ];
 
     protected $casts = [

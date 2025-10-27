@@ -21,6 +21,7 @@ return new class extends Migration
             $table->timestamps();
 
             $table->unique(['instagram_account_id', 'blocked_instagram_id']);
+            $table->unique(['instagram_account_id', 'blocked_username']);
         });
     }
 
