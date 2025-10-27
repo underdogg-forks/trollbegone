@@ -42,7 +42,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($fixtureData['data']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
 
@@ -80,7 +80,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($fixtureData['data']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
 
@@ -117,7 +117,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($fixtureData['data']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
 
@@ -150,9 +150,9 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $mockResponse = Mockery::mock(Response::class);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('post')
+        $mockClient->shouldReceive('request')
             ->once()
-            ->with('https://graph.instagram.com/me/blocked', [
+            ->with('POST', 'https://graph.instagram.com/me/blocked', [
                 'base_uri' => 'https://graph.instagram.com',
                 'token' => 'test_token',
                 'json' => ['user_id' => '17841401234567892'],
@@ -190,7 +190,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($fixtureData['data']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
 
@@ -232,7 +232,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($fixtureData['data']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
 
@@ -268,7 +268,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($fixtureData['data']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
 
@@ -304,7 +304,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($fixtureData['data']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
 
@@ -339,7 +339,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
             ->andReturn($fixtureData['data']);
 
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        $mockClient->shouldReceive('get')
+        $mockClient->shouldReceive('request')
             ->once()
             ->andReturn($mockResponse);
 
