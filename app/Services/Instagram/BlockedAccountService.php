@@ -101,7 +101,7 @@ class BlockedAccountService
      * @param  Account  $account  The Instagram account
      * @return \Illuminate\Database\Eloquent\Collection Collection of blocked accounts
      */
-    public function getBlockedAccounts(Account $account)
+    public function getBlockedAccounts(Account $account): \Illuminate\Database\Eloquent\Collection
     {
         return $account->blockedAccounts()->latest()->get();
     }

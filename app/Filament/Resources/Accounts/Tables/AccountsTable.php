@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Accounts\Tables;
 
+use App\Filament\Resources\Accounts\AccountResource;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -59,11 +60,11 @@ class AccountsTable
                 Action::make('view_following')
                     ->label('View Following')
                     ->icon('heroicon-o-users')
-                    ->url(fn ($record) => route('filament.admin.resources.accounts.following', $record)),
+                    ->url(fn ($record) => AccountResource::getUrl('following', ['record' => $record])),
                 Action::make('view_stories')
                     ->label('View Stories')
                     ->icon('heroicon-o-eye')
-                    ->url(fn ($record) => route('filament.admin.resources.accounts.stories', $record))
+                    ->url(fn ($record) => AccountResource::getUrl('stories', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
             ->toolbarActions([

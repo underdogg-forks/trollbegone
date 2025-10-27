@@ -108,6 +108,8 @@ class AccountTest extends TestCase
             'access_token' => 'token',
             'is_active' => true,
         ]);
+        // Sanity check initial state
+        $this->assertTrue($account->is_active);
         /** #endregion */
 
         /** #region Act */
@@ -115,7 +117,6 @@ class AccountTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertTrue($account->is_active);
         $this->assertFalse($account->fresh()->is_active);
         /** #endregion */
     }

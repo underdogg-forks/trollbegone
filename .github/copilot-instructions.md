@@ -46,6 +46,18 @@ This application is designed to look like **one person coded it in a single day*
    - `ExternalClient`: Single request function using Laravel HTTP client
    - `HttpClientExceptionDecorator`: Wraps ExternalClient for consistent exception handling
    - Uses GuzzleHttp-compatible interface
+   
+   **Request Method Signature**:
+   ```php
+   public function request(
+       RequestMethod|string $method,
+       Account $account,
+       string $endpoint,
+       array $options = []
+   ): Response
+   ```
+   
+   Services call this method for all HTTP operations (GET, POST, etc.).
 
 2. **Service Layer**
    - `InstagramBaseClient`: Abstract base class for Instagram API services
@@ -328,7 +340,7 @@ public function blockAccount(Account $account, string $username): BlockedAccount
 
 - **Classes**: PascalCase (e.g., `InstagramApiService`)
 - **Methods**: camelCase (e.g., `blockUser`, `getStories`)
-- **Variables**: camelCase (e.g., `$instagramAccount`, `$userId`)
+- **Variables**: camelCase (e.g., `$account`, `$userId`)
 - **Constants**: SCREAMING_SNAKE_CASE (e.g., `API_VERSION`)
 - **Database tables**: snake_case plural (e.g., `instagram_accounts`, `blocked_accounts`)
 - **Database columns**: snake_case (e.g., `instagram_id`, `access_token`)

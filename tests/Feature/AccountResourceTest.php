@@ -116,7 +116,7 @@ class AccountResourceTest extends TestCase
     public function it_can_validate_instagram_account_username_is_unique(): void
     {
         /** #region Arrange */
-        $existingAccount = Account::factory()->create([
+        Account::factory()->create([
             'username' => 'existing_account',
             'user_id' => $this->adminUser->id,
         ]);

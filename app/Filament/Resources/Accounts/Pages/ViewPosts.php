@@ -29,11 +29,11 @@ class ViewPosts extends Page
 
     public string $username;
 
-    protected $posts = [];
+    protected array $posts = [];
 
-    public function mount(int|string $record, string $username): void
+    public function mount(Account $record, string $username): void
     {
-        $this->record = Account::findOrFail($record);
+        $this->record = $record;
         $this->username = $username;
         $this->posts = $this->getPostsFromApi();
     }
@@ -60,7 +60,7 @@ class ViewPosts extends Page
 
             return $response->json('data', []);
         } catch (\Exception $e) {
-            \Log::error('Failed to fetch posts', [
+            logger()->error('Failed to fetch posts', [
                 'account_id' => $this->record->id,
                 'username' => $this->username,
                 'error' => $e->getMessage(),
@@ -76,7 +76,7 @@ class ViewPosts extends Page
             Action::make('back')
                 ->label('Back to Following')
                 ->icon('heroicon-o-arrow-left')
-                ->url(route('filament.admin.resources.accounts.following', ['record' => $this->record->id])),
+                ->url(ViewFollowing::getUrl(['record' => $this->record])),
             Action::make('refresh')
                 ->label('Refresh')
                 ->icon('heroicon-o-arrow-path')

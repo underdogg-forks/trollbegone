@@ -33,11 +33,11 @@ class ViewComments extends Page
 
     public array $selectedComments = [];
 
-    protected $comments = [];
+    protected array $comments = [];
 
-    public function mount(int|string $record, string $post): void
+    public function mount(Account $record, string $post): void
     {
-        $this->record = Account::findOrFail($record);
+        $this->record = $record;
         $this->postId = $post;
         $this->comments = $this->getCommentsFromApi();
     }
@@ -57,7 +57,7 @@ class ViewComments extends Page
 
             return $response->json('data', []);
         } catch (\Exception $e) {
-            \Log::error('Failed to fetch comments', [
+            logger()->error('Failed to fetch comments', [
                 'account_id' => $this->record->id,
                 'post_id' => $this->postId,
                 'error' => $e->getMessage(),
@@ -69,7 +69,7 @@ class ViewComments extends Page
 
     public function toggleComment(string $commentId): void
     {
-        if (in_array($commentId, $this->selectedComments)) {
+        if (in_array($commentId, $this->selectedComments, true)) {
             $this->selectedComments = array_diff($this->selectedComments, [$commentId]);
         } else {
             $this->selectedComments[] = $commentId;
@@ -97,12 +97,12 @@ class ViewComments extends Page
                 continue;
             }
 
-            BlockUserJob::dispatch(
+            dispatch(new BlockUserJob(
                 account: $this->record,
                 username: $comment['username'],
                 reason: 'Blocked from post comments',
                 commentText: $comment['text'] ?? null
-            );
+            ));
         }
 
         Notification::make()
