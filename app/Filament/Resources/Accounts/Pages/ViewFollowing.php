@@ -70,10 +70,6 @@ class ViewFollowing extends Page implements HasTable
             ]);
     }
 
-    public static function getEloquentQuery(): \Illuminate\Database\Eloquent\Builder
-    {
-        return Account::query()->where('id', -1); // Dummy query, not used
-    }
 
     protected function getFollowingFromApi(): array
     {
