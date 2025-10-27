@@ -21,20 +21,15 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_stories_throws_exception_when_no_access_token(): void
+    public function it_throws_exception_when_getting_stories_without_access_token(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account = new InstagramAccount(['username' => 'test']);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        /** #endregion */
-
-        /** #region Act */
         $service = new InstagramApiService($mockClient);
         /** #endregion */
 
-        /** #region Assert */
+        /** #region Act & Assert */
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No access token available for account: test');
         $service->getStories($account);
@@ -42,15 +37,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_stories_returns_collection_of_stories(): void
+    public function it_returns_collection_of_stories(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockResponse = Mockery::mock(Response::class);
         $mockResponse->shouldReceive('json')
             ->with('data', [])
@@ -80,15 +72,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_stories_returns_empty_collection_when_no_data(): void
+    public function it_returns_empty_collection_when_no_stories_data(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockResponse = Mockery::mock(Response::class);
         $mockResponse->shouldReceive('json')
             ->with('data', [])
@@ -110,20 +99,15 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_story_comments_throws_exception_when_no_access_token(): void
+    public function it_throws_exception_when_getting_story_comments_without_access_token(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account = new InstagramAccount(['username' => 'test']);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
-        /** #endregion */
-
-        /** #region Act */
         $service = new InstagramApiService($mockClient);
         /** #endregion */
 
-        /** #region Assert */
+        /** #region Act & Assert */
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No access token available for account: test');
         $service->getStoryComments($account, 'story123');
@@ -131,15 +115,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_story_comments_returns_collection_of_comments(): void
+    public function it_returns_collection_of_story_comments(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockResponse = Mockery::mock(Response::class);
         $mockResponse->shouldReceive('json')
             ->with('data', [])
@@ -169,15 +150,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_story_comments_returns_empty_collection_when_no_comments(): void
+    public function it_returns_empty_collection_when_no_story_comments(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockResponse = Mockery::mock(Response::class);
         $mockResponse->shouldReceive('json')
             ->with('data', [])
@@ -199,10 +177,8 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function block_user_returns_false_when_no_access_token(): void
+    public function it_returns_false_when_blocking_user_without_access_token(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account = new InstagramAccount(['username' => 'test']);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
@@ -219,15 +195,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function block_user_returns_true_on_success(): void
+    public function it_returns_true_when_blocking_user_successfully(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockResponse = Mockery::mock(Response::class);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
         $mockClient->shouldReceive('request')
@@ -251,15 +224,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function block_user_returns_false_on_exception(): void
+    public function it_returns_false_when_blocking_user_throws_http_exception(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
         $mockClient->shouldReceive('request')
             ->once()
@@ -277,15 +247,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function block_user_returns_false_on_general_exception(): void
+    public function it_returns_false_when_blocking_user_throws_general_exception(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
         $mockClient->shouldReceive('request')
             ->once()
@@ -303,10 +270,8 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_user_info_returns_null_when_no_access_token(): void
+    public function it_returns_null_when_getting_user_info_without_access_token(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
         $account = new InstagramAccount(['username' => 'test']);
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
@@ -323,15 +288,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_user_info_returns_first_user_from_search_results(): void
+    public function it_returns_first_user_from_search_results(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockResponse = Mockery::mock(Response::class);
         $mockResponse->shouldReceive('json')
             ->with('data', [])
@@ -366,15 +328,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_user_info_returns_null_when_no_results(): void
+    public function it_returns_null_when_user_search_has_no_results(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockResponse = Mockery::mock(Response::class);
         $mockResponse->shouldReceive('json')
             ->with('data', [])
@@ -396,15 +355,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_user_info_returns_null_on_exception(): void
+    public function it_returns_null_when_getting_user_info_throws_http_exception(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
         $mockClient->shouldReceive('request')
             ->once()
@@ -422,15 +378,12 @@ class InstagramApiServiceTest extends TestCase
     }
 
     #[Test]
-    public function get_user_info_returns_null_on_general_exception(): void
+    public function it_returns_null_when_getting_user_info_throws_general_exception(): void
     {
-        $this->markTestIncomplete();
-
         /** #region Arrange */
-        $account = new InstagramAccount([
-            'username' => 'test',
-            'access_token' => 'valid_token',
-        ]);
+        $account = new InstagramAccount(['username' => 'test']);
+        $account->access_token = 'valid_token';
+
         $mockClient = Mockery::mock(HttpClientExceptionDecorator::class);
         $mockClient->shouldReceive('request')
             ->once()
