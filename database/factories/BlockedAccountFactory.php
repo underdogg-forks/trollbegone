@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\BlockedAccount;
 use App\Models\Account;
+use App\Models\BlockedAccount;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**

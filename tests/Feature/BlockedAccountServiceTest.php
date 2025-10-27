@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\BlockedAccount;
 use App\Models\Account;
+use App\Models\BlockedAccount;
 use App\Services\Instagram\BlockedAccountService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;

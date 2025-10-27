@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\BlockedAccount;
 use App\Models\Account;
+use App\Models\BlockedAccount;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;

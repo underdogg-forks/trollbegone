@@ -2,8 +2,8 @@
 
 namespace App\Services\Instagram;
 
-use App\Models\BlockedAccount;
 use App\Models\Account;
+use App\Models\BlockedAccount;
 use Illuminate\Support\Facades\DB;
 
 /**

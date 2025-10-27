@@ -3,8 +3,8 @@
 namespace Tests\Feature;
 
 use App\Filament\Resources\Accounts\AccountResource;
-use App\Models\BlockedAccount;
 use App\Models\Account;
+use App\Models\BlockedAccount;
 use App\Models\User;
 use App\Services\Instagram\BlockedAccountService;
 use Illuminate\Foundation\Testing\RefreshDatabase;

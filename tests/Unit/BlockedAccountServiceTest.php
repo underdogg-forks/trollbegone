@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use App\Models\BlockedAccount;
 use App\Models\Account;
+use App\Models\BlockedAccount;
 use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\BlockedAccountService;

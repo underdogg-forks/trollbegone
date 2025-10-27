@@ -56,6 +56,10 @@ class AccountsTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                Action::make('view_following')
+                    ->label('View Following')
+                    ->icon('heroicon-o-users')
+                    ->url(fn ($record) => route('filament.admin.resources.accounts.following', $record)),
                 Action::make('view_stories')
                     ->label('View Stories')
                     ->icon('heroicon-o-eye')
