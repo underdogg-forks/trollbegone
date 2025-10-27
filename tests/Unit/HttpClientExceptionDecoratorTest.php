@@ -6,7 +6,6 @@ use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientException;
 use App\Services\Http\HttpClientExceptionDecorator;
 use Exception;
-use Illuminate\Http\Client\RequestException;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Fakes\FakeHttpClient;
@@ -14,7 +13,6 @@ use Tests\TestCase;
 
 class HttpClientExceptionDecoratorTest extends TestCase
 {
-
     #[Test]
     public function it_preserves_original_exception_message(): void
     {        /** #region Arrange */

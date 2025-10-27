@@ -5,7 +5,6 @@ namespace Tests\Unit;
 use App\Models\BlockedAccount;
 use App\Models\InstagramAccount;
 use App\Services\Instagram\BlockedAccountService;
-use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Fakes\FakeInstagramApiService;

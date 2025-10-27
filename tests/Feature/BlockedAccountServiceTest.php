@@ -4,15 +4,10 @@ namespace Tests\Feature;
 
 use App\Models\BlockedAccount;
 use App\Models\InstagramAccount;
-use App\Services\Http\HttpClientException;
 use App\Services\Instagram\BlockedAccountService;
-use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
-use Tests\Fakes\FakeHttpClient;
 use Tests\Fakes\FakeInstagramApiService;
-use Tests\Fixtures\InstagramApiFixtures;
 use Tests\TestCase;
 
 class BlockedAccountServiceTest extends TestCase
