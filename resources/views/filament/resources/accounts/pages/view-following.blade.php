@@ -8,11 +8,17 @@
             @forelse($this->getFollowing() as $user)
                 <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-4 hover:shadow-lg transition">
                     <div class="flex items-center space-x-4">
-                        <img 
-                            src="{{ $user['profile_picture_url'] ?? 'https://via.placeholder.com/64' }}" 
-                            alt="{{ $user['username'] }}"
-                            class="w-16 h-16 rounded-full"
-                        />
+                        @if(isset($user['profile_picture_url']))
+                            <img 
+                                src="{{ $user['profile_picture_url'] }}" 
+                                alt="{{ $user['username'] }}"
+                                class="w-16 h-16 rounded-full"
+                            />
+                        @else
+                            <div class="w-16 h-16 rounded-full bg-gray-300 dark:bg-gray-600 flex items-center justify-center text-gray-600 dark:text-gray-300 font-bold text-xl">
+                                {{ strtoupper(substr($user['username'], 0, 1)) }}
+                            </div>
+                        @endif
                         <div class="flex-1">
                             <h3 class="font-bold text-lg">{{ $user['username'] }}</h3>
                             @if(isset($user['full_name']))

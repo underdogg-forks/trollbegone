@@ -38,47 +38,43 @@ class BlockedAccountService
         ?string $reason = null,
         ?string $commentText = null
     ): BlockedAccount {
+        // Fetch user info - don't fail if unavailable
         try {
-            // Fetch user info outside the transaction
-            try {
-                $userInfo = $this->instagramApi->getUserInfo($account, $username);
-            } catch (\Throwable $e) {
-                $userInfo = null;
-            }
-
-            // Create database record inside transaction
-            $blockedAccount = DB::transaction(function () use ($account, $username, $reason, $commentText, $userInfo) {
-                return BlockedAccount::firstOrCreate(
-                    [
-                        'instagram_account_id' => $account->id,
-                        'blocked_username' => $username,
-                    ],
-                    [
-                        'blocked_instagram_id' => $userInfo['id'] ?? null,
-                        'reason' => $reason,
-                        'comment_text' => $commentText,
-                    ]
-                );
-            });
-
-            // Call Instagram API outside the transaction
-            if ($userInfo && isset($userInfo['id'])) {
-                try {
-                    $this->instagramApi->blockUser($account, $userInfo['id']);
-                } catch (\Throwable $e) {
-                    logger()->warning('Instagram block failed', [
-                        'account_id' => $account->id,
-                        'username' => $username,
-                        'instagram_user_id' => $userInfo['id'] ?? null,
-                        'error' => $e->getMessage(),
-                    ]);
-                }
-            }
-
-            return $blockedAccount;
+            $userInfo = $this->instagramApi->getUserInfo($account, $username);
         } catch (\Throwable $e) {
-            throw new \Exception("Failed to block account: {$e->getMessage()}", 0, $e);
+            $userInfo = null;
         }
+
+        // Create database record first - ensures audit trail even if API fails
+        $blockedAccount = DB::transaction(function () use ($account, $username, $reason, $commentText, $userInfo) {
+            return BlockedAccount::updateOrCreate(
+                [
+                    'instagram_account_id' => $account->id,
+                    'blocked_username' => $username,
+                ],
+                [
+                    'blocked_instagram_id' => $userInfo['id'] ?? null,
+                    'reason' => $reason,
+                    'comment_text' => $commentText,
+                ]
+            );
+        });
+
+        // Try to block on Instagram - log warning if it fails but don't throw
+        if ($userInfo && isset($userInfo['id'])) {
+            try {
+                $this->instagramApi->blockUser($account, $userInfo['id']);
+            } catch (\Throwable $e) {
+                logger()->warning('Instagram block failed', [
+                    'account_id' => $account->id,
+                    'username' => $username,
+                    'instagram_user_id' => $userInfo['id'],
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        return $blockedAccount;
     }
 
     /**

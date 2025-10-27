@@ -90,4 +90,12 @@ class ViewPosts extends Page
     {
         return collect($this->posts);
     }
+
+    /**
+     * Format a timestamp for display.
+     */
+    public function formatTimestamp(string $timestamp): string
+    {
+        return \Carbon\Carbon::parse($timestamp)->diffForHumans();
+    }
 }

@@ -1,7 +1,7 @@
 <x-filament-panels::page>
     <div class="space-y-4">
         <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-bold">Posts from @{{ $username }}</h2>
+            <h2 class="text-xl font-bold">Posts from {{ $username }}</h2>
             <span class="text-gray-600 dark:text-gray-400">{{ count($this->getPosts()) }} posts</span>
         </div>
 
@@ -33,7 +33,7 @@
                                 @endif
                             </div>
                             @if(isset($post['timestamp']))
-                                <span>{{ \Carbon\Carbon::parse($post['timestamp'])->diffForHumans() }}</span>
+                                <span>{{ $this->formatTimestamp($post['timestamp']) }}</span>
                             @endif
                         </div>
                         
