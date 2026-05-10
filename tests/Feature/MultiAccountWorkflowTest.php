@@ -27,21 +27,18 @@ class MultiAccountWorkflowTest extends TestCase
     #[Test]
     public function grandma_can_manage_her_instagram_account_independently(): void
     {
-        /** #region Arrange */
-        // Grandma creates her account in the system
+        /* Arrange */
         $grandma = User::factory()->create([
             'name' => 'Grandma',
             'email' => 'grandma@example.com',
         ]);
 
-        // Grandma connects her Instagram account
         $grandmaInstagram = Account::factory()->create([
             'user_id' => $grandma->id,
             'username' => 'grandma_account',
             'access_token' => 'grandma_token',
         ]);
 
-        // Setup fake Instagram API service
         $fakeApiService = new FakeInstagramApiService;
         $fakeApiService->setUserInfoResponse('troll_user', [
             'id' => '999',
@@ -50,38 +47,35 @@ class MultiAccountWorkflowTest extends TestCase
         $fakeApiService->setBlockUserResult('999', true);
 
         $service = new BlockedAccountService($fakeApiService);
-        /** #endregion */
+        
 
-        /** #region Act */
-        // Grandma blocks a troll from a comment
+        /* Act */
         $blockedAccount = $service->blockAccount(
             $grandmaInstagram,
             'troll_user',
             'Blocked from story comments',
             'Offensive comment text'
         );
-        /** #endregion */
+        
 
-        /** #region Assert */
-        // Verify the block was recorded
+        /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertEquals($grandmaInstagram->id, $blockedAccount->instagram_account_id);
         $this->assertEquals('troll_user', $blockedAccount->blocked_username);
         $this->assertEquals('999', $blockedAccount->blocked_instagram_id);
         $this->assertEquals('Blocked from story comments', $blockedAccount->reason);
 
-        // Verify it's in the database
         $this->assertDatabaseHas('blocked_accounts', [
             'instagram_account_id' => $grandmaInstagram->id,
             'blocked_username' => 'troll_user',
         ]);
-        /** #endregion */
+        
     }
 
     #[Test]
     public function it_multiple_users_have_isolated_instagram_accounts(): void
     {
-        /** #region Arrange */
+        /* Arrange */
         $user1 = User::factory()->create(['name' => 'User 1']);
         $user2 = User::factory()->create(['name' => 'User 2']);
 
@@ -94,32 +88,29 @@ class MultiAccountWorkflowTest extends TestCase
             'user_id' => $user2->id,
             'username' => 'user2_instagram',
         ]);
-        /** #endregion */
+        
 
-        /** #region Act */
-        // Verify User 1 owns account 1
+        /* Act */
         $user1OwnsAccount1 = $account1->user_id === $user1->id;
 
-        // Verify User 2 owns account 2
         $user2OwnsAccount2 = $account2->user_id === $user2->id;
 
-        // Verify accounts are isolated
         $user1CannotAccessAccount2 = $account2->user_id !== $user1->id;
         $user2CannotAccessAccount1 = $account1->user_id !== $user2->id;
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertTrue($user1OwnsAccount1);
         $this->assertTrue($user2OwnsAccount2);
         $this->assertTrue($user1CannotAccessAccount2);
         $this->assertTrue($user2CannotAccessAccount1);
-        /** #endregion */
+        
     }
 
     #[Test]
     public function user_can_block_multiple_trolls_from_different_comments(): void
     {
-        /** #region Arrange */
+        /* Arrange */
         $user = User::factory()->create();
         $account = Account::factory()->create([
             'user_id' => $user->id,
@@ -128,7 +119,6 @@ class MultiAccountWorkflowTest extends TestCase
 
         $fakeApiService = new FakeInstagramApiService;
 
-        // Simulate 3 different trolls
         $trolls = [
             ['username' => 'troll1', 'id' => '111', 'comment' => 'Spam link here!'],
             ['username' => 'troll2', 'id' => '222', 'comment' => 'Offensive content'],
@@ -144,10 +134,9 @@ class MultiAccountWorkflowTest extends TestCase
         }
 
         $service = new BlockedAccountService($fakeApiService);
-        /** #endregion */
+        
 
-        /** #region Act */
-        // Block all trolls
+        /* Act */
         $blockedAccounts = [];
         foreach ($trolls as $troll) {
             $blockedAccounts[] = $service->blockAccount(
@@ -157,10 +146,9 @@ class MultiAccountWorkflowTest extends TestCase
                 $troll['comment']
             );
         }
-        /** #endregion */
+        
 
-        /** #region Assert */
-        // Verify all trolls are blocked
+        /* Assert */
         $this->assertCount(3, $blockedAccounts);
 
         foreach ($trolls as $troll) {
@@ -171,18 +159,16 @@ class MultiAccountWorkflowTest extends TestCase
             ]);
         }
 
-        // Verify account has 3 blocked users
         $this->assertEquals(3, $account->blockedAccounts()->count());
-        /** #endregion */
+        
     }
 
     #[Test]
     public function blocked_accounts_are_isolated_between_different_instagram_accounts(): void
     {
-        /** #region Arrange */
+        /* Arrange */
         $user = User::factory()->create();
 
-        // User has 2 Instagram accounts
         $account1 = Account::factory()->create([
             'user_id' => $user->id,
             'username' => 'account_1',
@@ -193,7 +179,6 @@ class MultiAccountWorkflowTest extends TestCase
             'username' => 'account_2',
         ]);
 
-        // Block a user on account 1
         BlockedAccount::create([
             'instagram_account_id' => $account1->id,
             'blocked_username' => 'troll_user',
@@ -201,25 +186,23 @@ class MultiAccountWorkflowTest extends TestCase
 
         $fakeApiService = new FakeInstagramApiService;
         $service = new BlockedAccountService($fakeApiService);
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         $isBlockedOnAccount1 = $service->isBlocked($account1, 'troll_user');
         $isBlockedOnAccount2 = $service->isBlocked($account2, 'troll_user');
-        /** #endregion */
+        
 
-        /** #region Assert */
-        // Troll is blocked on account 1 but not account 2
+        /* Assert */
         $this->assertTrue($isBlockedOnAccount1);
         $this->assertFalse($isBlockedOnAccount2);
-        /** #endregion */
+        
     }
 
     #[Test]
     public function concurrent_users_can_block_different_trolls_simultaneously(): void
     {
-        /** #region Arrange */
-        // Two grandmas using the system at the same time
+        /* Arrange */
         $grandma1 = User::factory()->create(['name' => 'Grandma 1']);
         $grandma2 = User::factory()->create(['name' => 'Grandma 2']);
 
@@ -242,30 +225,24 @@ class MultiAccountWorkflowTest extends TestCase
         $fakeApiService->setBlockUserResult('Y456', true);
 
         $service = new BlockedAccountService($fakeApiService);
-        /** #endregion */
+        
 
-        /** #region Act */
-        // Grandma 1 blocks troll_x
+        /* Act */
         $block1 = $service->blockAccount($account1, 'troll_x', 'Spam');
 
-        // Grandma 2 blocks troll_y (simultaneously/independently)
         $block2 = $service->blockAccount($account2, 'troll_y', 'Offensive');
-        /** #endregion */
+        
 
-        /** #region Assert */
-        // Both blocks succeed
+        /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $block1);
         $this->assertInstanceOf(BlockedAccount::class, $block2);
 
-        // Blocks are isolated to each account
         $this->assertEquals($account1->id, $block1->instagram_account_id);
         $this->assertEquals($account2->id, $block2->instagram_account_id);
 
-        // Each account has only their own block
         $this->assertEquals(1, $account1->blockedAccounts()->count());
         $this->assertEquals(1, $account2->blockedAccounts()->count());
 
-        // Verify database records
         $this->assertDatabaseHas('blocked_accounts', [
             'instagram_account_id' => $account1->id,
             'blocked_username' => 'troll_x',
@@ -275,6 +252,6 @@ class MultiAccountWorkflowTest extends TestCase
             'instagram_account_id' => $account2->id,
             'blocked_username' => 'troll_y',
         ]);
-        /** #endregion */
+        
     }
 }
