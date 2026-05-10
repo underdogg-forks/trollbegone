@@ -13,55 +13,42 @@ class ExternalClientTest extends TestCase
 {
     #[Test]
     public function it_can_make_get_request(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $client->request('GET', 'https://example.com/test');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertTrue($response->json('success'));
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_wraps_exceptions_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/error' => Http::response(['error' => 'Not Found'], 404),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('GET', 'https://example.com/error');
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_supports_different_http_methods(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/post' => Http::response(['method' => 'POST'], 200),
             'https://example.com/put' => Http::response(['method' => 'PUT'], 200),
@@ -70,74 +57,53 @@ class ExternalClientTest extends TestCase
         $client = new ExternalClient;
         $postResponse = $client->request('POST', 'https://example.com/post');
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $putResponse = $client->request('PUT', 'https://example.com/put');
         $deleteResponse = $client->request('DELETE', 'https://example.com/delete');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals('POST', $postResponse->json('method'));
         $this->assertEquals('PUT', $putResponse->json('method'));
         $this->assertEquals('DELETE', $deleteResponse->json('method'));
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_supports_patch_method(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/patch' => Http::response(['method' => 'PATCH'], 200),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $client->request('PATCH', 'https://example.com/patch');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertEquals('PATCH', $response->json('method'));
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_can_send_request_with_timeout(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $client->request('GET', 'https://example.com/test', ['timeout' => 60]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_can_send_request_with_custom_headers(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -148,24 +114,17 @@ class ExternalClientTest extends TestCase
                 'Accept' => 'application/json',
             ],
 
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
+        /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_can_send_request_with_bearer_token(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/secure' => Http::response(['authenticated' => true], 200),
         ]);
@@ -173,24 +132,17 @@ class ExternalClientTest extends TestCase
         $response = $client->request('GET', 'https://example.com/secure', [
             'token' => 'bearer_token_123',
 
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
+        /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_can_use_base_uri(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://api.example.com/users' => Http::response(['users' => []], 200),
         ]);
@@ -198,47 +150,33 @@ class ExternalClientTest extends TestCase
         $response = $client->request('GET', 'https://api.example.com/users', [
             'base_uri' => 'https://api.example.com',
 
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
+        /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_uses_default_timeout_values(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $client->request('GET', 'https://example.com/test');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_can_override_connect_timeout(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -246,24 +184,17 @@ class ExternalClientTest extends TestCase
         $response = $client->request('GET', 'https://example.com/test', [
             'connect_timeout' => 5,
 
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
+        /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_preserves_status_code_in_decorator_exceptions(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/forbidden' => Http::response(['error' => 'Forbidden'], 403),
         ]);
@@ -273,25 +204,19 @@ class ExternalClientTest extends TestCase
             $decorator->request('GET', 'https://example.com/forbidden');
             $this->fail('Expected HttpClientException to be thrown');
 
-            /** #endregion */
+        /* Act */
 
-            /** #region Act */
-            /* Act */
-
-            /** #endregion */
-
-            /** #region Assert */
-            /* Assert */
+        /* Assert */
 
         } catch (HttpClientException $e) {
             $this->assertEquals(403, $e->getCode());
-            /** #endregion */
         }
     }
 
     #[Test]
     public function it_handles_server_errors_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/error' => Http::response(['error' => 'Internal Server Error'], 500),
         ]);
@@ -301,132 +226,93 @@ class ExternalClientTest extends TestCase
             $decorator->request('GET', 'https://example.com/error');
             $this->fail('Expected HttpClientException to be thrown');
 
-            /** #endregion */
+        /* Act */
 
-            /** #region Act */
-            /* Act */
-
-            /** #endregion */
-
-            /** #region Assert */
-            /* Assert */
+        /* Assert */
 
         } catch (HttpClientException $e) {
             $this->assertEquals(500, $e->getCode());
-            /** #endregion */
         }
     }
 
     #[Test]
     public function it_wraps_post_exceptions_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/bad-request' => Http::response(['error' => 'Bad Request'], 400),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('POST', 'https://example.com/bad-request');
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_wraps_put_exceptions_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/conflict' => Http::response(['error' => 'Conflict'], 409),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('PUT', 'https://example.com/conflict');
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_wraps_delete_exceptions_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/gone' => Http::response(['error' => 'Gone'], 410),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('DELETE', 'https://example.com/gone');
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_wraps_patch_exceptions_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/unprocessable' => Http::response(['error' => 'Unprocessable'], 422),
         ]);
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('PATCH', 'https://example.com/unprocessable');
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_wraps_general_exceptions_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake(function () {
             throw new \RuntimeException('Network error');
-            /** #endregion */
 
-            /** #region Act */
-            /* Act */
+        /* Act */
 
-            /** #endregion */
-
-            /** #region Assert */
-            /* Assert */
+        /* Assert */
 
         });
 
@@ -439,63 +325,49 @@ class ExternalClientTest extends TestCase
         } catch (HttpClientException $e) {
             $this->assertStringContainsString('HTTP request failed', $e->getMessage());
             $this->assertEquals(0, $e->getCode());
-            /** #endregion */
         }
     }
 
     #[Test]
     public function it_allows_successful_requests_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/success' => Http::response(['success' => true], 200),
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $decorator->request('GET', 'https://example.com/success');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertTrue($response->json('success'));
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_allows_successful_post_in_decorator(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/create' => Http::response(['created' => true], 201),
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $decorator->request('POST', 'https://example.com/create');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(201, $response->status());
         $this->assertTrue($response->json('created'));
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_applies_all_options(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://api.example.com/test' => Http::response(['success' => true], 200),
         ]);
@@ -507,89 +379,60 @@ class ExternalClientTest extends TestCase
             'token' => 'bearer_token',
             'base_uri' => 'https://api.example.com',
 
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
+        /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_supports_magic_call_method_for_get(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $decorator->get('https://example.com/test');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertTrue($response->json('success'));
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_supports_magic_call_method_for_post(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         Http::fake([
             'https://example.com/create' => Http::response(['created' => true], 201),
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $decorator->post('https://example.com/create');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(201, $response->status());
         $this->assertTrue($response->json('created'));
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_throws_exception_for_invalid_magic_method(): void
-    {        /* Arrange */
+    {
+        /* Arrange */
         $client = new ExternalClient;
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->expectException(\BadMethodCallException::class);
         $decorator->invalid('https://example.com/test');
-
-        /** #endregion */
     }
 }
