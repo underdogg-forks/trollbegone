@@ -4,9 +4,9 @@ namespace App\Services\Instagram;
 
 use App\Models\Account;
 use App\Models\BlockedAccount;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 
 /**
  * BlockedAccountService manages blocking functionality for Instagram accounts.
