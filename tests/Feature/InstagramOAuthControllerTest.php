@@ -14,43 +14,8 @@ class InstagramOAuthControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    #[Test]
-    public function it_stores_access_token_from_oauth_callback_for_authenticated_user(): void
+    private function fakeSocialiteDriver(SocialiteUserContract $instagramUser): void
     {
-        /** #region Arrange */
-        $user = User::factory()->create();
-        $this->actingAs($user);
-
-        $instagramUser = new class implements SocialiteUserContract
-        {
-            public string $token = 'oauth_token_123';
-
-            public function getId()
-            {
-                return 'ig-user-1';
-            }
-
-            public function getNickname()
-            {
-                return 'connected_user';
-            }
-
-            public function getName()
-            {
-                return 'Connected User';
-            }
-
-            public function getEmail()
-            {
-                return null;
-            }
-
-            public function getAvatar()
-            {
-                return null;
-            }
-        };
-
         $provider = new class($instagramUser)
         {
             public function __construct(private readonly SocialiteUserContract $instagramUser) {}
@@ -65,6 +30,64 @@ class InstagramOAuthControllerTest extends TestCase
             ->once()
             ->with('instagram')
             ->andReturn($provider);
+    }
+
+    private function makeSocialiteUser(
+        string $id,
+        string $nickname,
+        string $name,
+        string $token
+    ): SocialiteUserContract {
+        return new class($id, $nickname, $name, $token) implements SocialiteUserContract
+        {
+            public function __construct(
+                private readonly string $id,
+                private readonly string $nickname,
+                private readonly string $name,
+                public string $token
+            ) {}
+
+            public function getId()
+            {
+                return $this->id;
+            }
+
+            public function getNickname()
+            {
+                return $this->nickname;
+            }
+
+            public function getName()
+            {
+                return $this->name;
+            }
+
+            public function getEmail()
+            {
+                return null;
+            }
+
+            public function getAvatar()
+            {
+                return null;
+            }
+        };
+    }
+
+    #[Test]
+    public function it_stores_access_token_from_oauth_callback_for_authenticated_user(): void
+    {
+        /** #region Arrange */
+        $user = User::factory()->create();
+        $this->actingAs($user);
+
+        $instagramUser = $this->makeSocialiteUser(
+            id: 'ig-user-1',
+            nickname: 'connected_user',
+            name: 'Connected User',
+            token: 'oauth_token_123'
+        );
+        $this->fakeSocialiteDriver($instagramUser);
         /** #endregion */
 
         /** #region Act */
@@ -101,50 +124,13 @@ class InstagramOAuthControllerTest extends TestCase
             'is_active' => true,
         ]);
 
-        $instagramUser = new class implements SocialiteUserContract
-        {
-            public string $token = 'renewed_token';
-
-            public function getId()
-            {
-                return 'ig-user-2';
-            }
-
-            public function getNickname()
-            {
-                return 'reconnect_user';
-            }
-
-            public function getName()
-            {
-                return 'Reconnect User';
-            }
-
-            public function getEmail()
-            {
-                return null;
-            }
-
-            public function getAvatar()
-            {
-                return null;
-            }
-        };
-
-        $provider = new class($instagramUser)
-        {
-            public function __construct(private readonly SocialiteUserContract $instagramUser) {}
-
-            public function user(): SocialiteUserContract
-            {
-                return $this->instagramUser;
-            }
-        };
-
-        Socialite::shouldReceive('driver')
-            ->once()
-            ->with('instagram')
-            ->andReturn($provider);
+        $instagramUser = $this->makeSocialiteUser(
+            id: 'ig-user-2',
+            nickname: 'reconnect_user',
+            name: 'Reconnect User',
+            token: 'renewed_token'
+        );
+        $this->fakeSocialiteDriver($instagramUser);
         /** #endregion */
 
         /** #region Act */

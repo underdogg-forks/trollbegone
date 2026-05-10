@@ -25,7 +25,7 @@ class CommentModerationService
         Collection $comments,
         array $selectedCommenters
     ): Collection {
-        if (empty($selectedCommenters)) {
+        if (empty($selectedCommenters) || $comments->isEmpty()) {
             return collect();
         }
 
