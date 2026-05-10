@@ -17,6 +17,7 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function blocking_account_creates_database_record(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'access_token' => 'test_token',
@@ -32,10 +33,16 @@ class BlockedAccountServiceTest extends TestCase
         $service = new BlockedAccountService($fakeApiService);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $service->blockAccount($account, 'spammer', 'Spam comments');
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertDatabaseHas('blocked_accounts', [
             'instagram_account_id' => $account->id,
@@ -44,11 +51,13 @@ class BlockedAccountServiceTest extends TestCase
             'reason' => 'Spam comments',
         ]);
         
+    /** #endregion */
     }
 
     #[Test]
     public function checking_if_user_is_blocked_queries_database(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'access_token' => 'test_token',
@@ -61,19 +70,27 @@ class BlockedAccountServiceTest extends TestCase
         $fakeApiService = new FakeInstagramApiService;
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $service = new BlockedAccountService($fakeApiService);
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertTrue($service->isBlocked($account, 'blocked_user'));
         $this->assertFalse($service->isBlocked($account, 'not_blocked_user'));
         
+    /** #endregion */
     }
 
     #[Test]
     public function get_blocked_accounts_returns_only_account_specific_blocks(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account1 = Account::factory()->create([
             'access_token' => 'token1',
@@ -99,19 +116,27 @@ class BlockedAccountServiceTest extends TestCase
         $account1Blocks = $service->getBlockedAccounts($account1);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $account2Blocks = $service->getBlockedAccounts($account2);
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertCount(2, $account1Blocks);
         $this->assertCount(1, $account2Blocks);
         
+    /** #endregion */
     }
 
     #[Test]
     public function blocking_handles_api_failure_gracefully(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'access_token' => 'test_token',
@@ -128,20 +153,28 @@ class BlockedAccountServiceTest extends TestCase
         $blockedAccount = $service->blockAccount($account, 'target_user');
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertDatabaseHas('blocked_accounts', [
             'blocked_username' => 'target_user',
         ]);
         
+    /** #endregion */
     }
 
     #[Test]
     public function blocking_user_not_found_still_creates_record(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'access_token' => 'test_token',
@@ -153,10 +186,16 @@ class BlockedAccountServiceTest extends TestCase
         $service = new BlockedAccountService($fakeApiService);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $blockedAccount = $service->blockAccount($account, 'ghost_user');
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertNull($blockedAccount->blocked_instagram_id);
@@ -164,5 +203,6 @@ class BlockedAccountServiceTest extends TestCase
             'blocked_username' => 'ghost_user',
         ]);
         
+    /** #endregion */
     }
 }
