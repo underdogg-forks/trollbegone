@@ -17,21 +17,20 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
-        // No arrangement needed
-        /** #endregion */
+        /* Arrange */
+        
 
-        /** #region Act */
+        /* Act */
         $fillable = (new BlockedAccount)->getFillable();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertContains('instagram_account_id', $fillable);
         $this->assertContains('blocked_username', $fillable);
         $this->assertContains('blocked_instagram_id', $fillable);
         $this->assertContains('reason', $fillable);
         $this->assertContains('comment_text', $fillable);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -39,19 +38,19 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
+        /* Arrange */
         $account = Account::factory()->create();
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         $blockedAccount = BlockedAccount::factory()->forAccount($account)->create();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $blockedAccount->account());
         $this->assertInstanceOf(Account::class, $blockedAccount->account);
         $this->assertEquals($account->id, $blockedAccount->account->id);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -59,17 +58,16 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
-        // No arrangement needed
-        /** #endregion */
+        /* Arrange */
+        
 
-        /** #region Act */
+        /* Act */
         $blockedAccount = BlockedAccount::factory()->withoutInstagramId()->create();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertNull($blockedAccount->blocked_instagram_id);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -77,18 +75,18 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
+        /* Arrange */
         $blockedAccount = BlockedAccount::factory()->create([
             'reason' => null,
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         ]);
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertNull($blockedAccount->reason);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -96,18 +94,18 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
+        /* Arrange */
         $blockedAccount = BlockedAccount::factory()->create([
             'comment_text' => null,
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         ]);
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertNull($blockedAccount->comment_text);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -115,17 +113,17 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
+        /* Arrange */
         $reason = 'Spam and harassment';
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         $blockedAccount = BlockedAccount::factory()->withReason($reason)->create();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertEquals($reason, $blockedAccount->reason);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -133,17 +131,17 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
+        /* Arrange */
         $comment = 'This is the offensive comment';
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         $blockedAccount = BlockedAccount::factory()->withComment($comment)->create();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertEquals($comment, $blockedAccount->comment_text);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -151,19 +149,19 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
+        /* Arrange */
         $blockedAccount = BlockedAccount::factory()->create([
             'reason' => 'Original reason',
         ]);
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         $blockedAccount->update(['reason' => 'Updated reason']);
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertEquals('Updated reason', $blockedAccount->fresh()->reason);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -171,18 +169,17 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
-        // No arrangement needed
-        /** #endregion */
+        /* Arrange */
+        
 
-        /** #region Act */
+        /* Act */
         $blockedAccount = BlockedAccount::factory()->create();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertNotNull($blockedAccount->created_at);
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $blockedAccount->created_at);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -190,18 +187,17 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
-        // No arrangement needed
-        /** #endregion */
+        /* Arrange */
+        
 
-        /** #region Act */
+        /* Act */
         $blockedAccount = BlockedAccount::factory()->create();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertNotNull($blockedAccount->updated_at);
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $blockedAccount->updated_at);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -209,19 +205,18 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
-        // No arrangement needed
-        /** #endregion */
+        /* Arrange */
+        
 
-        /** #region Act */
+        /* Act */
         $blockedAccount = BlockedAccount::factory()->create();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertNotNull($blockedAccount->instagram_account_id);
         $this->assertNotNull($blockedAccount->blocked_username);
         $this->assertIsString($blockedAccount->blocked_username);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -229,20 +224,20 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
+        /* Arrange */
         $account = Account::factory()->create();
         $blocked1 = BlockedAccount::factory()->forAccount($account)->create();
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         $blocked2 = BlockedAccount::factory()->forAccount($account)->create();
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertEquals($account->id, $blocked1->instagram_account_id);
         $this->assertEquals($account->id, $blocked2->instagram_account_id);
         $this->assertNotEquals($blocked1->id, $blocked2->id);
-        /** #endregion */
+        
     }
 
     #[Test]
@@ -250,7 +245,7 @@ class BlockedAccountModelTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
+        /* Arrange */
         $account1 = Account::factory()->create();
         $account2 = Account::factory()->create();
         $blocked1 = BlockedAccount::factory()->forAccount($account1)->create([
@@ -258,16 +253,16 @@ class BlockedAccountModelTest extends TestCase
         ]);
         $blocked2 = BlockedAccount::factory()->forAccount($account2)->create([
             'blocked_username' => 'same_user',
-        /** #endregion */
+        
 
-        /** #region Act */
+        /* Act */
         ]);
-        /** #endregion */
+        
 
-        /** #region Assert */
+        /* Assert */
         $this->assertEquals('same_user', $blocked1->blocked_username);
         $this->assertEquals('same_user', $blocked2->blocked_username);
         $this->assertNotEquals($blocked1->instagram_account_id, $blocked2->instagram_account_id);
-        /** #endregion */
+        
     }
 }
