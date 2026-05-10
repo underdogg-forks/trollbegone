@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\BlockedAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Collection;
 
 /**
  * BlockedAccountService manages blocking functionality for Instagram accounts.
@@ -101,5 +102,26 @@ class BlockedAccountService
     public function getBlockedAccounts(Account $account): \Illuminate\Database\Eloquent\Collection
     {
         return $account->blockedAccounts()->latest()->get();
+    }
+
+    public function blockAccountsFromCommentsByTag(
+        Account $account,
+        Collection $comments,
+        string $tag = 'TrollBeGone'
+    ): Collection {
+        $needle = '#'.ltrim(strtolower($tag), '#');
+
+        return $comments
+            ->filter(function (array $comment) use ($needle) {
+                $text = strtolower((string) ($comment['text'] ?? ''));
+
+                return isset($comment['username']) && str_contains($text, $needle);
+            })
+            ->map(fn (array $comment) => $this->blockAccount(
+                $account,
+                $comment['username'],
+                'Blocked from tagged comment',
+                $comment['text'] ?? null
+            ));
     }
 }
