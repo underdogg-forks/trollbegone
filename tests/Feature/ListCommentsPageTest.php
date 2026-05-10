@@ -60,6 +60,7 @@ class ListCommentsPageTest extends TestCase
 
         /** #region Assert */
         Queue::assertPushed(BlockUserJob::class, function (BlockUserJob $job): bool {
+            // Assert queued job targets the deleted comment's author with delete+block reason.
             return $job->account->is($this->account)
                 && $job->username === 'single_troll'
                 && $job->reason === 'Deleted and blocked from post comments';

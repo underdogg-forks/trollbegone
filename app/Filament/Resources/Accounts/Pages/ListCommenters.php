@@ -32,8 +32,18 @@ class ListCommenters extends Page
 
     public array $selectedCommenters = [];
 
+    protected InstagramApiService $instagramApi;
+
     #[Locked]
     public array $comments = [];
+
+    /**
+     * Inject dependencies via Livewire's boot method.
+     */
+    public function boot(InstagramApiService $instagramApi): void
+    {
+        $this->instagramApi = $instagramApi;
+    }
 
     public function mount(Account $record, string $post): void
     {
@@ -45,8 +55,7 @@ class ListCommenters extends Page
     protected function getCommentsFromApi(): array
     {
         try {
-            $apiService = app(InstagramApiService::class);
-            $comments = $apiService->getPostComments($this->record, $this->postId);
+            $comments = $this->instagramApi->getPostComments($this->record, $this->postId);
 
             return $comments->all();
         } catch (\Exception $e) {
@@ -85,7 +94,13 @@ class ListCommenters extends Page
         $selectedCommentersLookup = array_flip($this->selectedCommenters);
 
         $commentsByUser = collect($this->comments)
-            ->filter(fn (array $comment): bool => isset($selectedCommentersLookup[$comment['username'] ?? '']))
+            ->filter(function (array $comment) use ($selectedCommentersLookup): bool {
+                if (! isset($comment['username']) || $comment['username'] === '') {
+                    return false;
+                }
+
+                return isset($selectedCommentersLookup[$comment['username']]);
+            })
             ->groupBy('username')
             ->map(fn (Collection $items): array => $items->first());
 
