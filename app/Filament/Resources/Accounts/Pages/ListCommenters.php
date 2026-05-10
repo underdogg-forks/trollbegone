@@ -82,12 +82,14 @@ class ListCommenters extends Page
             return;
         }
 
-        $commentByUser = collect($this->comments)
-            ->filter(fn (array $comment): bool => in_array($comment['username'] ?? '', $this->selectedCommenters, true))
+        $selectedCommentersLookup = array_flip($this->selectedCommenters);
+
+        $commentsByUser = collect($this->comments)
+            ->filter(fn (array $comment): bool => isset($selectedCommentersLookup[$comment['username'] ?? '']))
             ->groupBy('username')
             ->map(fn (Collection $items): array => $items->first());
 
-        foreach ($commentByUser as $username => $comment) {
+        foreach ($commentsByUser as $username => $comment) {
             BlockUserJob::dispatch(
                 account: $this->record,
                 username: (string) $username,
@@ -97,7 +99,7 @@ class ListCommenters extends Page
         }
 
         Notification::make()
-            ->title('Queued block jobs for '.count($commentByUser).' commenter(s)')
+            ->title('Queued block jobs for '.count($commentsByUser).' commenter(s)')
             ->success()
             ->send();
 
