@@ -38,12 +38,25 @@
                         </div>
                         
                         <div class="pt-2">
-                            <a 
-                                href="{{ route('filament.admin.resources.accounts.comments', ['record' => $record->id, 'post' => $post['id']]) }}"
-                                class="block w-full text-center bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded transition"
-                            >
-                                View Comments
-                            </a>
+                            <details class="relative">
+                                <summary class="list-none cursor-pointer block w-full text-center bg-primary-600 hover:bg-primary-700 text-white font-medium py-2 px-4 rounded transition">
+                                    Moderation Actions
+                                </summary>
+                                <div class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+                                    <a
+                                        href="{{ route('filament.admin.resources.accounts.comments', ['record' => $record->id, 'post' => $post['id'], 'username' => $username]) }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    >
+                                        List Comments
+                                    </a>
+                                    <a
+                                        href="{{ route('filament.admin.resources.accounts.commenters', ['record' => $record->id, 'post' => $post['id']]) }}"
+                                        class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
+                                    >
+                                        List Commenters
+                                    </a>
+                                </div>
+                            </details>
                         </div>
                     </div>
                 </div>
