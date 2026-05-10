@@ -40,11 +40,8 @@ class TrollBeGoneWorkflowTest extends TestCase
     {
         /* Arrange */
         $fakeHttpClient = new FakeHttpClient;
-        $fakeHttpClient->addResponse('/search', ['data' => [['id' => 'followed-1', 'username' => 'followed_user']]]);
-        $fakeHttpClient->addResponse('/followed-1/media', ['data' => [
-            ['id' => 'post-1', 'caption' => 'hello'],
-            ['id' => 'post-2', 'caption' => 'world'],
-        ]]);
+        $fakeHttpClient->addResponse('/search', InstagramApiFixtures::getFollowedUserSearchResponse());
+        $fakeHttpClient->addResponse('/followed-1/media', InstagramApiFixtures::getFollowedUserMediaResponse());
 
         $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
         $account = Account::factory()->create(['access_token' => 'token']);
@@ -62,14 +59,7 @@ class TrollBeGoneWorkflowTest extends TestCase
     {
         /* Arrange */
         $fakeHttpClient = new FakeHttpClient;
-        $fakeHttpClient->addResponse('/post-1/comments', ['data' => [
-            ['id' => 'c1', 'username' => 'alpha', 'text' => 'nice post'],
-            ['id' => 'c2', 'username' => 'beta', 'text' => 'spam #TrollBeGone'],
-            ['id' => 'c3', 'username' => 'gamma', 'text' => 'rude #trollbegone'],
-            ['id' => 'c4', 'username' => 'delta', 'text' => 'also rude #TROLLBEGONE'],
-            ['id' => 'c5', 'username' => 'epsilon', 'text' => 'bad #Trollbegone'],
-            ['id' => 'c6', 'username' => 'zeta', 'text' => 'mixed #tRoLlBeGoNe'],
-        ]]);
+        $fakeHttpClient->addResponse('/post-1/comments', InstagramApiFixtures::getPostCommentsWithTrollBeGoneTagsResponse());
 
         $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
         $account = Account::factory()->create(['access_token' => 'token']);

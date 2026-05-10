@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Queue;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\Fakes\FakeInstagramApiService;
+use Tests\Fixtures\InstagramApiFixtures;
 use Tests\TestCase;
 
 class ListCommentersPageTest extends TestCase
@@ -32,11 +33,7 @@ class ListCommentersPageTest extends TestCase
         ]);
 
         $fakeApi = new FakeInstagramApiService;
-        $fakeApi->setPostCommentsResponse('post-44', collect([
-            ['id' => 'c1', 'username' => 'alpha', 'text' => 'first'],
-            ['id' => 'c2', 'username' => 'alpha', 'text' => 'second'],
-            ['id' => 'c3', 'username' => 'beta', 'text' => 'third'],
-        ]));
+        $fakeApi->setPostCommentsResponse('post-44', collect(InstagramApiFixtures::getCommenterModerationComments()));
         $this->app->instance(InstagramApiService::class, $fakeApi);
         /** #endregion */
 
