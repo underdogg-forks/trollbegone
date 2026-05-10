@@ -11,10 +11,10 @@ use Illuminate\Http\Client\Response;
  * HttpClientExceptionDecorator wraps ExternalClient to provide consistent exception handling.
  * All HTTP errors and exceptions are caught and wrapped in HttpClientException.
  */
-class HttpClientExceptionDecorator
+class HttpClientExceptionDecorator implements ApiClient
 {
     public function __construct(
-        protected ExternalClient $client
+        protected ApiClient $client
     ) {}
 
     /**
