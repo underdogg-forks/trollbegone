@@ -114,7 +114,6 @@ class AccountTest extends TestCase
 
         /* Assert */
         $this->assertNotNull($account->fresh()->last_synced_at);
-        // SQLite stores timestamps without microseconds; compare at second precision.
         $this->assertEquals($syncTime->startOfSecond()->timestamp, $account->fresh()->last_synced_at->timestamp);
     }
 
