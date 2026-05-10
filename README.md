@@ -303,20 +303,29 @@ Both operations are **independent** and **thread-safe**.
 1. Facebook Developer account
 2. Instagram Business or Creator account
 3. Facebook App with Instagram Graph API access
-4. Access token for each Instagram account
+4. TrollBeGone configured with Instagram OAuth credentials (`INSTAGRAM_CLIENT_ID`, `INSTAGRAM_CLIENT_SECRET`, `INSTAGRAM_REDIRECT_URI`)
 
-### Getting an Access Token
+### Connect Instagram (Non-Technical Walkthrough)
 
-1. Create a Facebook App.
-2. Add Instagram Graph API permissions (`instagram_basic`, `instagram_manage_comments`, `instagram_manage_insights`).
-3. Configure `INSTAGRAM_CLIENT_ID`, `INSTAGRAM_CLIENT_SECRET`, and `INSTAGRAM_REDIRECT_URI` in `.env`.
-4. In the app, open **Admin → Instagram Accounts** and click **Connect Instagram** (OAuth flow).
-5. After callback, TrollBeGone stores the returned token in `instagram_accounts.access_token` (encrypted cast on `Account` model).
+You do **not** paste API tokens manually.
 
-```php
-$account->access_token = 'your_long_lived_token';
-$account->save();
-```
+If your admin already configured the app credentials, you only need to:
+
+1. Log in to TrollBeGone.
+2. Go to **Admin → Instagram Accounts**.
+3. Click **Connect Instagram**.
+4. Sign in to Instagram/Facebook and approve access.
+5. You return to TrollBeGone and your account shows as connected.
+
+That is it. Socialite handles the OAuth2 redirect flow and TrollBeGone stores the returned access token for that specific Instagram account.
+
+### What Socialite Is Doing Behind the Scenes
+
+- Opens Instagram/Facebook login page securely.
+- Asks for required permissions.
+- Receives an access token after approval.
+- Saves that token in `instagram_accounts.access_token` for the connected account.
+- Reconnecting the same account updates/replaces the token automatically.
 
 ### Token Retrieval and Renewal in TrollBeGone
 
