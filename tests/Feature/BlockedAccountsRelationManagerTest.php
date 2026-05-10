@@ -44,18 +44,26 @@ class BlockedAccountsRelationManagerTest extends TestCase
     {
         $this->markTestIncomplete();
 
+        /** #region Arrange */
         /* Arrange */
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $response = $this->get(
             AccountResource::getUrl('view', ['record' => $this->account])
         );
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $response->assertSuccessful();
         
+    /** #endregion */
     }
 
     #[Test]
@@ -73,6 +81,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
     #[Test]
     public function it_blocked_account_creation_uses_transaction(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $fakeApiService = new FakeInstagramApiService;
         $fakeApiService->setUserInfoResponse('test_user', null); // Simulate getUserInfo returning null
@@ -80,6 +89,9 @@ class BlockedAccountsRelationManagerTest extends TestCase
         $service = new BlockedAccountService($fakeApiService);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $result = $service->blockAccount(
             $this->account,
@@ -88,6 +100,9 @@ class BlockedAccountsRelationManagerTest extends TestCase
         );
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $result);
         $this->assertDatabaseHas('blocked_accounts', [
@@ -95,6 +110,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
             'blocked_username' => 'test_user',
         ]);
         
+    /** #endregion */
     }
 
     #[Test]

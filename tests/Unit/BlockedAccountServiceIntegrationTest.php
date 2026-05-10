@@ -22,6 +22,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     #[Test]
     public function complete_blocking_workflow_with_fixtures(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_account',
@@ -39,6 +40,9 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $service = new BlockedAccountService($fakeInstagramApi);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $blockedAccount = $service->blockAccount(
             $account,
@@ -48,6 +52,9 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         );
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertEquals('test_user', $blockedAccount->blocked_username);
@@ -55,11 +62,13 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $this->assertEquals('Spam content', $blockedAccount->reason);
         $this->assertEquals('Check out this spam link!', $blockedAccount->comment_text);
         
+    /** #endregion */
     }
 
     #[Test]
     public function blocking_workflow_when_user_search_fails(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_account',
@@ -74,6 +83,9 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $service = new BlockedAccountService($fakeInstagramApi);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $blockedAccount = $service->blockAccount(
             $account,
@@ -82,17 +94,22 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         );
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertEquals('unknown_user', $blockedAccount->blocked_username);
         $this->assertNull($blockedAccount->blocked_instagram_id);
         $this->assertEquals('Suspicious activity', $blockedAccount->reason);
         
+    /** #endregion */
     }
 
     #[Test]
     public function blocking_multiple_users_from_comments(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_account',
@@ -108,6 +125,9 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         });
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         foreach ($spamComments as $comment) {
             $fakeInstagramApi = new FakeInstagramApiService;
@@ -132,15 +152,20 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $blockedAccounts = BlockedAccount::where('instagram_account_id', $account->id)->get();
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertCount(1, $blockedAccounts);
         $this->assertEquals('spam_account', $blockedAccounts->first()->blocked_username);
         
+    /** #endregion */
     }
 
     #[Test]
     public function is_blocked_with_fixture_data(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_account',
@@ -162,20 +187,28 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $service = new BlockedAccountService($fakeInstagramApi);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $isBlocked = $service->isBlocked($account, $fixtureUser['username']);
         $isNotBlocked = $service->isBlocked($account, 'not_blocked_user');
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertTrue($isBlocked);
         $this->assertFalse($isNotBlocked);
         
+    /** #endregion */
     }
 
     #[Test]
     public function get_blocked_accounts_returns_latest_first(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_account',
@@ -200,10 +233,16 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $service = new BlockedAccountService($fakeInstagramApi);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $blockedAccounts = $service->getBlockedAccounts($account);
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertCount(3, $blockedAccounts);
         $usernames = $blockedAccounts->pluck('blocked_username')->toArray();
@@ -211,11 +250,13 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $this->assertContains('jane_smith_456', $usernames);
         $this->assertContains('spam_account', $usernames);
         
+    /** #endregion */
     }
 
     #[Test]
     public function blocking_workflow_when_api_block_fails(): void
     {
+        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_account',
@@ -233,13 +274,20 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $service = new BlockedAccountService($fakeInstagramApi);
         
 
+        /** #endregion */
+
+        /** #region Act */
         /* Act */
         $blockedAccount = $service->blockAccount($account, 'test_user', 'Spam');
         
 
+        /** #endregion */
+
+        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertEquals('test_user', $blockedAccount->blocked_username);
         
+    /** #endregion */
     }
 }
