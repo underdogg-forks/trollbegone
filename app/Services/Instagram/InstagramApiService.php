@@ -124,7 +124,6 @@ class InstagramApiService extends InstagramBaseClient
             return false;
         }
     }
-
     /**
      * Get stories for an Instagram account.
      *
