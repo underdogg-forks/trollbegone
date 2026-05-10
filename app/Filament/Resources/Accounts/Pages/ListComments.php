@@ -17,6 +17,7 @@ use Livewire\Attributes\Locked;
  * List Comments Page
  *
  * Displays post comments and provides single/bulk moderation actions.
+ * This is a custom resource page backed by Instagram API data (not Eloquent records).
  */
 class ListComments extends Page
 {
@@ -167,6 +168,15 @@ class ListComments extends Page
             ->send();
     }
 
+    public function deleteAndBlockSelected(): void
+    {
+        if (! $this->hasSingleSelectedComment()) {
+            return;
+        }
+
+        $this->deleteAndBlockComment((string) $this->selectedComments[0]);
+    }
+
     public function bulkDeleteTaggedComments(string $tag = 'trollbegone'): void
     {
         $taggedComments = $this->instagramApi->filterCommentsByTag(collect($this->comments), $tag);
@@ -240,6 +250,16 @@ class ListComments extends Page
                 ->modalDescription('This removes #trollbegone comments and queues block jobs for their authors.')
                 ->modalSubmitActionLabel('Delete + Block')
                 ->action(fn () => $this->bulkDeleteTaggedComments()),
+            Action::make('delete_and_block_selected')
+                ->label('Delete + Block Selected')
+                ->icon('heroicon-o-trash')
+                ->color('danger')
+                ->requiresConfirmation()
+                ->modalHeading('Delete selected comment and block user?')
+                ->modalDescription('This will delete the selected comment and block its author.')
+                ->modalSubmitActionLabel('Delete + Block')
+                ->action(fn () => $this->deleteAndBlockSelected())
+                ->disabled(fn () => ! $this->hasSingleSelectedComment()),
             Action::make('block_selected')
                 ->label('Block Selected Users')
                 ->icon('heroicon-o-no-symbol')
@@ -274,5 +294,10 @@ class ListComments extends Page
     private function removeSelectedItems(array $selectedItems, array $itemsToRemove): array
     {
         return array_values(array_diff($selectedItems, $itemsToRemove));
+    }
+
+    private function hasSingleSelectedComment(): bool
+    {
+        return count($this->selectedComments) === 1;
     }
 }
