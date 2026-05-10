@@ -305,6 +305,20 @@ Both operations are **independent** and **thread-safe**.
 3. Facebook App with Instagram Graph API access
 4. TrollBeGone configured with Instagram OAuth credentials (`INSTAGRAM_CLIENT_ID`, `INSTAGRAM_CLIENT_SECRET`, `INSTAGRAM_REDIRECT_URI`)
 
+### OAuth Scopes and Permissions
+
+TrollBeGone requests the following OAuth scopes:
+
+- **`instagram_basic`**: Read basic account info and following list
+- **`instagram_manage_comments`**: Read and manage comments on your posts
+- **`instagram_manage_insights`**: Access to insights data (reserved for future use)
+
+**Important:** See [docs/PRIVACY_AND_PERMISSIONS.md](docs/PRIVACY_AND_PERMISSIONS.md) for complete details on:
+- What data we can and cannot access
+- GDPR compliance
+- How to revoke access
+- Data storage and retention
+
 ### Connect Instagram (Non-Technical Walkthrough)
 
 You do **not** paste API tokens manually.

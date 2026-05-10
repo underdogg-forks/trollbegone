@@ -15,6 +15,14 @@ class InstagramOAuthController extends Controller
 {
     /**
      * Redirect the user to the Instagram authentication page.
+     *
+     * OAuth Scopes Requested:
+     * - instagram_basic: Read basic account info and following list
+     * - instagram_manage_comments: Read and manage comments on posts
+     * - instagram_manage_insights: Access to insights data (reserved for future use)
+     *
+     * See docs/PRIVACY_AND_PERMISSIONS.md for complete details on what
+     * TrollBeGone can and cannot do with these permissions.
      */
     public function redirectToProvider(): RedirectResponse
     {
