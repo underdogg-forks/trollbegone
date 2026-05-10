@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\Accounts\Pages;
 
 use App\Filament\Resources\Accounts\AccountResource;
-use App\Jobs\BlockUserJob;
 use App\Models\Account;
+use App\Services\Instagram\CommentModerationService;
 use App\Services\Instagram\InstagramApiService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -35,15 +35,20 @@ class ListCommenters extends Page
 
     protected InstagramApiService $instagramApi;
 
+    protected CommentModerationService $commentModerationService;
+
     #[Locked]
     public array $comments = [];
 
     /**
      * Inject dependencies via Livewire's boot method.
      */
-    public function boot(InstagramApiService $instagramApi): void
-    {
+    public function boot(
+        InstagramApiService $instagramApi,
+        CommentModerationService $commentModerationService
+    ): void {
         $this->instagramApi = $instagramApi;
+        $this->commentModerationService = $commentModerationService;
     }
 
     public function mount(Account $record, string $post): void
@@ -92,27 +97,14 @@ class ListCommenters extends Page
             return;
         }
 
-        $selectedCommentersLookup = array_flip($this->selectedCommenters);
-
-        $commentsByUser = collect($this->comments)
-            ->filter(function (array $comment) use ($selectedCommentersLookup): bool {
-                if (! isset($comment['username']) || $comment['username'] === '') {
-                    return false;
-                }
-
-                return isset($selectedCommentersLookup[$comment['username']]);
-            })
-            ->groupBy('username')
-            ->map(fn (Collection $items): array => $items->first());
-
-        foreach ($commentsByUser as $username => $comment) {
-            BlockUserJob::dispatch(
-                account: $this->record,
-                username: (string) $username,
-                reason: 'Blocked from commenters list',
-                commentText: $comment['text'] ?? null
-            );
-        }
+        $commentsByUser = $this->commentModerationService->getCommentsGroupedBySelectedUsernames(
+            comments: collect($this->comments),
+            selectedCommenters: $this->selectedCommenters
+        );
+        $this->commentModerationService->dispatchBlockJobsForGroupedComments(
+            account: $this->record,
+            commentsByUser: $commentsByUser
+        );
 
         Notification::make()
             ->title('Queued block jobs for '.count($commentsByUser).' commenter(s)')
@@ -152,18 +144,6 @@ class ListCommenters extends Page
 
     public function getCommenters(): Collection
     {
-        return collect($this->comments)
-            ->filter(fn (array $comment): bool => isset($comment['username']))
-            ->groupBy('username')
-            ->map(function (Collection $items, string $username): array {
-                $firstComment = $items->first();
-
-                return [
-                    'username' => $username,
-                    'comment_count' => $items->count(),
-                    'latest_comment' => $firstComment['text'] ?? null,
-                ];
-            })
-            ->values();
+        return $this->commentModerationService->getUniqueCommenters(collect($this->comments));
     }
 }

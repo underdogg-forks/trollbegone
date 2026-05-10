@@ -123,6 +123,65 @@ class InstagramApiFixtures
     }
 
     /**
+     * Get user search response for followed user lookups.
+     */
+    public static function getFollowedUserSearchResponse(): array
+    {
+        return [
+            'data' => [
+                [
+                    'id' => 'followed-1',
+                    'username' => 'followed_user',
+                ],
+            ],
+        ];
+    }
+
+    /**
+     * Get media response for a followed user.
+     */
+    public static function getFollowedUserMediaResponse(): array
+    {
+        return [
+            'data' => [
+                ['id' => 'post-1', 'caption' => 'hello'],
+                ['id' => 'post-2', 'caption' => 'world'],
+            ],
+        ];
+    }
+
+    /**
+     * Get post comments with mixed-case TrollBeGone tags.
+     */
+    public static function getPostCommentsWithTrollBeGoneTagsResponse(): array
+    {
+        return [
+            'data' => [
+                ['id' => 'c1', 'username' => 'alpha', 'text' => 'nice post'],
+                ['id' => 'c2', 'username' => 'beta', 'text' => 'spam #TrollBeGone'],
+                ['id' => 'c3', 'username' => 'gamma', 'text' => 'rude #trollbegone'],
+                ['id' => 'c4', 'username' => 'delta', 'text' => 'also rude #TROLLBEGONE'],
+                ['id' => 'c5', 'username' => 'epsilon', 'text' => 'bad #Trollbegone'],
+                ['id' => 'c6', 'username' => 'zeta', 'text' => 'mixed #tRoLlBeGoNe'],
+            ],
+        ];
+    }
+
+    /**
+     * Get comments fixture for commenter moderation pages.
+     *
+     * @return array<int, array{id: string, username: string, text: string}>
+     */
+    public static function getCommenterModerationComments(): array
+    {
+        return [
+            ['id' => 'c1', 'username' => 'alpha', 'text' => 'first'],
+            ['id' => 'c2', 'username' => 'alpha', 'text' => 'second'],
+            ['id' => 'c3', 'username' => 'beta', 'text' => 'third'],
+        ];
+    }
+
+    /**
      * Get empty user search response (user not found).
      */
     public static function getEmptyUserSearchResponse(): array

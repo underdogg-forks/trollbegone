@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Accounts\Pages;
 
-use App\Enums\RequestMethod;
 use App\Filament\Resources\Accounts\AccountResource;
 use App\Models\Account;
 use App\Services\Instagram\InstagramApiService;
@@ -42,23 +41,9 @@ class ViewPosts extends Page
     {
         try {
             $apiService = app(InstagramApiService::class);
+            $posts = $apiService->getPostsByUsername($this->record, $this->username);
 
-            // First, get the user ID
-            $userInfo = $apiService->getUserInfo($this->record, $this->username);
-
-            if (! $userInfo || ! isset($userInfo['id'])) {
-                return [];
-            }
-
-            // Fetch posts for this user
-            $response = $apiService->request(
-                RequestMethod::GET,
-                $this->record,
-                "/{$userInfo['id']}/media",
-                ['query' => ['fields' => 'id,caption,media_type,media_url,permalink,timestamp,like_count,comments_count']]
-            );
-
-            return $response->json('data', []);
+            return $posts->all();
         } catch (\Exception $e) {
             logger()->error('Failed to fetch posts', [
                 'account_id' => $this->record->id,
