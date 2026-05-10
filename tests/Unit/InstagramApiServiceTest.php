@@ -21,13 +21,12 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #region Act & Assert */
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No access token available for account: test');
         $service->getStories($account);
-        
+
     }
 
     #[Test]
@@ -50,14 +49,12 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $stories = $service->getStories($account);
-        
 
         /** #endregion */
 
@@ -65,8 +62,8 @@ class InstagramApiServiceTest extends TestCase
         /* Assert */
         $this->assertCount(2, $stories);
         $this->assertEquals('story1', $stories->first()['id']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -84,22 +81,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $stories = $service->getStories($account);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertCount(0, $stories);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -111,13 +106,12 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #region Act & Assert */
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No access token available for account: test');
         $service->getStoryComments($account, 'story123');
-        
+
     }
 
     #[Test]
@@ -140,14 +134,12 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $comments = $service->getStoryComments($account, 'story123');
-        
 
         /** #endregion */
 
@@ -155,8 +147,8 @@ class InstagramApiServiceTest extends TestCase
         /* Assert */
         $this->assertCount(2, $comments);
         $this->assertEquals('comment1', $comments->first()['id']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -174,22 +166,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $comments = $service->getStoryComments($account, 'story123');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertCount(0, $comments);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -201,22 +191,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $service->blockUser($account, 'user123');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -234,22 +222,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $service->blockUser($account, 'user123');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -267,22 +253,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $service->blockUser($account, 'user123');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -300,22 +284,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $service->blockUser($account, 'user123');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -327,22 +309,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'search_user');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -365,14 +345,12 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'search_user');
-        
 
         /** #endregion */
 
@@ -381,8 +359,8 @@ class InstagramApiServiceTest extends TestCase
         $this->assertIsArray($userInfo);
         $this->assertEquals('user123', $userInfo['id']);
         $this->assertEquals('search_user', $userInfo['username']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -400,22 +378,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'nonexistent_user');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -433,22 +409,20 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'search_user');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -466,21 +440,19 @@ class InstagramApiServiceTest extends TestCase
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'search_user');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

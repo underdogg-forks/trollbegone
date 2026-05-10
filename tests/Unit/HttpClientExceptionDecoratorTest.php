@@ -24,22 +24,20 @@ class HttpClientExceptionDecoratorTest extends TestCase
         try {
             $decorator->get('https://example.com/error');
             $this->fail('Expected HttpClientException to be thrown');
-            
 
             /** #endregion */
 
             /** #region Act */
             /* Act */
-            
 
             /** #endregion */
 
             /** #region Assert */
             /* Assert */
-            
+
         } catch (HttpClientException $e) {
             $this->assertNotEmpty($e->getMessage());
-        /** #endregion */
+            /** #endregion */
         }
     }
 
@@ -54,22 +52,20 @@ class HttpClientExceptionDecoratorTest extends TestCase
         try {
             $decorator->get('https://example.com/error');
             $this->fail('Expected HttpClientException to be thrown');
-            
 
             /** #endregion */
 
             /** #region Act */
             /* Act */
-            
 
             /** #endregion */
 
             /** #region Assert */
             /* Assert */
-            
+
         } catch (HttpClientException $e) {
             $this->assertInstanceOf(Exception::class, $e->getPrevious());
-        /** #endregion */
+            /** #endregion */
         }
     }
 
@@ -83,22 +79,20 @@ class HttpClientExceptionDecoratorTest extends TestCase
         try {
             $decorator->get('https://example.com/timeout');
             $this->fail('Expected HttpClientException to be thrown');
-            
 
             /** #endregion */
 
             /** #region Act */
             /* Act */
-            
 
             /** #endregion */
 
             /** #region Assert */
             /* Assert */
-            
+
         } catch (HttpClientException $e) {
             $this->assertStringContainsString('HTTP request failed', $e->getMessage());
-        /** #endregion */
+            /** #endregion */
         }
     }
 
@@ -112,22 +106,20 @@ class HttpClientExceptionDecoratorTest extends TestCase
         try {
             $decorator->get('https://nonexistent.example.com/test');
             $this->fail('Expected HttpClientException to be thrown');
-            
 
             /** #endregion */
 
             /** #region Act */
             /* Act */
-            
 
             /** #endregion */
 
             /** #region Assert */
             /* Assert */
-            
+
         } catch (HttpClientException $e) {
             $this->assertEquals(0, $e->getCode());
-        /** #endregion */
+            /** #endregion */
         }
     }
 
@@ -139,14 +131,12 @@ class HttpClientExceptionDecoratorTest extends TestCase
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $decorator->get('https://example.com/ok');
-        
 
         /** #endregion */
 
@@ -154,8 +144,8 @@ class HttpClientExceptionDecoratorTest extends TestCase
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertEquals('ok', $response->json('status'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -166,14 +156,12 @@ class HttpClientExceptionDecoratorTest extends TestCase
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $decorator->post('https://example.com/created');
-        
 
         /** #endregion */
 
@@ -181,8 +169,8 @@ class HttpClientExceptionDecoratorTest extends TestCase
         /* Assert */
         $this->assertEquals(201, $response->status());
         $this->assertEquals(123, $response->json('id'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -193,22 +181,20 @@ class HttpClientExceptionDecoratorTest extends TestCase
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $decorator->delete('https://example.com/deleted');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals(204, $response->status());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -224,22 +210,20 @@ class HttpClientExceptionDecoratorTest extends TestCase
             try {
                 $decorator->get("https://example.com/error-{$statusCode}");
                 $this->fail("Expected HttpClientException for status code {$statusCode}");
-                
 
                 /** #endregion */
 
                 /** #region Act */
                 /* Act */
-                
 
                 /** #endregion */
 
                 /** #region Assert */
                 /* Assert */
-                
+
             } catch (HttpClientException $e) {
                 $this->assertEquals($statusCode, $e->getCode());
-            /** #endregion */
+                /** #endregion */
             }
         }
     }
@@ -257,22 +241,20 @@ class HttpClientExceptionDecoratorTest extends TestCase
             try {
                 $decorator->get("https://example.com/error-{$statusCode}");
                 $this->fail("Expected HttpClientException for status code {$statusCode}");
-                
 
                 /** #endregion */
 
                 /** #region Act */
                 /* Act */
-                
 
                 /** #endregion */
 
                 /** #region Assert */
                 /* Assert */
-                
+
             } catch (HttpClientException $e) {
                 $this->assertEquals($statusCode, $e->getCode());
-            /** #endregion */
+                /** #endregion */
             }
         }
     }
@@ -287,22 +269,20 @@ class HttpClientExceptionDecoratorTest extends TestCase
         try {
             $decorator->get('https://example.com/error');
             $this->fail('Expected HttpClientException to be thrown');
-            
 
             /** #endregion */
 
             /** #region Act */
             /* Act */
-            
 
             /** #endregion */
 
             /** #region Assert */
             /* Assert */
-            
+
         } catch (HttpClientException $e) {
             $this->assertEquals(0, $e->getCode());
-        /** #endregion */
+            /** #endregion */
         }
     }
 }

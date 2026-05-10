@@ -38,7 +38,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $fakeInstagramApi->setBlockUserResult($fixtureUser['id'], true);
 
         $service = new BlockedAccountService($fakeInstagramApi);
-        
 
         /** #endregion */
 
@@ -50,7 +49,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
             'Spam content',
             'Check out this spam link!'
         );
-        
 
         /** #endregion */
 
@@ -61,8 +59,8 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $this->assertEquals($fixtureUser['id'], $blockedAccount->blocked_instagram_id);
         $this->assertEquals('Spam content', $blockedAccount->reason);
         $this->assertEquals('Check out this spam link!', $blockedAccount->comment_text);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -81,7 +79,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $fakeInstagramApi->setUserInfoResponse('unknown_user', null);
 
         $service = new BlockedAccountService($fakeInstagramApi);
-        
 
         /** #endregion */
 
@@ -92,7 +89,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
             'unknown_user',
             'Suspicious activity'
         );
-        
 
         /** #endregion */
 
@@ -102,8 +98,8 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $this->assertEquals('unknown_user', $blockedAccount->blocked_username);
         $this->assertNull($blockedAccount->blocked_instagram_id);
         $this->assertEquals('Suspicious activity', $blockedAccount->reason);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -123,7 +119,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $spamComments = array_filter($comments, function ($comment) {
             return str_contains(strtolower($comment['text']), 'spam');
         });
-        
 
         /** #endregion */
 
@@ -150,7 +145,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         }
 
         $blockedAccounts = BlockedAccount::where('instagram_account_id', $account->id)->get();
-        
 
         /** #endregion */
 
@@ -158,8 +152,8 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         /* Assert */
         $this->assertCount(1, $blockedAccounts);
         $this->assertEquals('spam_account', $blockedAccounts->first()->blocked_username);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -185,7 +179,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
 
         $fakeInstagramApi = new FakeInstagramApiService;
         $service = new BlockedAccountService($fakeInstagramApi);
-        
 
         /** #endregion */
 
@@ -193,7 +186,6 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         /* Act */
         $isBlocked = $service->isBlocked($account, $fixtureUser['username']);
         $isNotBlocked = $service->isBlocked($account, 'not_blocked_user');
-        
 
         /** #endregion */
 
@@ -201,8 +193,8 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         /* Assert */
         $this->assertTrue($isBlocked);
         $this->assertFalse($isNotBlocked);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -231,14 +223,12 @@ class BlockedAccountServiceIntegrationTest extends TestCase
 
         $fakeInstagramApi = new FakeInstagramApiService;
         $service = new BlockedAccountService($fakeInstagramApi);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $blockedAccounts = $service->getBlockedAccounts($account);
-        
 
         /** #endregion */
 
@@ -249,8 +239,8 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $this->assertContains('john_doe_123', $usernames);
         $this->assertContains('jane_smith_456', $usernames);
         $this->assertContains('spam_account', $usernames);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -272,14 +262,12 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         $fakeInstagramApi->setBlockUserResult($fixtureUser['id'], false); // Simulate API failure
 
         $service = new BlockedAccountService($fakeInstagramApi);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $blockedAccount = $service->blockAccount($account, 'test_user', 'Spam');
-        
 
         /** #endregion */
 
@@ -287,7 +275,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
         /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertEquals('test_user', $blockedAccount->blocked_username);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

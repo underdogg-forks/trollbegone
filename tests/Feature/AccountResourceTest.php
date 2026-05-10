@@ -38,22 +38,20 @@ class AccountResourceTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $this->get(AccountResource::getUrl('index'));
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $response->assertSuccessful();
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -64,22 +62,20 @@ class AccountResourceTest extends TestCase
         $accounts = Account::factory()->count(3)->create([
             'user_id' => $this->adminUser->id,
         ]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $component = Livewire::test(ListAccounts::class);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $component->assertCanSeeTableRecords($accounts);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -93,7 +89,6 @@ class AccountResourceTest extends TestCase
             'access_token' => 'test_token_abc123',
             'is_active' => true,
         ];
-        
 
         /** #endregion */
 
@@ -101,7 +96,6 @@ class AccountResourceTest extends TestCase
         /* Act */
         Livewire::test(ListAccounts::class)
             ->callAction('create', data: $newData);
-        
 
         /** #endregion */
 
@@ -112,8 +106,8 @@ class AccountResourceTest extends TestCase
             'instagram_id' => '123456789',
             'is_active' => true,
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -124,7 +118,6 @@ class AccountResourceTest extends TestCase
         $invalidData = [
             'instagram_id' => '123456789',
         ];
-        
 
         /** #endregion */
 
@@ -132,15 +125,14 @@ class AccountResourceTest extends TestCase
         /* Act */
         $component = Livewire::test(ListAccounts::class)
             ->callAction('create', data: $invalidData);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $component->assertHasActionErrors(['username' => 'required']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -152,7 +144,6 @@ class AccountResourceTest extends TestCase
             'username' => 'existing_account',
             'user_id' => $this->adminUser->id,
         ]);
-        
 
         /** #endregion */
 
@@ -162,15 +153,14 @@ class AccountResourceTest extends TestCase
             ->callAction('create', data: [
                 'username' => 'existing_account',
             ]);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $component->assertHasActionErrors(['username' => 'unique']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -183,7 +173,6 @@ class AccountResourceTest extends TestCase
             'is_active' => true,
             'user_id' => $this->adminUser->id,
         ]);
-        
 
         /** #endregion */
 
@@ -194,7 +183,6 @@ class AccountResourceTest extends TestCase
                 'username' => 'updated_username',
                 'is_active' => false,
             ]);
-        
 
         /** #endregion */
 
@@ -205,8 +193,8 @@ class AccountResourceTest extends TestCase
             'username' => 'updated_username',
             'is_active' => false,
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -215,7 +203,6 @@ class AccountResourceTest extends TestCase
         /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create(['user_id' => $this->adminUser->id]);
-        
 
         /** #endregion */
 
@@ -223,7 +210,6 @@ class AccountResourceTest extends TestCase
         /* Act */
         Livewire::test(ViewAccount::class, ['record' => $account->id])
             ->callAction('delete');
-        
 
         /** #endregion */
 
@@ -232,8 +218,8 @@ class AccountResourceTest extends TestCase
         $this->assertDatabaseMissing('instagram_accounts', [
             'id' => $account->id,
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -242,7 +228,6 @@ class AccountResourceTest extends TestCase
         /** #region Arrange */
         /* Arrange */
         $accounts = Account::factory()->count(3)->create(['user_id' => $this->adminUser->id]);
-        
 
         /** #endregion */
 
@@ -250,7 +235,6 @@ class AccountResourceTest extends TestCase
         /* Act */
         Livewire::test(ListAccounts::class)
             ->callTableBulkAction('delete', $accounts);
-        
 
         /** #endregion */
 
@@ -260,9 +244,9 @@ class AccountResourceTest extends TestCase
             $this->assertDatabaseMissing('instagram_accounts', [
                 'id' => $account->id,
             ]);
-        /** #endregion */
+            /** #endregion */
         }
-        
+
     }
 
     #[Test]
@@ -276,14 +260,12 @@ class AccountResourceTest extends TestCase
             'is_active' => true,
             'user_id' => $this->adminUser->id,
         ]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $component = Livewire::test(ListAccounts::class);
-        
 
         /** #endregion */
 
@@ -294,8 +276,8 @@ class AccountResourceTest extends TestCase
             ->assertTableColumnExists('instagram_id')
             ->assertTableColumnExists('is_active')
             ->assertTableColumnExists('blockedAccounts_count');
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -311,7 +293,6 @@ class AccountResourceTest extends TestCase
             'username' => 'other_account',
             'user_id' => $this->adminUser->id,
         ]);
-        
 
         /** #endregion */
 
@@ -319,7 +300,6 @@ class AccountResourceTest extends TestCase
         /* Act */
         $component = Livewire::test(ListAccounts::class)
             ->searchTable('searchable');
-        
 
         /** #endregion */
 
@@ -327,8 +307,8 @@ class AccountResourceTest extends TestCase
         /* Assert */
         $component->assertCanSeeTableRecords([$account1])
             ->assertCanNotSeeTableRecords([$account2]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -337,21 +317,19 @@ class AccountResourceTest extends TestCase
         /** #region Arrange */
         /* Arrange */
         $accounts = Account::factory()->count(3)->create(['user_id' => $this->adminUser->id]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $component = Livewire::test(ListAccounts::class);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $component->assertCanSeeTableRecords($accounts, inOrder: true);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

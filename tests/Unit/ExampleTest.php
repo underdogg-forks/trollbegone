@@ -17,20 +17,18 @@ class ExampleTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue(true);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

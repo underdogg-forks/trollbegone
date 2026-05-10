@@ -31,14 +31,12 @@ class BlockedAccountServiceTest extends TestCase
         $fakeApiService->setBlockUserResult('12345', true);
 
         $service = new BlockedAccountService($fakeApiService);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $service->blockAccount($account, 'spammer', 'Spam comments');
-        
 
         /** #endregion */
 
@@ -50,8 +48,8 @@ class BlockedAccountServiceTest extends TestCase
             'blocked_instagram_id' => '12345',
             'reason' => 'Spam comments',
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -68,14 +66,12 @@ class BlockedAccountServiceTest extends TestCase
         ]);
 
         $fakeApiService = new FakeInstagramApiService;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $service = new BlockedAccountService($fakeApiService);
-        
 
         /** #endregion */
 
@@ -83,8 +79,8 @@ class BlockedAccountServiceTest extends TestCase
         /* Assert */
         $this->assertTrue($service->isBlocked($account, 'blocked_user'));
         $this->assertFalse($service->isBlocked($account, 'not_blocked_user'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -114,14 +110,12 @@ class BlockedAccountServiceTest extends TestCase
         $fakeApiService = new FakeInstagramApiService;
         $service = new BlockedAccountService($fakeApiService);
         $account1Blocks = $service->getBlockedAccounts($account1);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $account2Blocks = $service->getBlockedAccounts($account2);
-        
 
         /** #endregion */
 
@@ -129,8 +123,8 @@ class BlockedAccountServiceTest extends TestCase
         /* Assert */
         $this->assertCount(2, $account1Blocks);
         $this->assertCount(1, $account2Blocks);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -151,13 +145,11 @@ class BlockedAccountServiceTest extends TestCase
 
         $service = new BlockedAccountService($fakeApiService);
         $blockedAccount = $service->blockAccount($account, 'target_user');
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
-        
 
         /** #endregion */
 
@@ -167,8 +159,8 @@ class BlockedAccountServiceTest extends TestCase
         $this->assertDatabaseHas('blocked_accounts', [
             'blocked_username' => 'target_user',
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -184,14 +176,12 @@ class BlockedAccountServiceTest extends TestCase
         $fakeApiService->setUserInfoResponse('ghost_user', null);
 
         $service = new BlockedAccountService($fakeApiService);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $blockedAccount = $service->blockAccount($account, 'ghost_user');
-        
 
         /** #endregion */
 
@@ -202,7 +192,7 @@ class BlockedAccountServiceTest extends TestCase
         $this->assertDatabaseHas('blocked_accounts', [
             'blocked_username' => 'ghost_user',
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

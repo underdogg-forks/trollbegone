@@ -35,14 +35,12 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $stories = $service->getStories($account);
-        
 
         /** #endregion */
 
@@ -52,8 +50,8 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertEquals('17895695668004550', $stories->first()['id']);
         $this->assertEquals('IMAGE', $stories->first()['media_type']);
         $this->assertEquals('VIDEO', $stories->last()['media_type']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -73,14 +71,12 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $comments = $service->getStoryComments($account, '17895695668004550');
-        
 
         /** #endregion */
 
@@ -89,8 +85,8 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertCount(3, $comments);
         $this->assertEquals('Great story! Love this content 🔥', $comments->first()['text']);
         $this->assertEquals('john_doe_123', $comments->first()['from']['username']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -110,14 +106,12 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'spam_account');
-        
 
         /** #endregion */
 
@@ -127,8 +121,8 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertEquals('17841401234567892', $userInfo['id']);
         $this->assertEquals('spam_account', $userInfo['username']);
         $this->assertEquals('Spam Account User', $userInfo['full_name']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -146,22 +140,20 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $service->blockUser($account, '17841401234567892');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -181,7 +173,6 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
@@ -192,7 +183,6 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $spamComments = $comments->filter(function ($comment) {
             return str_contains(strtolower($comment['text']), 'spam');
         });
-        
 
         /** #endregion */
 
@@ -201,8 +191,8 @@ class InstagramApiServiceIntegrationTest extends TestCase
         $this->assertCount(1, $spamComments);
         $spamComment = $spamComments->first();
         $this->assertEquals('spam_account', $spamComment['from']['username']);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -222,14 +212,12 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $stories = $service->getStories($account);
-        
 
         /** #endregion */
 
@@ -237,8 +225,8 @@ class InstagramApiServiceIntegrationTest extends TestCase
         /* Assert */
         $this->assertCount(0, $stories);
         $this->assertTrue($stories->isEmpty());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -258,14 +246,12 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $comments = $service->getStoryComments($account, '17895695668004550');
-        
 
         /** #endregion */
 
@@ -273,8 +259,8 @@ class InstagramApiServiceIntegrationTest extends TestCase
         /* Assert */
         $this->assertCount(0, $comments);
         $this->assertTrue($comments->isEmpty());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -294,22 +280,20 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'nonexistent_user');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -329,7 +313,6 @@ class InstagramApiServiceIntegrationTest extends TestCase
         ]);
 
         $service = app(InstagramApiService::class);
-        
 
         /** #endregion */
 
@@ -339,7 +322,6 @@ class InstagramApiServiceIntegrationTest extends TestCase
 
         $imageStories = $stories->filter(fn ($story) => $story['media_type'] === 'IMAGE');
         $videoStories = $stories->filter(fn ($story) => $story['media_type'] === 'VIDEO');
-        
 
         /** #endregion */
 
@@ -347,7 +329,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
         /* Assert */
         $this->assertCount(1, $imageStories);
         $this->assertCount(1, $videoStories);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

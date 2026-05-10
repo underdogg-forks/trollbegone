@@ -18,14 +18,12 @@ class ExternalClientTest extends TestCase
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $client->request('GET', 'https://example.com/test');
-        
 
         /** #endregion */
 
@@ -33,8 +31,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertTrue($response->json('success'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -44,14 +42,12 @@ class ExternalClientTest extends TestCase
             'https://example.com/error' => Http::response(['error' => 'Not Found'], 404),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
@@ -59,8 +55,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('GET', 'https://example.com/error');
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -73,7 +69,6 @@ class ExternalClientTest extends TestCase
         ]);
         $client = new ExternalClient;
         $postResponse = $client->request('POST', 'https://example.com/post');
-        
 
         /** #endregion */
 
@@ -81,7 +76,6 @@ class ExternalClientTest extends TestCase
         /* Act */
         $putResponse = $client->request('PUT', 'https://example.com/put');
         $deleteResponse = $client->request('DELETE', 'https://example.com/delete');
-        
 
         /** #endregion */
 
@@ -90,8 +84,8 @@ class ExternalClientTest extends TestCase
         $this->assertEquals('POST', $postResponse->json('method'));
         $this->assertEquals('PUT', $putResponse->json('method'));
         $this->assertEquals('DELETE', $deleteResponse->json('method'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -101,14 +95,12 @@ class ExternalClientTest extends TestCase
             'https://example.com/patch' => Http::response(['method' => 'PATCH'], 200),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $client->request('PATCH', 'https://example.com/patch');
-        
 
         /** #endregion */
 
@@ -116,8 +108,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertEquals('PATCH', $response->json('method'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -127,22 +119,20 @@ class ExternalClientTest extends TestCase
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $client->request('GET', 'https://example.com/test', ['timeout' => 60]);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -157,22 +147,20 @@ class ExternalClientTest extends TestCase
                 'X-Custom-Header' => 'CustomValue',
                 'Accept' => 'application/json',
             ],
-        
 
         /** #endregion */
 
         /** #region Act */
-        /* Act */
+            /* Act */
         ]);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -184,22 +172,20 @@ class ExternalClientTest extends TestCase
         $client = new ExternalClient;
         $response = $client->request('GET', 'https://example.com/secure', [
             'token' => 'bearer_token_123',
-        
 
         /** #endregion */
 
         /** #region Act */
-        /* Act */
+            /* Act */
         ]);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -211,22 +197,20 @@ class ExternalClientTest extends TestCase
         $client = new ExternalClient;
         $response = $client->request('GET', 'https://api.example.com/users', [
             'base_uri' => 'https://api.example.com',
-        
 
         /** #endregion */
 
         /** #region Act */
-        /* Act */
+            /* Act */
         ]);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -236,22 +220,20 @@ class ExternalClientTest extends TestCase
             'https://example.com/test' => Http::response(['success' => true], 200),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $client->request('GET', 'https://example.com/test');
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -263,22 +245,20 @@ class ExternalClientTest extends TestCase
         $client = new ExternalClient;
         $response = $client->request('GET', 'https://example.com/test', [
             'connect_timeout' => 5,
-        
 
         /** #endregion */
 
         /** #region Act */
-        /* Act */
+            /* Act */
         ]);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -292,22 +272,20 @@ class ExternalClientTest extends TestCase
         try {
             $decorator->request('GET', 'https://example.com/forbidden');
             $this->fail('Expected HttpClientException to be thrown');
-            
 
             /** #endregion */
 
             /** #region Act */
             /* Act */
-            
 
             /** #endregion */
 
             /** #region Assert */
             /* Assert */
-            
+
         } catch (HttpClientException $e) {
             $this->assertEquals(403, $e->getCode());
-        /** #endregion */
+            /** #endregion */
         }
     }
 
@@ -322,22 +300,20 @@ class ExternalClientTest extends TestCase
         try {
             $decorator->request('GET', 'https://example.com/error');
             $this->fail('Expected HttpClientException to be thrown');
-            
 
             /** #endregion */
 
             /** #region Act */
             /* Act */
-            
 
             /** #endregion */
 
             /** #region Assert */
             /* Assert */
-            
+
         } catch (HttpClientException $e) {
             $this->assertEquals(500, $e->getCode());
-        /** #endregion */
+            /** #endregion */
         }
     }
 
@@ -348,14 +324,12 @@ class ExternalClientTest extends TestCase
             'https://example.com/bad-request' => Http::response(['error' => 'Bad Request'], 400),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
@@ -363,8 +337,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('POST', 'https://example.com/bad-request');
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -374,14 +348,12 @@ class ExternalClientTest extends TestCase
             'https://example.com/conflict' => Http::response(['error' => 'Conflict'], 409),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
@@ -389,8 +361,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('PUT', 'https://example.com/conflict');
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -400,14 +372,12 @@ class ExternalClientTest extends TestCase
             'https://example.com/gone' => Http::response(['error' => 'Gone'], 410),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
@@ -415,8 +385,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('DELETE', 'https://example.com/gone');
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -426,14 +396,12 @@ class ExternalClientTest extends TestCase
             'https://example.com/unprocessable' => Http::response(['error' => 'Unprocessable'], 422),
         ]);
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
@@ -441,8 +409,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->expectException(HttpClientException::class);
         $decorator->request('PATCH', 'https://example.com/unprocessable');
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -450,19 +418,16 @@ class ExternalClientTest extends TestCase
     {        /* Arrange */
         Http::fake(function () {
             throw new \RuntimeException('Network error');
-            
-
             /** #endregion */
 
             /** #region Act */
             /* Act */
-            
 
             /** #endregion */
 
             /** #region Assert */
             /* Assert */
-            
+
         });
 
         $client = new ExternalClient;
@@ -474,7 +439,7 @@ class ExternalClientTest extends TestCase
         } catch (HttpClientException $e) {
             $this->assertStringContainsString('HTTP request failed', $e->getMessage());
             $this->assertEquals(0, $e->getCode());
-        /** #endregion */
+            /** #endregion */
         }
     }
 
@@ -486,14 +451,12 @@ class ExternalClientTest extends TestCase
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $decorator->request('GET', 'https://example.com/success');
-        
 
         /** #endregion */
 
@@ -501,8 +464,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertTrue($response->json('success'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -513,14 +476,12 @@ class ExternalClientTest extends TestCase
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $decorator->request('POST', 'https://example.com/create');
-        
 
         /** #endregion */
 
@@ -528,8 +489,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->assertEquals(201, $response->status());
         $this->assertTrue($response->json('created'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -545,22 +506,20 @@ class ExternalClientTest extends TestCase
             'headers' => ['X-API-Key' => 'test123'],
             'token' => 'bearer_token',
             'base_uri' => 'https://api.example.com',
-        
 
         /** #endregion */
 
         /** #region Act */
-        /* Act */
+            /* Act */
         ]);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals(200, $response->status());
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -571,14 +530,12 @@ class ExternalClientTest extends TestCase
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $decorator->get('https://example.com/test');
-        
 
         /** #endregion */
 
@@ -586,8 +543,8 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->assertEquals(200, $response->status());
         $this->assertTrue($response->json('success'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -598,14 +555,12 @@ class ExternalClientTest extends TestCase
         ]);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $response = $decorator->post('https://example.com/create');
-        
 
         /** #endregion */
 
@@ -613,22 +568,20 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->assertEquals(201, $response->status());
         $this->assertTrue($response->json('created'));
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
     public function it_throws_exception_for_invalid_magic_method(): void
     {        /* Arrange */
         $client = new ExternalClient;
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $decorator = new HttpClientExceptionDecorator($client);
-        
 
         /** #endregion */
 
@@ -636,7 +589,7 @@ class ExternalClientTest extends TestCase
         /* Assert */
         $this->expectException(\BadMethodCallException::class);
         $decorator->invalid('https://example.com/test');
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

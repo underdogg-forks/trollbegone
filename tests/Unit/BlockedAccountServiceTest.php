@@ -41,7 +41,6 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #endregion */
 
@@ -53,7 +52,6 @@ class BlockedAccountServiceTest extends TestCase
             'Spamming comments',
             'Buy my product!'
         );
-        
 
         /** #endregion */
 
@@ -72,8 +70,8 @@ class BlockedAccountServiceTest extends TestCase
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'spam_user',
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -94,7 +92,6 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #endregion */
 
@@ -105,7 +102,6 @@ class BlockedAccountServiceTest extends TestCase
             'nonexistent_user',
             'User not found'
         );
-        
 
         /** #endregion */
 
@@ -115,8 +111,8 @@ class BlockedAccountServiceTest extends TestCase
         $this->assertEquals('nonexistent_user', $blockedAccount->blocked_username);
         $this->assertNull($blockedAccount->blocked_instagram_id);
         $this->assertEquals('User not found', $blockedAccount->reason);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -139,7 +135,6 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #endregion */
 
@@ -149,15 +144,14 @@ class BlockedAccountServiceTest extends TestCase
             $instagramAccount,
             'partial_user'
         );
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNull($blockedAccount->blocked_instagram_id);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -181,14 +175,12 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $blockedAccount = $service->blockAccount($instagramAccount, 'test_user');
-        
 
         /** #endregion */
 
@@ -197,8 +189,8 @@ class BlockedAccountServiceTest extends TestCase
         $this->assertNull($blockedAccount->reason);
         $this->assertNull($blockedAccount->comment_text);
         $this->assertEquals('test_user', $blockedAccount->blocked_username);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -219,11 +211,10 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #region Act & Assert */
         $this->assertTrue($service->isBlocked($instagramAccount, 'blocked_user'));
-        
+
     }
 
     #[Test]
@@ -240,11 +231,10 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #region Act & Assert */
         $this->assertFalse($service->isBlocked($instagramAccount, 'non_blocked_user'));
-        
+
     }
 
     #[Test]
@@ -265,11 +255,10 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #region Act & Assert */
         $this->assertFalse($service->isBlocked($instagramAccount, 'blockeduser'));
-        
+
     }
 
     #[Test]
@@ -294,12 +283,11 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #region Act & Assert */
         $this->assertTrue($service->isBlocked($account1, 'blocked_user'));
         $this->assertFalse($service->isBlocked($account2, 'blocked_user'));
-        
+
     }
 
     #[Test]
@@ -328,22 +316,20 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $blockedAccounts = $service->getBlockedAccounts($instagramAccount);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertCount(3, $blockedAccounts);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -369,14 +355,12 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $blockedAccounts = $service->getBlockedAccounts($instagramAccount);
-        
 
         /** #endregion */
 
@@ -384,8 +368,8 @@ class BlockedAccountServiceTest extends TestCase
         /* Assert */
         $this->assertEquals('newest', $blockedAccounts->first()->blocked_username);
         $this->assertEquals('oldest', $blockedAccounts->last()->blocked_username);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -402,22 +386,20 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $blockedAccounts = $service->getBlockedAccounts($instagramAccount);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertCount(0, $blockedAccounts);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -450,7 +432,6 @@ class BlockedAccountServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $instagramApi = new InstagramApiService($decorator);
         $service = new BlockedAccountService($instagramApi);
-        
 
         /** #endregion */
 
@@ -458,7 +439,6 @@ class BlockedAccountServiceTest extends TestCase
         /* Act */
         $account1Blocks = $service->getBlockedAccounts($account1);
         $account2Blocks = $service->getBlockedAccounts($account2);
-        
 
         /** #endregion */
 
@@ -466,7 +446,7 @@ class BlockedAccountServiceTest extends TestCase
         /* Assert */
         $this->assertCount(1, $account1Blocks);
         $this->assertCount(2, $account2Blocks);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

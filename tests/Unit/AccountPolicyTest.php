@@ -32,22 +32,20 @@ class AccountPolicyTest extends TestCase
         /** #region Arrange */
         /* Arrange */
         $user = User::factory()->create();
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $this->policy->viewAny($user);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -57,22 +55,20 @@ class AccountPolicyTest extends TestCase
         /* Arrange */
         $user = User::factory()->create();
         $account = Account::factory()->create(['user_id' => $user->id]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $this->policy->view($user, $account);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -83,22 +79,20 @@ class AccountPolicyTest extends TestCase
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
         $account = Account::factory()->create(['user_id' => $user2->id]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $this->policy->view($user1, $account);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -107,22 +101,20 @@ class AccountPolicyTest extends TestCase
         /** #region Arrange */
         /* Arrange */
         $user = User::factory()->create();
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $this->policy->create($user);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -132,22 +124,20 @@ class AccountPolicyTest extends TestCase
         /* Arrange */
         $user = User::factory()->create();
         $account = Account::factory()->create(['user_id' => $user->id]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $this->policy->update($user, $account);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -158,22 +148,20 @@ class AccountPolicyTest extends TestCase
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
         $account = Account::factory()->create(['user_id' => $user2->id]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $this->policy->update($user1, $account);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -183,22 +171,20 @@ class AccountPolicyTest extends TestCase
         /* Arrange */
         $user = User::factory()->create();
         $account = Account::factory()->create(['user_id' => $user->id]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $this->policy->delete($user, $account);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -209,22 +195,20 @@ class AccountPolicyTest extends TestCase
         $user1 = User::factory()->create();
         $user2 = User::factory()->create();
         $account = Account::factory()->create(['user_id' => $user2->id]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $result = $this->policy->delete($user1, $account);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -236,7 +220,6 @@ class AccountPolicyTest extends TestCase
         $user2 = User::factory()->create();
         $account1 = Account::factory()->create(['user_id' => $user1->id]);
         $account2 = Account::factory()->create(['user_id' => $user2->id]);
-        
 
         /** #endregion */
 
@@ -249,7 +232,6 @@ class AccountPolicyTest extends TestCase
         $canViewOther = $this->policy->view($user1, $account2);
         $canUpdateOther = $this->policy->update($user1, $account2);
         $canDeleteOther = $this->policy->delete($user1, $account2);
-        
 
         /** #endregion */
 
@@ -261,7 +243,7 @@ class AccountPolicyTest extends TestCase
         $this->assertFalse($canViewOther);
         $this->assertFalse($canUpdateOther);
         $this->assertFalse($canDeleteOther);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

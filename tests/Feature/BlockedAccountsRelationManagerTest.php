@@ -46,7 +46,6 @@ class BlockedAccountsRelationManagerTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
@@ -55,15 +54,14 @@ class BlockedAccountsRelationManagerTest extends TestCase
         $response = $this->get(
             AccountResource::getUrl('view', ['record' => $this->account])
         );
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $response->assertSuccessful();
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -87,7 +85,6 @@ class BlockedAccountsRelationManagerTest extends TestCase
         $fakeApiService->setUserInfoResponse('test_user', null); // Simulate getUserInfo returning null
 
         $service = new BlockedAccountService($fakeApiService);
-        
 
         /** #endregion */
 
@@ -98,7 +95,6 @@ class BlockedAccountsRelationManagerTest extends TestCase
             'test_user',
             'Test reason'
         );
-        
 
         /** #endregion */
 
@@ -109,8 +105,8 @@ class BlockedAccountsRelationManagerTest extends TestCase
             'instagram_account_id' => $this->account->id,
             'blocked_username' => 'test_user',
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
