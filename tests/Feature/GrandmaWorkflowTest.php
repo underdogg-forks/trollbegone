@@ -174,7 +174,7 @@ class GrandmaWorkflowTest extends TestCase
 
         /** #region Act */
         // Step 3: Grandma views her following list
-        $followingComponent = Livewire::test(ViewFollowing::class, ['record' => $account->id]);
+        $followingComponent = Livewire::test(ViewFollowing::class, ['record' => $account]);
 
         // Step 4: Grandma browses posts from a friend
         $postsComponent = Livewire::test(ViewPosts::class, [
@@ -335,7 +335,7 @@ class GrandmaWorkflowTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $followingComponent = Livewire::test(ViewFollowing::class, ['record' => $account->id]);
+        $followingComponent = Livewire::test(ViewFollowing::class, ['record' => $account]);
         /** #endregion */
 
         /** #region Assert */
