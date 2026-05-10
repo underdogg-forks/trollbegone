@@ -60,6 +60,20 @@ class InstagramApiService extends InstagramBaseClient
         return collect($response->json('data', []));
     }
 
+    /**
+     * Filter comments that include a moderation hash tag.
+     *
+     * Example input:
+     * [
+     *   {"id": "comment_1", "text": "hello #TrollBeGone"},
+     *   {"id": "comment_2", "text": "normal comment"}
+     * ]
+     *
+     * Example output:
+     * [
+     *   {"id": "comment_1", "text": "hello #TrollBeGone"}
+     * ]
+     */
     public function filterCommentsByTag(Collection $comments, string $tag): Collection
     {
         $needle = '#'.ltrim(strtolower($tag), '#');
@@ -71,6 +85,20 @@ class InstagramApiService extends InstagramBaseClient
         })->values();
     }
 
+    /**
+     * Filter comments that do not contain any hash tags.
+     *
+     * Example input:
+     * [
+     *   {"id": "comment_1", "text": "hello #TrollBeGone"},
+     *   {"id": "comment_2", "text": "normal comment"}
+     * ]
+     *
+     * Example output:
+     * [
+     *   {"id": "comment_2", "text": "normal comment"}
+     * ]
+     */
     public function filterCommentsWithoutTags(Collection $comments): Collection
     {
         return $comments->filter(function (array $comment) {
@@ -96,6 +124,7 @@ class InstagramApiService extends InstagramBaseClient
             return false;
         }
     }
+
     /**
      * Get stories for an Instagram account.
      *

@@ -5,8 +5,8 @@ namespace Tests\Fakes;
 use App\Enums\RequestMethod;
 use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientException;
+use GuzzleHttp\Psr7\Response as PsrResponse;
 use Illuminate\Http\Client\Response;
-use Illuminate\Support\Facades\Http;
 
 /**
  * FakeHttpClient provides a fake implementation of ExternalClient for testing.
@@ -84,10 +84,11 @@ class FakeHttpClient extends ExternalClient
         }
 
         // Return fake response
-        return Http::response(
-            $responseData['response'] ?? [],
-            $responseData['status'] ?? 200
-        );
+        return new Response(new PsrResponse(
+            $responseData['status'] ?? 200,
+            ['Content-Type' => 'application/json'],
+            json_encode($responseData['response'] ?? []) ?: '{}'
+        ));
     }
 
     /**

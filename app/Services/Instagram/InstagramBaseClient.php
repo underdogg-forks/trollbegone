@@ -4,8 +4,8 @@ namespace App\Services\Instagram;
 
 use App\Enums\RequestMethod;
 use App\Models\Account;
+use App\Services\Http\ApiClient;
 use App\Services\Http\HttpClientException;
-use App\Services\Http\HttpClientExceptionDecorator;
 use Exception;
 use Illuminate\Http\Client\Response;
 
@@ -19,7 +19,7 @@ abstract class InstagramBaseClient
     protected const BASE_URI = 'https://graph.instagram.com';
 
     public function __construct(
-        protected HttpClientExceptionDecorator $httpClient
+        protected ApiClient $httpClient
     ) {}
 
     /**

@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Http;
  * ExternalClient provides a unified interface for making HTTP requests to external APIs.
  * This client mimics the interface of GuzzleHttp\Client with a single request() method.
  */
-class ExternalClient
+class ExternalClient implements ApiClient
 {
     /**
      * Send an HTTP request to an external API.

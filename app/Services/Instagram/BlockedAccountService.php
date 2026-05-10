@@ -4,9 +4,9 @@ namespace App\Services\Instagram;
 
 use App\Models\Account;
 use App\Models\BlockedAccount;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Collection;
 
 /**
  * BlockedAccountService manages blocking functionality for Instagram accounts.
@@ -104,6 +104,20 @@ class BlockedAccountService
         return $account->blockedAccounts()->latest()->get();
     }
 
+    /**
+     * Block users from comments that include a moderation hash tag.
+     *
+     * Example input comments:
+     * [
+     *   {"username": "alpha", "text": "normal comment"},
+     *   {"username": "beta", "text": "spam #TrollBeGone"}
+     * ]
+     *
+     * Example output:
+     * [
+     *   {"blocked_username": "beta", "reason": "Blocked from tagged comment"}
+     * ]
+     */
     public function blockAccountsFromCommentsByTag(
         Account $account,
         Collection $comments,
