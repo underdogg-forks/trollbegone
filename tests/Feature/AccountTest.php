@@ -17,7 +17,6 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
@@ -26,21 +25,13 @@ class AccountTest extends TestCase
             'is_active' => true,
         ]);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertDatabaseHas('instagram_accounts', [
             'username' => 'test_user',
             'instagram_id' => '123456',
         ]);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -48,36 +39,27 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'test_token',
         ]);
+
+        /* Act */
         $blockedAccount = BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'blocked_user',
             'blocked_instagram_id' => '789',
             'reason' => 'Spam',
             'comment_text' => 'This is spam',
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertDatabaseHas('blocked_accounts', [
             'blocked_username' => 'blocked_user',
             'reason' => 'Spam',
         ]);
         $this->assertEquals(1, $instagramAccount->blockedAccounts()->count());
-
-        /** #endregion */
     }
 
     #[Test]
@@ -85,12 +67,13 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'test_token',
         ]);
+
+        /* Act */
         BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'user1',
@@ -98,20 +81,10 @@ class AccountTest extends TestCase
         BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'user2',
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(2, $instagramAccount->blockedAccounts->count());
-
-        /** #endregion */
     }
 
     #[Test]
@@ -119,7 +92,6 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
@@ -128,19 +100,11 @@ class AccountTest extends TestCase
         ]);
         $this->assertTrue($account->is_active);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $account->update(['is_active' => false]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertFalse($account->fresh()->is_active);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -148,7 +112,6 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
@@ -157,20 +120,12 @@ class AccountTest extends TestCase
         $this->assertNull($account->last_synced_at);
         $syncTime = now();
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $account->update(['last_synced_at' => $syncTime]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertNotNull($account->fresh()->last_synced_at);
         $this->assertTrue($account->fresh()->last_synced_at->equalTo($syncTime));
-
-        /** #endregion */
     }
 
     #[Test]
@@ -178,24 +133,15 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->expectException(\Illuminate\Database\QueryException::class);
         Account::factory()->create([
             'access_token' => 'token',
         ]);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -203,7 +149,6 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
@@ -214,19 +159,11 @@ class AccountTest extends TestCase
             'blocked_username' => 'blocked_user',
         ]);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(Account::class, $blockedAccount->account);
         $this->assertEquals($instagramAccount->id, $blockedAccount->account->id);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -234,32 +171,23 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
+
+        /* Act */
         $blockedAccount = BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'spammer',
             'reason' => 'Repeated spam',
             'comment_text' => 'Buy my product now!!!',
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals('Repeated spam', $blockedAccount->reason);
         $this->assertEquals('Buy my product now!!!', $blockedAccount->comment_text);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -267,30 +195,21 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
+
+        /* Act */
         $blockedAccount = BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'user123',
             'blocked_instagram_id' => '98765432',
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals('98765432', $blockedAccount->blocked_instagram_id);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -298,31 +217,22 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
+
+        /* Act */
         $blockedAccount = BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'blocked_user',
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertNull($blockedAccount->reason);
         $this->assertNull($blockedAccount->comment_text);
         $this->assertNull($blockedAccount->blocked_instagram_id);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -330,7 +240,6 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $account1 = Account::factory()->create([
             'username' => 'account1',
@@ -340,6 +249,8 @@ class AccountTest extends TestCase
             'username' => 'account2',
             'access_token' => 'token2',
         ]);
+
+        /* Act */
         BlockedAccount::create([
             'instagram_account_id' => $account1->id,
             'blocked_username' => 'spammer',
@@ -347,22 +258,12 @@ class AccountTest extends TestCase
         BlockedAccount::create([
             'instagram_account_id' => $account2->id,
             'blocked_username' => 'spammer',
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(1, $account1->blockedAccounts()->count());
         $this->assertEquals(1, $account2->blockedAccounts()->count());
         $this->assertEquals(2, BlockedAccount::where('blocked_username', 'spammer')->count());
-
-        /** #endregion */
     }
 
     #[Test]
@@ -370,7 +271,6 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
@@ -383,18 +283,10 @@ class AccountTest extends TestCase
             ]);
         }
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertEquals(10, $account->blockedAccounts()->count());
-
-        /** #endregion */
     }
 
     #[Test]
@@ -402,7 +294,6 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
@@ -413,24 +304,16 @@ class AccountTest extends TestCase
             'blocked_username' => 'blocked_user',
         ]);
         $blockedAccountCount = BlockedAccount::count();
+
+        /* Act */
         try {
-
-            /** #endregion */
-
-            /** #region Act */
-            /* Act */
             $account->delete();
-
-            /** #endregion */
-
-            /** #region Assert */
-            /* Assert */
-            $this->assertEquals($blockedAccountCount, BlockedAccount::count());
-
         } catch (\Exception $e) {
             $this->assertInstanceOf(\Exception::class, $e);
-            /** #endregion */
         }
+
+        /* Assert */
+        $this->assertEquals($blockedAccountCount, BlockedAccount::count());
     }
 
     #[Test]
@@ -438,27 +321,18 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
+
+        /* Act */
         $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
             'is_active' => 1,
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertIsBool($account->is_active);
         $this->assertTrue($account->is_active);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -466,26 +340,17 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
+
+        /* Act */
         $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
             'last_synced_at' => now(),
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $account->last_synced_at);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -493,30 +358,21 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
+
+        /* Act */
         $blockedAccount = BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'blocked_user',
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertNotNull($blockedAccount->created_at);
         $this->assertNotNull($blockedAccount->updated_at);
-
-        /** #endregion */
     }
 
     #[Test]
@@ -524,25 +380,16 @@ class AccountTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
+
+        /* Act */
         $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
-
-        /** #endregion */
-
-        /** #region Act */
-            /* Act */
         ]);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertNotNull($account->created_at);
         $this->assertNotNull($account->updated_at);
-
-        /** #endregion */
     }
 }

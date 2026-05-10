@@ -44,51 +44,50 @@ class BlockedAccountsRelationManagerTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $this->get(
             AccountResource::getUrl('view', ['record' => $this->account])
         );
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $response->assertSuccessful();
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_can_list_blocked_accounts_in_relation_manager(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_can_create_blocked_account_via_modal_with_service(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_blocked_account_creation_uses_transaction(): void
     {
-        /** #region Arrange */
         /* Arrange */
         $fakeApiService = new FakeInstagramApiService;
-        $fakeApiService->setUserInfoResponse('test_user', null); // Simulate getUserInfo returning null
+        $fakeApiService->setUserInfoResponse('test_user', null);
 
         $service = new BlockedAccountService($fakeApiService);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $result = $service->blockAccount(
             $this->account,
@@ -96,64 +95,107 @@ class BlockedAccountsRelationManagerTest extends TestCase
             'Test reason'
         );
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $result);
         $this->assertDatabaseHas('blocked_accounts', [
             'instagram_account_id' => $this->account->id,
             'blocked_username' => 'test_user',
         ]);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_can_validate_blocked_username_is_required(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_can_edit_blocked_account_via_modal(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_can_delete_blocked_account(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_can_bulk_delete_blocked_accounts(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_blocked_accounts_table_displays_correct_columns(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_can_search_blocked_accounts_by_username(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_blocked_accounts_sorted_by_created_at_desc(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 
     #[Test]
     public function it_only_shows_blocked_accounts_for_current_instagram_account(): void
     {
         $this->markTestIncomplete();
+
+        /* Arrange */
+
+        /* Act */
+
+        /* Assert */
     }
 }
