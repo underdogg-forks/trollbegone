@@ -317,7 +317,7 @@ If your admin already configured the app credentials, you only need to:
 4. Sign in to Instagram/Facebook and approve access.
 5. You return to TrollBeGone and your account shows as connected.
 
-That is it. Socialite handles the OAuth2 redirect flow and TrollBeGone stores the returned access token for that specific Instagram account.
+That's it. Socialite handles the OAuth2 redirect flow and TrollBeGone stores the returned access token for that specific Instagram account.
 
 ### What Socialite Is Doing Behind the Scenes
 
