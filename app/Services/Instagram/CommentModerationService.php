@@ -33,11 +33,13 @@ class CommentModerationService
 
         return $comments
             ->filter(function (array $comment) use ($selectedCommentersLookup): bool {
-                if (! isset($comment['username']) || $comment['username'] === '') {
+                $username = $comment['username'] ?? null;
+
+                if (! is_string($username) || $username === '') {
                     return false;
                 }
 
-                return isset($selectedCommentersLookup[$comment['username']]);
+                return isset($selectedCommentersLookup[$username]);
             })
             ->groupBy('username')
             ->map(fn (Collection $items): array => $items->first());
