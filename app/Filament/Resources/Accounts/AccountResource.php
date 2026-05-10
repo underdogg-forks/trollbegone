@@ -76,7 +76,8 @@ class AccountResource extends Resource
             'stories' => Pages\ViewStories::route('/{record}/stories'),
             'following' => Pages\ViewFollowing::route('/{record}/following'),
             'posts' => Pages\ViewPosts::route('/{record}/posts/{username}'),
-            'comments' => Pages\ViewComments::route('/{record}/comments/{post}'),
+            'comments' => Pages\ListComments::route('/{record}/comments/{post}'),
+            'commenters' => Pages\ListCommenters::route('/{record}/commenters/{post}'),
         ];
     }
 
