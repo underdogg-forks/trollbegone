@@ -307,15 +307,22 @@ Both operations are **independent** and **thread-safe**.
 
 ### Getting an Access Token
 
-1. Create a Facebook App
-2. Add Instagram Graph API permissions
-3. Generate User Access Token via OAuth flow
-4. Store token in `InstagramAccount` model
+1. Create a Facebook App.
+2. Add Instagram Graph API permissions (`instagram_basic`, `instagram_manage_comments`, `instagram_manage_insights`).
+3. Configure `INSTAGRAM_CLIENT_ID`, `INSTAGRAM_CLIENT_SECRET`, and `INSTAGRAM_REDIRECT_URI` in `.env`.
+4. In the app, open **Admin → Instagram Accounts** and click **Connect Instagram** (OAuth flow).
+5. After callback, TrollBeGone stores the returned token in `instagram_accounts.access_token` (encrypted cast on `Account` model).
 
 ```php
 $account->access_token = 'your_long_lived_token';
 $account->save();
 ```
+
+### Token Retrieval and Renewal in TrollBeGone
+
+- **Retrieval for requests**: every Instagram request uses the `Account` instance passed to `InstagramBaseClient::request(...)`, which injects that account's `access_token`.
+- **Renewal/rotation**: reconnecting the same Instagram account via OAuth updates the existing record (`updateOrCreate` in `InstagramOAuthController`) and replaces the stored `access_token`.
+- **Verification in tests**: workflow tests assert token storage, token usage in request options, and that renewed tokens are used on subsequent API calls.
 
 ### API Endpoints Used
 

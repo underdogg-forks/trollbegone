@@ -66,6 +66,8 @@ class TrollBeGoneWorkflowTest extends TestCase
             ['id' => 'c1', 'username' => 'alpha', 'text' => 'nice post'],
             ['id' => 'c2', 'username' => 'beta', 'text' => 'spam #TrollBeGone'],
             ['id' => 'c3', 'username' => 'gamma', 'text' => 'rude #trollbegone'],
+            ['id' => 'c4', 'username' => 'delta', 'text' => 'also rude #TROLLBEGONE'],
+            ['id' => 'c5', 'username' => 'epsilon', 'text' => 'bad #Trollbegone'],
         ]]);
 
         $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
@@ -77,8 +79,8 @@ class TrollBeGoneWorkflowTest extends TestCase
         $withoutTags = $service->filterCommentsWithoutTags($comments);
 
         /* Assert */
-        $this->assertCount(3, $comments);
-        $this->assertCount(2, $tagged);
+        $this->assertCount(5, $comments);
+        $this->assertCount(4, $tagged);
         $this->assertCount(1, $withoutTags);
         $this->assertSame('c1', $withoutTags->first()['id']);
     }
@@ -102,9 +104,14 @@ class TrollBeGoneWorkflowTest extends TestCase
         $deleted = $instagramApi->deleteComment($account, 'comment-10');
         $blocked = (new BlockedAccountService($fakeBlockingApi))
             ->blockAccount($account, 'troll_user', 'Trolling', 'bad comment');
+        $deleteRequest = collect($fakeHttpClient->getRequestHistory())
+            ->first(fn (array $request): bool => str_ends_with($request['url'], '/comment-10'));
 
         /* Assert */
         $this->assertTrue($deleted);
+        $this->assertNotNull($deleteRequest);
+        $this->assertSame('DELETE', $deleteRequest['method']);
+        $this->assertSame(['u-10'], $fakeBlockingApi->getBlockUserCalls());
         $this->assertSame('troll_user', $blocked->blocked_username);
     }
 
@@ -130,7 +137,48 @@ class TrollBeGoneWorkflowTest extends TestCase
 
         /* Assert */
         $this->assertCount(2, $blocked);
+        $this->assertSame(['u-2', 'u-3'], $fakeApi->getBlockUserCalls());
         $this->assertDatabaseHas('blocked_accounts', ['instagram_account_id' => $account->id, 'blocked_username' => 'beta']);
         $this->assertDatabaseHas('blocked_accounts', ['instagram_account_id' => $account->id, 'blocked_username' => 'gamma']);
+    }
+
+    #[Test]
+    public function it_uses_stored_api_key_when_making_instagram_requests(): void
+    {
+        /* Arrange */
+        $fakeHttpClient = new FakeHttpClient;
+        $fakeHttpClient->addResponse('/me/following', ['data' => []]);
+        $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $account = Account::factory()->create(['access_token' => 'stored_token_abc']);
+
+        /* Act */
+        $service->getFollowing($account);
+        $request = collect($fakeHttpClient->getRequestHistory())->first();
+
+        /* Assert */
+        $this->assertNotNull($request);
+        $this->assertSame('stored_token_abc', $request['options']['token'] ?? null);
+    }
+
+    #[Test]
+    public function it_uses_the_renewed_api_key_for_subsequent_requests(): void
+    {
+        /* Arrange */
+        $fakeHttpClient = new FakeHttpClient;
+        $fakeHttpClient->addResponse('/me/following', ['data' => []]);
+        $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $account = Account::factory()->create(['access_token' => 'old_token']);
+
+        /* Act */
+        $service->getFollowing($account);
+        $account->update(['access_token' => 'renewed_token']);
+        $account->refresh();
+        $service->getFollowing($account);
+        $requestHistory = $fakeHttpClient->getRequestHistory();
+
+        /* Assert */
+        $this->assertCount(2, $requestHistory);
+        $this->assertSame('old_token', $requestHistory[0]['options']['token'] ?? null);
+        $this->assertSame('renewed_token', $requestHistory[1]['options']['token'] ?? null);
     }
 }

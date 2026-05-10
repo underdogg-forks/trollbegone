@@ -35,6 +35,11 @@ class FakeInstagramApiService extends InstagramApiService
     protected array $blockUserResults = [];
 
     /**
+     * @var array<int, string>
+     */
+    protected array $blockUserCalls = [];
+
+    /**
      * Override constructor to avoid requiring HttpClientExceptionDecorator.
      */
     public function __construct()
@@ -134,7 +139,19 @@ class FakeInstagramApiService extends InstagramApiService
      */
     public function blockUser(Account $account, string $userId): bool
     {
+        $this->blockUserCalls[] = $userId;
+
         return $this->blockUserResults[$userId] ?? true;
+    }
+
+    /**
+     * Get all user IDs passed to blockUser.
+     *
+     * @return array<int, string>
+     */
+    public function getBlockUserCalls(): array
+    {
+        return $this->blockUserCalls;
     }
 
     /**
@@ -146,5 +163,6 @@ class FakeInstagramApiService extends InstagramApiService
         $this->storiesResponses = [];
         $this->commentsResponses = [];
         $this->blockUserResults = [];
+        $this->blockUserCalls = [];
     }
 }
