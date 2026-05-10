@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use PHPUnit\Framework\Attributes\Test;
-// use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class ExampleTest extends TestCase
@@ -17,15 +16,20 @@ class ExampleTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        // No arrangement needed
+        /* Arrange */
+
         /** #endregion */
 
         /** #region Act */
+        /* Act */
         $response = $this->get('/');
+
         /** #endregion */
 
         /** #region Assert */
+        /* Assert */
         $response->assertStatus(200);
+
         /** #endregion */
     }
 }

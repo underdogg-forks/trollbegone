@@ -31,8 +31,8 @@ TrollBeGone is an API-only Laravel application that consumes the Instagram Graph
 ### 3) Multi-Account, Multi-Tenant (Required)
 
 - No global or config-based API keys.
-- Per-account tokens on `InstagramAccount`.
-- All operations require an `InstagramAccount` instance.
+- Per-account tokens on `Account`.
+- All operations require an `Account` instance.
 - Concurrent-safe for many users.
 
 ---
@@ -88,7 +88,7 @@ abstract class InstagramBaseClient extends BaseClient
 {
     protected const BASE_URI = 'https://graph.instagram.com';
 
-    protected function withToken(InstagramAccount $account, array $options = []): array
+    protected function withToken(Account $account, array $options = []): array
     {
         if (empty($account->access_token)) {
             throw new \RuntimeException('Missing access token');
@@ -107,7 +107,7 @@ abstract class InstagramBaseClient extends BaseClient
 ```php
 class InstagramStoriesClient extends InstagramBaseClient
 {
-    public function list(InstagramAccount $account): \Illuminate\Support\Collection
+    public function list(Account $account): \Illuminate\Support\Collection
     {
         $opts = $this->withToken($account);
         $res = $this->request('GET', self::BASE_URI . '/me/stories', $opts);
@@ -119,7 +119,7 @@ class InstagramStoriesClient extends InstagramBaseClient
 ```php
 class InstagramModerationClient extends InstagramBaseClient
 {
-    public function block(InstagramAccount $account, string $instagramUserId): bool
+    public function block(Account $account, string $instagramUserId): bool
     {
         $opts = $this->withToken($account, ['query' => ['user_id' => $instagramUserId]]);
         $this->request('POST', self::BASE_URI . '/me/blocked', $opts);
@@ -145,7 +145,7 @@ class BlockedAccountService
     ) {}
 
     public function blockByUsername(
-        InstagramAccount $account,
+        Account $account,
         string $username,
         ?string $reason = null,
         ?string $commentText = null
@@ -180,7 +180,7 @@ class BlockedAccountService
 ## Models
 
 ```php
-class InstagramAccount extends \Illuminate\Database\Eloquent\Model
+class Account extends \Illuminate\Database\Eloquent\Model
 {
     protected $fillable = [
         'username',
@@ -213,12 +213,12 @@ class BlockedAccount extends \Illuminate\Database\Eloquent\Model
 
     public function instagramAccount(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
-        return $this->belongsTo(InstagramAccount::class);
+        return $this->belongsTo(Account::class);
     }
 }
 ```
 
-Note: Deleting an `InstagramAccount` does not cascade delete `BlockedAccount` to preserve audit history.
+Note: Deleting an `Account` does not cascade delete `BlockedAccount` to preserve audit history.
 
 ---
 
@@ -272,7 +272,7 @@ Pattern:
 #[Test]
 public function it_blocks_and_persists(): void
 {
-    $account = InstagramAccount::factory()->create(['access_token' => 'x']);
+    $account = Account::factory()->create(['access_token' => 'x']);
     $stories = \Mockery::mock(InstagramStoriesClient::class);
     $mod = \Mockery::mock(InstagramModerationClient::class);
     $users = \Mockery::mock(InstagramUsersClient::class);

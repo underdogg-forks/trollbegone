@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\InstagramAccounts\Tables;
+namespace App\Filament\Resources\Accounts\Tables;
 
+use App\Filament\Resources\Accounts\AccountResource;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -15,7 +16,7 @@ use Filament\Tables\Table;
  *
  * Defines the table structure for listing Instagram accounts in Filament.
  */
-class InstagramAccountsTable
+class AccountsTable
 {
     /**
      * Configure the table with columns, filters, and actions.
@@ -56,10 +57,14 @@ class InstagramAccountsTable
             ])
             ->recordActions([
                 ViewAction::make(),
+                Action::make('view_following')
+                    ->label('View Following')
+                    ->icon('heroicon-o-users')
+                    ->url(fn ($record) => AccountResource::getUrl('following', ['record' => $record])),
                 Action::make('view_stories')
                     ->label('View Stories')
                     ->icon('heroicon-o-eye')
-                    ->url(fn ($record) => route('filament.admin.resources.instagram-accounts.stories', $record))
+                    ->url(fn ($record) => AccountResource::getUrl('stories', ['record' => $record]))
                     ->openUrlInNewTab(),
             ])
             ->toolbarActions([

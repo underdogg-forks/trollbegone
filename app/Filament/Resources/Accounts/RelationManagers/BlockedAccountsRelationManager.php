@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\InstagramAccounts\RelationManagers;
+namespace App\Filament\Resources\Accounts\RelationManagers;
 
 use App\Services\Instagram\BlockedAccountService;
 use Filament\Forms\Components\Textarea;

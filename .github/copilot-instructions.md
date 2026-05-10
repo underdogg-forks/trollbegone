@@ -46,6 +46,18 @@ This application is designed to look like **one person coded it in a single day*
    - `ExternalClient`: Single request function using Laravel HTTP client
    - `HttpClientExceptionDecorator`: Wraps ExternalClient for consistent exception handling
    - Uses GuzzleHttp-compatible interface
+   
+   **Request Method Signature**:
+   ```php
+   public function request(
+       RequestMethod|string $method,
+       Account $account,
+       string $endpoint,
+       array $options = []
+   ): Response
+   ```
+   
+   Services call this method for all HTTP operations (GET, POST, etc.).
 
 2. **Service Layer**
    - `InstagramBaseClient`: Abstract base class for Instagram API services
@@ -53,7 +65,7 @@ This application is designed to look like **one person coded it in a single day*
    - `BlockedAccountService`: Manages blocked account business logic
 
 3. **Model Layer**
-   - `InstagramAccount`: Connected Instagram account with access tokens
+   - `Account`: Connected Instagram account with access tokens
    - `BlockedAccount`: Tracks blocked users with reasons
    - `User`: Filament admin users
 
@@ -96,7 +108,7 @@ Always follow PSR-12 coding standards. The project uses Laravel Pint for automat
 
 ```php
 // ✅ GOOD - Early returns with guard clauses
-public function blockUser(InstagramAccount $account, string $userId): bool
+public function blockUser(Account $account, string $userId): bool
 {
     // Guard clause - check preconditions first
     if (!$account->access_token) {
@@ -104,7 +116,12 @@ public function blockUser(InstagramAccount $account, string $userId): bool
     }
 
     try {
-        $this->post($account, '/me/blocked', ['user_id' => $userId]);
+        $this->request(
+            RequestMethod::POST,
+            $account,
+            '/me/blocked',
+            ['json' => ['user_id' => $userId]]
+        );
         return true;
     } catch (\Exception $e) {
         // Early return on error
@@ -113,11 +130,16 @@ public function blockUser(InstagramAccount $account, string $userId): bool
 }
 
 // ❌ BAD - Deep nesting, late checks
-public function blockUser(InstagramAccount $account, string $userId): bool
+public function blockUser(Account $account, string $userId): bool
 {
     if ($account->access_token) {
         try {
-            $this->post($account, '/me/blocked', ['user_id' => $userId]);
+            $this->request(
+                RequestMethod::POST,
+                $account,
+                '/me/blocked',
+                ['json' => ['user_id' => $userId]]
+            );
             return true;
         } catch (\Exception $e) {
             return false;
@@ -137,15 +159,15 @@ public function blockUser(InstagramAccount $account, string $userId): bool
 class InstagramApiService extends InstagramBaseClient
 {
     // Only handles Instagram API calls
-    public function getStories(InstagramAccount $account): Collection { }
-    public function blockUser(InstagramAccount $account, string $userId): bool { }
+    public function getStories(Account $account): Collection { }
+    public function blockUser(Account $account, string $userId): bool { }
 }
 
 class BlockedAccountService
 {
     // Only handles blocking business logic
-    public function blockAccount(InstagramAccount $account, string $username): BlockedAccount { }
-    public function isBlocked(InstagramAccount $account, string $username): bool { }
+    public function blockAccount(Account $account, string $username): BlockedAccount { }
+    public function isBlocked(Account $account, string $username): bool { }
 }
 ```
 
@@ -157,14 +179,14 @@ public function __construct(
     protected InstagramApiService $instagramApi
 ) {}
 
-public function blockAccount(InstagramAccount $account, string $username): BlockedAccount
+public function blockAccount(Account $account, string $username): BlockedAccount
 {
     $userInfo = $this->instagramApi->getUserInfo($account, $username);
     // ... rest of logic
 }
 
 // ❌ BAD - Direct instantiation
-public function blockAccount(InstagramAccount $account, string $username): BlockedAccount
+public function blockAccount(Account $account, string $username): BlockedAccount
 {
     $instagramApi = new InstagramApiService(); // Never do this!
     // ...
@@ -240,9 +262,9 @@ throw new HttpClientException(
 
 ```php
 // ✅ GOOD - Return collections for flexibility
-public function getStories(InstagramAccount $account): Collection
+public function getStories(Account $account): Collection
 {
-    $response = $this->get($account, '/me/stories');
+    $response = $this->request(RequestMethod::GET, $account, '/me/stories');
     return collect($response->json('data', []));
 }
 ```
@@ -253,9 +275,9 @@ public function getStories(InstagramAccount $account): Collection
 
 ```php
 // ✅ GOOD - Full type hints
-public function blockUser(InstagramAccount $account, string $userId): bool
-public function getUserInfo(InstagramAccount $account, string $username): ?array
-public function getStories(InstagramAccount $account): Collection
+public function blockUser(Account $account, string $userId): bool
+public function getUserInfo(Account $account, string $username): ?array
+public function getStories(Account $account): Collection
 
 // ❌ BAD - No type hints
 public function blockUser($account, $userId)
@@ -266,10 +288,15 @@ public function getUserInfo($account, $username)
 
 ```php
 // ✅ GOOD - Nullable return for optional data
-public function getUserInfo(InstagramAccount $account, string $username): ?array
+public function getUserInfo(Account $account, string $username): ?array
 {
     try {
-        $response = $this->get($account, '/search', ['q' => $username, 'type' => 'user']);
+        $response = $this->request(
+            RequestMethod::GET,
+            $account,
+            '/search',
+            ['query' => ['q' => $username, 'type' => 'user']]
+        );
         $users = $response->json('data', []);
         return $users[0] ?? null; // Early return if no users
     } catch (\Exception $e) {
@@ -284,7 +311,7 @@ public function getUserInfo(InstagramAccount $account, string $username): ?array
 
 ```php
 // ✅ GOOD - Throw exception for critical operation
-protected function ensureAccessToken(InstagramAccount $account): void
+protected function ensureAccessToken(Account $account): void
 {
     if (!$account->access_token) {
         throw new Exception("No access token available for account: {$account->username}");
@@ -296,10 +323,15 @@ protected function ensureAccessToken(InstagramAccount $account): void
 
 ```php
 // ✅ GOOD - Return false for non-critical failure
-public function blockUser(InstagramAccount $account, string $userId): bool
+public function blockUser(Account $account, string $userId): bool
 {
     try {
-        $this->post($account, '/me/blocked', ['user_id' => $userId]);
+        $this->request(
+            RequestMethod::POST,
+            $account,
+            '/me/blocked',
+            ['json' => ['user_id' => $userId]]
+        );
         return true;
     } catch (\Exception $e) {
         // Silently fail and return false
@@ -312,7 +344,7 @@ public function blockUser(InstagramAccount $account, string $userId): bool
 
 ```php
 // ✅ GOOD - Transaction for atomicity
-public function blockAccount(InstagramAccount $account, string $username): BlockedAccount
+public function blockAccount(Account $account, string $username): BlockedAccount
 {
     return DB::transaction(function () use ($account, $username, $reason, $commentText) {
         // Multiple database operations protected by transaction
@@ -328,7 +360,7 @@ public function blockAccount(InstagramAccount $account, string $username): Block
 
 - **Classes**: PascalCase (e.g., `InstagramApiService`)
 - **Methods**: camelCase (e.g., `blockUser`, `getStories`)
-- **Variables**: camelCase (e.g., `$instagramAccount`, `$userId`)
+- **Variables**: camelCase (e.g., `$account`, `$userId`)
 - **Constants**: SCREAMING_SNAKE_CASE (e.g., `API_VERSION`)
 - **Database tables**: snake_case plural (e.g., `instagram_accounts`, `blocked_accounts`)
 - **Database columns**: snake_case (e.g., `instagram_id`, `access_token`)
@@ -364,7 +396,7 @@ public function blockAccount(InstagramAccount $account, string $username): Block
 ### Filament Conventions
 
 1. **Resources**
-   - Organize by feature in subdirectories (e.g., `BlockedAccounts/`, `InstagramAccounts/`)
+   - Organize by feature in subdirectories (e.g., `BlockedAccounts/`, `Accounts/`)
    - Separate concerns: Tables, Forms, Pages
    - Use static methods for configuration
 
@@ -399,12 +431,12 @@ All classes and public methods must have comprehensive PHPDoc blocks:
  *   "success": true
  * }
  *
- * @param InstagramAccount $account The Instagram account
+ * @param Account $account The Instagram account
  * @param string $userId The Instagram user ID to block
  * @return bool True if successful, false otherwise
  * @throws \Exception If no access token is available
  */
-public function blockUser(InstagramAccount $account, string $userId): bool
+public function blockUser(Account $account, string $userId): bool
 {
     // Implementation
 }
@@ -428,7 +460,7 @@ Models should include:
  * 
  * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\BlockedAccount> $blockedAccounts
  */
-class InstagramAccount extends Model
+class Account extends Model
 ```
 
 ## Testing Requirements
@@ -470,7 +502,7 @@ class InstagramAccount extends Model
 public function blocking_account_creates_database_record(): void
 {
     /** #region Arrange */
-    $account = InstagramAccount::create([
+    $account = Account::create([
         'username' => 'main_account',
         'access_token' => 'test_token',
     ]);
@@ -541,7 +573,7 @@ php artisan test --filter test_block_account_creates_blocked_account_record
 **Critical Path Operations** - Throw exceptions:
 ```php
 // Configuration errors, missing dependencies, data integrity issues
-protected function ensureAccessToken(InstagramAccount $account): void
+protected function ensureAccessToken(Account $account): void
 {
     if (!$account->access_token) {
         throw new Exception("No access token available for account: {$account->username}");
@@ -552,7 +584,7 @@ protected function ensureAccessToken(InstagramAccount $account): void
 **Non-Critical Operations** - Return null/false:
 ```php
 // External API calls, optional features, search operations
-public function getUserInfo(InstagramAccount $account, string $username): ?array
+public function getUserInfo(Account $account, string $username): ?array
 {
     try {
         $response = $this->get($account, '/search', ['q' => $username, 'type' => 'user']);
@@ -882,7 +914,7 @@ Before committing any code, verify:
  * and calls the Instagram API to block them. Returns the created record
  * or throws an exception if the operation fails.
  *
- * @param InstagramAccount $account The Instagram account performing the block
+ * @param Account $account The Instagram account performing the block
  * @param string $username The username to block
  * @param string|null $reason Optional reason for blocking
  * @param string|null $commentText Optional comment that triggered the block
@@ -891,7 +923,7 @@ Before committing any code, verify:
  * @throws \Exception If there's an error during the process
  */
 public function blockAccount(
-    InstagramAccount $account,
+    Account $account,
     string $username,
     ?string $reason = null,
     ?string $commentText = null

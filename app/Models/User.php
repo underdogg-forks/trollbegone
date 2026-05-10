@@ -23,8 +23,9 @@ use Illuminate\Notifications\Notifiable;
  * @property string|null $remember_token
  * @property \Carbon\Carbon $created_at
  * @property \Carbon\Carbon $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\InstagramAccount> $instagramAccounts
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Account> $instagramAccounts
  * @property-read int|null $instagram_accounts_count
+ * @property-read \Illuminate\Database\Eloquent\Collection<int, \App\Models\Account> $accounts
  */
 class User extends Authenticatable
 {
@@ -59,12 +60,24 @@ class User extends Authenticatable
     /**
      * Get all Instagram accounts owned by this user.
      *
-     * Relationship: One User has many InstagramAccounts.
+     * Relationship: One User has many Accounts.
      *
-     * @return HasMany<\App\Models\InstagramAccount>
+     * @return HasMany<\App\Models\Account>
      */
     public function instagramAccounts(): HasMany
     {
-        return $this->hasMany(\App\Models\InstagramAccount::class);
+        return $this->hasMany(\App\Models\Account::class);
+    }
+
+    /**
+     * Alias for instagramAccounts() for convenience.
+     *
+     * Relationship: One User has many Accounts.
+     *
+     * @return HasMany<\App\Models\Account>
+     */
+    public function accounts(): HasMany
+    {
+        return $this->instagramAccounts();
     }
 }

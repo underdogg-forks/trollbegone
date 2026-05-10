@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\InstagramAccounts\Pages;
+namespace App\Filament\Resources\Accounts\Pages;
 
-use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
-use App\Models\InstagramAccount;
+use App\Filament\Resources\Accounts\AccountResource;
+use App\Models\Account;
 use App\Services\Instagram\BlockedAccountService;
 use App\Services\Instagram\InstagramApiService;
 use Filament\Notifications\Notification;
@@ -17,11 +17,11 @@ use Filament\Resources\Pages\Page;
  */
 class ViewStories extends Page
 {
-    protected static string $resource = InstagramAccountResource::class;
+    protected static string $resource = AccountResource::class;
 
-    protected string $view = 'filament.resources.instagram-accounts.pages.view-stories';
+    protected string $view = 'filament.resources.accounts.pages.view-stories';
 
-    public InstagramAccount $record;
+    public Account $record;
 
     public array $stories = [];
 
@@ -32,7 +32,7 @@ class ViewStories extends Page
     /**
      * Initialize the page with the Instagram account record and load stories.
      */
-    public function mount(InstagramAccount $record): void
+    public function mount(Account $record): void
     {
         $this->record = $record;
         $this->loadStories();

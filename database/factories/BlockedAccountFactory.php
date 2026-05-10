@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
+use App\Models\Account;
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -21,7 +21,7 @@ class BlockedAccountFactory extends Factory
     public function definition(): array
     {
         return [
-            'instagram_account_id' => InstagramAccount::factory(),
+            'instagram_account_id' => Account::factory(),
             'blocked_username' => fake()->userName(),
             'blocked_instagram_id' => fake()->numerify('##########'),
             'reason' => fake()->randomElement([
@@ -68,7 +68,7 @@ class BlockedAccountFactory extends Factory
     /**
      * Indicate that the blocked account belongs to a specific Instagram account.
      */
-    public function forInstagramAccount(InstagramAccount $account): static
+    public function forAccount(Account $account): static
     {
         return $this->state(fn () => [
             'instagram_account_id' => $account->id,

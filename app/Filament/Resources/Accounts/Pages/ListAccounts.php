@@ -1,16 +1,16 @@
 <?php
 
-namespace App\Filament\Resources\InstagramAccounts\Pages;
+namespace App\Filament\Resources\Accounts\Pages;
 
-use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
+use App\Filament\Resources\Accounts\AccountResource;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
 
-class ListInstagramAccounts extends ListRecords
+class ListAccounts extends ListRecords
 {
-    protected static string $resource = InstagramAccountResource::class;
+    protected static string $resource = AccountResource::class;
 
     protected function getHeaderActions(): array
     {

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Laravel\Socialite\Facades\Socialite;
@@ -40,7 +40,7 @@ class InstagramOAuthController extends Controller
             }
 
             // Create or update the Instagram account
-            $account = InstagramAccount::updateOrCreate(
+            $account = Account::updateOrCreate(
                 [
                     'instagram_id' => $instagramUser->getId(),
                 ],
@@ -54,12 +54,12 @@ class InstagramOAuthController extends Controller
             );
 
             return redirect()
-                ->route('filament.admin.resources.instagram-accounts.index')
+                ->route('filament.admin.resources.accounts.index')
                 ->with('success', "Instagram account @{$account->username} connected successfully!");
 
         } catch (\Exception $e) {
             return redirect()
-                ->route('filament.admin.resources.instagram-accounts.index')
+                ->route('filament.admin.resources.accounts.index')
                 ->with('error', 'Failed to connect Instagram account: '.$e->getMessage());
         }
     }
@@ -67,7 +67,7 @@ class InstagramOAuthController extends Controller
     /**
      * Disconnect an Instagram account by revoking the access token.
      */
-    public function disconnect(InstagramAccount $account): RedirectResponse
+    public function disconnect(Account $account): RedirectResponse
     {
         try {
             $this->authorize('update', $account);

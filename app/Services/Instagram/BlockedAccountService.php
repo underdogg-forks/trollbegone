@@ -2,8 +2,8 @@
 
 namespace App\Services\Instagram;
 
+use App\Models\Account;
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -25,7 +25,7 @@ class BlockedAccountService
      * 2. Creates a local database record
      * 3. Calls the Instagram API to block the user
      *
-     * @param  InstagramAccount  $account  The Instagram account performing the block
+     * @param  Account  $account  The Instagram account performing the block
      * @param  string  $username  The username to block
      * @param  string|null  $reason  Optional reason for blocking
      * @param  string|null  $commentText  Optional comment text that triggered the block
@@ -34,56 +34,58 @@ class BlockedAccountService
      * @throws \Exception If there's an error during the process
      */
     public function blockAccount(
-        InstagramAccount $account,
+        Account $account,
         string $username,
         ?string $reason = null,
         ?string $commentText = null
     ): BlockedAccount {
+        // Fetch user info - don't fail if unavailable
         try {
-            return DB::transaction(function () use ($account, $username, $reason, $commentText) {
-                try {
-                    $userInfo = $this->instagramApi->getUserInfo($account, $username);
-                } catch (\Exception $e) {
-                    // If we can't get user info, continue with null
-                    $userInfo = null;
-                }
+            $userInfo = $this->instagramApi->getUserInfo($account, $username);
+        } catch (\Throwable $e) {
+            $userInfo = null;
+        }
 
-                $blockedAccount = BlockedAccount::create([
+        // Create database record first - ensures audit trail even if API fails
+        $blockedAccount = DB::transaction(function () use ($account, $username, $reason, $commentText, $userInfo) {
+            return BlockedAccount::firstOrCreate(
+                [
                     'instagram_account_id' => $account->id,
                     'blocked_username' => $username,
+                ],
+                [
                     'blocked_instagram_id' => $userInfo['id'] ?? null,
                     'reason' => $reason,
                     'comment_text' => $commentText,
+                ]
+            );
+        });
+
+        // Try to block on Instagram - log warning if it fails but don't throw
+        if ($userInfo && isset($userInfo['id'])) {
+            try {
+                $this->instagramApi->blockUser($account, $userInfo['id']);
+            } catch (\Throwable $e) {
+                logger()->warning('Instagram block failed', [
+                    'account_id' => $account->id,
+                    'username' => $username,
+                    'instagram_user_id' => $userInfo['id'],
+                    'error' => $e->getMessage(),
                 ]);
-
-                if ($userInfo && isset($userInfo['id'])) {
-                    try {
-                        $this->instagramApi->blockUser($account, $userInfo['id']);
-                    } catch (\Exception $e) {
-                        // Block failed on Instagram but we keep the local record
-                        Log::warning('Instagram API block failed', [
-                            'account_id' => $account->id,
-                            'username' => $username,
-                            'error' => $e->getMessage(),
-                        ]);
-                    }
-                }
-
-                return $blockedAccount;
-            });
-        } catch (\Exception $e) {
-            throw new \Exception("Failed to block account: {$e->getMessage()}", 0, $e);
+            }
         }
+
+        return $blockedAccount;
     }
 
     /**
      * Check if a username is blocked for a specific Instagram account.
      *
-     * @param  InstagramAccount  $account  The Instagram account
+     * @param  Account  $account  The Instagram account
      * @param  string  $username  The username to check
      * @return bool True if the username is blocked, false otherwise
      */
-    public function isBlocked(InstagramAccount $account, string $username): bool
+    public function isBlocked(Account $account, string $username): bool
     {
         return BlockedAccount::where('instagram_account_id', $account->id)
             ->where('blocked_username', $username)
@@ -93,10 +95,10 @@ class BlockedAccountService
     /**
      * Get all blocked accounts for a specific Instagram account.
      *
-     * @param  InstagramAccount  $account  The Instagram account
+     * @param  Account  $account  The Instagram account
      * @return \Illuminate\Database\Eloquent\Collection Collection of blocked accounts
      */
-    public function getBlockedAccounts(InstagramAccount $account)
+    public function getBlockedAccounts(Account $account): \Illuminate\Database\Eloquent\Collection
     {
         return $account->blockedAccounts()->latest()->get();
     }

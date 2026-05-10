@@ -2,13 +2,15 @@
 
 namespace Tests\Fakes;
 
-use App\Models\InstagramAccount;
+use App\Models\Account;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Support\Collection;
 
 /**
  * FakeInstagramApiService provides a fake implementation of InstagramApiService for testing.
  * This allows tests to define predictable responses without needing Mockery.
+ *
+ * @SuppressWarnings(PHPMD.UnusedFormalParameter)
  */
 class FakeInstagramApiService extends InstagramApiService
 {
@@ -87,7 +89,7 @@ class FakeInstagramApiService extends InstagramApiService
     /**
      * Get user info by username.
      */
-    public function getUserInfo(InstagramAccount $account, string $username): ?array
+    public function getUserInfo(Account $account, string $username): ?array
     {
         return $this->userInfoResponses[$username] ?? null;
     }
@@ -95,7 +97,7 @@ class FakeInstagramApiService extends InstagramApiService
     /**
      * Get stories for an account.
      */
-    public function getStories(InstagramAccount $account): Collection
+    public function getStories(Account $account): Collection
     {
         return $this->storiesResponses[$account->username] ?? collect([]);
     }
@@ -103,7 +105,7 @@ class FakeInstagramApiService extends InstagramApiService
     /**
      * Get comments for a story.
      */
-    public function getStoryComments(InstagramAccount $account, string $storyId): Collection
+    public function getStoryComments(Account $account, string $storyId): Collection
     {
         return $this->commentsResponses[$storyId] ?? collect([]);
     }
@@ -111,7 +113,7 @@ class FakeInstagramApiService extends InstagramApiService
     /**
      * Block a user.
      */
-    public function blockUser(InstagramAccount $account, string $userId): bool
+    public function blockUser(Account $account, string $userId): bool
     {
         return $this->blockUserResults[$userId] ?? true;
     }

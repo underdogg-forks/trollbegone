@@ -2,9 +2,9 @@
 
 namespace Tests\Feature;
 
-use App\Filament\Resources\InstagramAccounts\InstagramAccountResource;
+use App\Filament\Resources\Accounts\AccountResource;
+use App\Models\Account;
 use App\Models\BlockedAccount;
-use App\Models\InstagramAccount;
 use App\Models\User;
 use App\Services\Instagram\BlockedAccountService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -24,7 +24,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
 
     protected User $adminUser;
 
-    protected InstagramAccount $instagramAccount;
+    protected Account $account;
 
     protected function setUp(): void
     {
@@ -33,7 +33,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
         $this->adminUser = User::factory()->create();
         $this->actingAs($this->adminUser);
 
-        $this->instagramAccount = InstagramAccount::factory()->create([
+        $this->account = Account::factory()->create([
             'username' => 'test_account',
             'access_token' => 'test_token',
         ]);
@@ -45,17 +45,22 @@ class BlockedAccountsRelationManagerTest extends TestCase
         $this->markTestIncomplete();
 
         /** #region Arrange */
-        // User and Instagram account set up in setUp()
+        /* Arrange */
+
         /** #endregion */
 
         /** #region Act */
+        /* Act */
         $response = $this->get(
-            InstagramAccountResource::getUrl('view', ['record' => $this->instagramAccount])
+            AccountResource::getUrl('view', ['record' => $this->account])
         );
+
         /** #endregion */
 
         /** #region Assert */
+        /* Assert */
         $response->assertSuccessful();
+
         /** #endregion */
     }
 
@@ -75,26 +80,32 @@ class BlockedAccountsRelationManagerTest extends TestCase
     public function it_blocked_account_creation_uses_transaction(): void
     {
         /** #region Arrange */
+        /* Arrange */
         $fakeApiService = new FakeInstagramApiService;
         $fakeApiService->setUserInfoResponse('test_user', null); // Simulate getUserInfo returning null
 
         $service = new BlockedAccountService($fakeApiService);
+
         /** #endregion */
 
         /** #region Act */
+        /* Act */
         $result = $service->blockAccount(
-            $this->instagramAccount,
+            $this->account,
             'test_user',
             'Test reason'
         );
+
         /** #endregion */
 
         /** #region Assert */
+        /* Assert */
         $this->assertInstanceOf(BlockedAccount::class, $result);
         $this->assertDatabaseHas('blocked_accounts', [
-            'instagram_account_id' => $this->instagramAccount->id,
+            'instagram_account_id' => $this->account->id,
             'blocked_username' => 'test_user',
         ]);
+
         /** #endregion */
     }
 
