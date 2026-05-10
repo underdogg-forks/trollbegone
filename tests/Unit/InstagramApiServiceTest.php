@@ -15,24 +15,23 @@ class InstagramApiServiceTest extends TestCase
     #[Test]
     public function it_throws_exception_when_getting_stories_without_access_token(): void
     {
-        /** #region Arrange */
         /* Arrange */
         $account = new Account(['username' => 'test']);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #region Act & Assert */
+        /* Act */
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No access token available for account: test');
         $service->getStories($account);
 
+        /* Assert */
     }
 
     #[Test]
     public function it_returns_collection_of_stories(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/me/stories' => Http::response([
@@ -50,26 +49,17 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $stories = $service->getStories($account);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertCount(2, $stories);
         $this->assertEquals('story1', $stories->first()['id']);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_empty_collection_when_no_stories_data(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/me/stories' => Http::response(['data' => []], 200),
@@ -82,42 +72,33 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $stories = $service->getStories($account);
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertCount(0, $stories);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_throws_exception_when_getting_story_comments_without_access_token(): void
     {
-        /** #region Arrange */
         /* Arrange */
         $account = new Account(['username' => 'test']);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #region Act & Assert */
+        /* Act */
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage('No access token available for account: test');
         $service->getStoryComments($account, 'story123');
 
+        /* Assert */
     }
 
     #[Test]
     public function it_returns_collection_of_story_comments(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/story123/comments' => Http::response([
@@ -135,26 +116,17 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $comments = $service->getStoryComments($account, 'story123');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertCount(2, $comments);
         $this->assertEquals('comment1', $comments->first()['id']);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_empty_collection_when_no_story_comments(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/story123/comments' => Http::response(['data' => []], 200),
@@ -167,50 +139,32 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $comments = $service->getStoryComments($account, 'story123');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertCount(0, $comments);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_false_when_blocking_user_without_access_token(): void
     {
-        /** #region Arrange */
         /* Arrange */
         $account = new Account(['username' => 'test']);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $result = $service->blockUser($account, 'user123');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_true_when_blocking_user_successfully(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/me/blocked' => Http::response(['success' => true], 200),
@@ -223,25 +177,16 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $result = $service->blockUser($account, 'user123');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertTrue($result);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_false_when_blocking_user_throws_http_exception(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/me/blocked' => Http::response(['error' => 'API Error'], 500),
@@ -254,25 +199,16 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $result = $service->blockUser($account, 'user123');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_false_when_blocking_user_throws_general_exception(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/me/blocked' => Http::response(['error' => 'Network error'], 503),
@@ -285,50 +221,32 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $result = $service->blockUser($account, 'user123');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertFalse($result);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_null_when_getting_user_info_without_access_token(): void
     {
-        /** #region Arrange */
         /* Arrange */
         $account = new Account(['username' => 'test']);
         $client = new ExternalClient;
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'search_user');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_first_user_from_search_results(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/search*' => Http::response([
@@ -346,27 +264,18 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'search_user');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertIsArray($userInfo);
         $this->assertEquals('user123', $userInfo['id']);
         $this->assertEquals('search_user', $userInfo['username']);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_null_when_user_search_has_no_results(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/search*' => Http::response(['data' => []], 200),
@@ -379,25 +288,16 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'nonexistent_user');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_null_when_getting_user_info_throws_http_exception(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/search*' => Http::response(['error' => 'API Error'], 500),
@@ -410,25 +310,16 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'search_user');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-
-        /** #endregion */
     }
 
     #[Test]
     public function it_returns_null_when_getting_user_info_throws_general_exception(): void
     {
-        /** #region Arrange */
         /* Arrange */
         Http::fake([
             'https://graph.instagram.com/search*' => Http::response(['error' => 'Network timeout'], 503),
@@ -441,18 +332,10 @@ class InstagramApiServiceTest extends TestCase
         $decorator = new HttpClientExceptionDecorator($client);
         $service = new InstagramApiService($decorator);
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $userInfo = $service->getUserInfo($account, 'search_user');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertNull($userInfo);
-
-        /** #endregion */
     }
 }

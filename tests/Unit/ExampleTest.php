@@ -15,20 +15,11 @@ class ExampleTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $this->assertTrue(true);
-
-        /** #endregion */
     }
 }

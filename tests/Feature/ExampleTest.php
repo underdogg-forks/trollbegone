@@ -15,21 +15,12 @@ class ExampleTest extends TestCase
     {
         $this->markTestIncomplete();
 
-        /** #region Arrange */
         /* Arrange */
 
-        /** #endregion */
-
-        /** #region Act */
         /* Act */
         $response = $this->get('/');
 
-        /** #endregion */
-
-        /** #region Assert */
         /* Assert */
         $response->assertStatus(200);
-
-        /** #endregion */
     }
 }
