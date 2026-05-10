@@ -63,7 +63,10 @@ class ListComments extends Page
     public function toggleComment(string $commentId): void
     {
         if (in_array($commentId, $this->selectedComments, true)) {
-            $this->selectedComments = array_values(array_diff($this->selectedComments, [$commentId]));
+            $this->selectedComments = $this->removeSelectedItems(
+                selectedItems: $this->selectedComments,
+                itemsToRemove: [$commentId]
+            );
 
             return;
         }
@@ -124,6 +127,15 @@ class ListComments extends Page
         $apiService = app(InstagramApiService::class);
         $deleted = $apiService->deleteComment($this->record, $commentId);
 
+        if (! $deleted) {
+            Notification::make()
+                ->title('Delete failed')
+                ->warning()
+                ->send();
+
+            return;
+        }
+
         BlockUserJob::dispatch(
             account: $this->record,
             username: $comment['username'],
@@ -131,21 +143,15 @@ class ListComments extends Page
             commentText: $comment['text'] ?? null
         );
 
-        if (! $deleted) {
-            Notification::make()
-                ->title('Block queued, delete failed')
-                ->warning()
-                ->send();
-
-            return;
-        }
-
         $this->comments = collect($this->comments)
             ->reject(fn (array $item): bool => ($item['id'] ?? null) === $commentId)
             ->values()
             ->all();
 
-        $this->selectedComments = array_values(array_diff($this->selectedComments, [$commentId]));
+        $this->selectedComments = $this->removeSelectedItems(
+            selectedItems: $this->selectedComments,
+            itemsToRemove: [$commentId]
+        );
 
         Notification::make()
             ->title('Comment deleted and user queued for block')
@@ -174,9 +180,11 @@ class ListComments extends Page
                 continue;
             }
 
-            if ($apiService->deleteComment($this->record, $comment['id'])) {
-                $deletedCount++;
+            if (! $apiService->deleteComment($this->record, $comment['id'])) {
+                continue;
             }
+
+            $deletedCount++;
 
             BlockUserJob::dispatch(
                 account: $this->record,
@@ -191,7 +199,10 @@ class ListComments extends Page
             ->reject(fn (array $item): bool => in_array($item['id'] ?? null, $taggedCommentIds, true))
             ->values()
             ->all();
-        $this->selectedComments = array_values(array_diff($this->selectedComments, $taggedCommentIds));
+        $this->selectedComments = $this->removeSelectedItems(
+            selectedItems: $this->selectedComments,
+            itemsToRemove: $taggedCommentIds
+        );
 
         Notification::make()
             ->title("Deleted {$deletedCount} tagged comments and queued blocks")
@@ -244,5 +255,17 @@ class ListComments extends Page
     public function getComments(): Collection
     {
         return collect($this->comments);
+    }
+
+    /**
+     * Remove IDs from a selected items list and return reindexed values.
+     *
+     * @param  array<int, string>  $selectedItems
+     * @param  array<int, string>  $itemsToRemove
+     * @return array<int, string>
+     */
+    private function removeSelectedItems(array $selectedItems, array $itemsToRemove): array
+    {
+        return array_values(array_diff($selectedItems, $itemsToRemove));
     }
 }

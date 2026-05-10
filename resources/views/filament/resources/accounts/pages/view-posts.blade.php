@@ -44,7 +44,7 @@
                                 </summary>
                                 <div class="absolute z-10 mt-2 w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
                                     <a
-                                        href="{{ route('filament.admin.resources.accounts.comments', ['record' => $record->id, 'post' => $post['id'], 'username' => $username]) }}"
+                                        href="{{ route('filament.admin.resources.accounts.comments', ['record' => $record->id, 'post' => $post['id']]) }}"
                                         class="block px-4 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700"
                                     >
                                         List Comments
