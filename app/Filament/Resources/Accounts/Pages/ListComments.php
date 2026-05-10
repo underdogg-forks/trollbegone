@@ -32,8 +32,18 @@ class ListComments extends Page
 
     public array $selectedComments = [];
 
+    protected InstagramApiService $instagramApi;
+
     #[Locked]
     public array $comments = [];
+
+    /**
+     * Inject dependencies via Livewire's boot method.
+     */
+    public function boot(InstagramApiService $instagramApi): void
+    {
+        $this->instagramApi = $instagramApi;
+    }
 
     public function mount(Account $record, string $post): void
     {
@@ -45,8 +55,7 @@ class ListComments extends Page
     protected function getCommentsFromApi(): array
     {
         try {
-            $apiService = app(InstagramApiService::class);
-            $comments = $apiService->getPostComments($this->record, $this->postId);
+            $comments = $this->instagramApi->getPostComments($this->record, $this->postId);
 
             return $comments->all();
         } catch (\Exception $e) {
@@ -124,8 +133,7 @@ class ListComments extends Page
             return;
         }
 
-        $apiService = app(InstagramApiService::class);
-        $deleted = $apiService->deleteComment($this->record, $commentId);
+        $deleted = $this->instagramApi->deleteComment($this->record, $commentId);
 
         if (! $deleted) {
             Notification::make()
@@ -161,8 +169,7 @@ class ListComments extends Page
 
     public function bulkDeleteTaggedComments(string $tag = 'trollbegone'): void
     {
-        $apiService = app(InstagramApiService::class);
-        $taggedComments = $apiService->filterCommentsByTag(collect($this->comments), $tag);
+        $taggedComments = $this->instagramApi->filterCommentsByTag(collect($this->comments), $tag);
 
         if ($taggedComments->isEmpty()) {
             Notification::make()
@@ -180,7 +187,7 @@ class ListComments extends Page
                 continue;
             }
 
-            if (! $apiService->deleteComment($this->record, $comment['id'])) {
+            if (! $this->instagramApi->deleteComment($this->record, $comment['id'])) {
                 continue;
             }
 
