@@ -5,6 +5,7 @@ namespace App\Services\Instagram;
 use App\Enums\RequestMethod;
 use App\Models\Account;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Log;
 
 /**
  * InstagramApiService provides methods for interacting with Instagram's Graph API.
@@ -108,7 +109,7 @@ class InstagramApiService extends InstagramBaseClient
 
             return true;
         } catch (\Exception $e) {
-            \Log::warning('Failed to block user', [
+            Log::warning('Failed to block user', [
                 'account_id' => $account->id,
                 'user_id' => $userId,
                 'error' => $e->getMessage(),
@@ -158,7 +159,7 @@ class InstagramApiService extends InstagramBaseClient
 
             return $users[0] ?? null;
         } catch (\Exception $e) {
-            \Log::warning('Failed to get user info', [
+            Log::warning('Failed to get user info', [
                 'account_id' => $account->id,
                 'username' => $username,
                 'error' => $e->getMessage(),

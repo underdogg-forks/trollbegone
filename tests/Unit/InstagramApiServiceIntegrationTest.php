@@ -19,7 +19,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function get_stories_with_real_fixture(): void
+    public function it_gets_stories_with_real_fixture(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -57,7 +57,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function get_story_comments_with_real_fixture(): void
+    public function it_gets_story_comments_with_real_fixture(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -94,7 +94,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function get_user_info_with_real_fixture(): void
+    public function it_gets_user_info_with_real_fixture(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -132,7 +132,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function block_user_with_success_response(): void
+    public function it_blocks_user_with_success_response(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -165,7 +165,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function identify_spam_comment_from_fixture(): void
+    public function it_identifies_spam_comment_from_fixture(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -206,7 +206,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function handle_empty_stories_response(): void
+    public function it_handles_empty_stories_response(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -242,7 +242,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function handle_empty_comments_response(): void
+    public function it_handles_empty_comments_response(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -278,7 +278,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function handle_user_not_found_response(): void
+    public function it_handles_user_not_found_response(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -313,7 +313,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function process_multiple_story_types(): void
+    public function it_processes_multiple_story_types(): void
     {
         /** #region Arrange */
         /* Arrange */

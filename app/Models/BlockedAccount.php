@@ -30,13 +30,7 @@ class BlockedAccount extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'instagram_account_id',
-        'blocked_username',
-        'blocked_instagram_id',
-        'reason',
-        'comment_text',
-    ];
+    protected $guarded = [];
 
     /**
      * Get the account that blocked this user.

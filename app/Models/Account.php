@@ -35,18 +35,7 @@ class Account extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'user_id',
-        'username',
-        'instagram_id',
-        'access_token',
-        'is_active',
-        'last_synced_at',
-    ];
-
-    protected $hidden = [
-        'access_token',
-    ];
+    protected $guarded = [];
 
     protected $casts = [
         'is_active' => 'boolean',

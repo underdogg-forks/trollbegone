@@ -20,7 +20,6 @@ class AccountModelTest extends TestCase
         /** #region Arrange */
         /* Arrange */
         $account = new Account;
-        
 
         /** #endregion */
 
@@ -28,7 +27,6 @@ class AccountModelTest extends TestCase
         /* Act */
         $fillable = $account->getFillable();
         $guarded = $account->getGuarded();
-        
 
         /** #endregion */
 
@@ -40,8 +38,8 @@ class AccountModelTest extends TestCase
         $this->assertContains('last_synced_at', $fillable);
         $this->assertNotContains('access_token', $fillable);
         $this->assertContains('access_token', $guarded);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -51,7 +49,6 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
@@ -61,7 +58,6 @@ class AccountModelTest extends TestCase
             'is_active' => 1,
             'last_synced_at' => '2024-01-01 12:00:00',
         ]);
-        
 
         /** #endregion */
 
@@ -69,8 +65,8 @@ class AccountModelTest extends TestCase
         /* Assert */
         $this->assertIsBool($account->is_active);
         $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $account->last_synced_at);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -81,22 +77,20 @@ class AccountModelTest extends TestCase
         /** #region Arrange */
         /* Arrange */
         $account = Account::factory()->create();
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $relationship = $account->blockedAccounts();
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $relationship);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -106,7 +100,6 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
@@ -115,7 +108,6 @@ class AccountModelTest extends TestCase
         $account = Account::factory()->create([
             'instagram_id' => null,
         ]);
-        
 
         /** #endregion */
 
@@ -126,8 +118,8 @@ class AccountModelTest extends TestCase
             'id' => $account->id,
             'instagram_id' => null,
         ]);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -137,22 +129,20 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $account = Account::factory()->withoutAccessToken()->create();
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNull($account->access_token);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -162,22 +152,20 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $account = Account::factory()->create();
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertTrue($account->is_active);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -187,22 +175,20 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $account = Account::factory()->inactive()->create();
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertFalse($account->is_active);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -212,7 +198,6 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
@@ -221,15 +206,14 @@ class AccountModelTest extends TestCase
         $account = Account::factory()->create([
             'last_synced_at' => null,
         ]);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNull($account->last_synced_at);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -242,22 +226,20 @@ class AccountModelTest extends TestCase
         $account = Account::factory()->create([
             'username' => 'original_username',
         ]);
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $account->update(['username' => 'updated_username']);
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertEquals('updated_username', $account->fresh()->username);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -267,7 +249,6 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
@@ -275,15 +256,14 @@ class AccountModelTest extends TestCase
         /* Act */
         $account1 = Account::factory()->create();
         $account2 = Account::factory()->create();
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNotEquals($account1->username, $account2->username);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -293,7 +273,6 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
@@ -301,15 +280,14 @@ class AccountModelTest extends TestCase
         /* Act */
         $account1 = Account::factory()->create();
         $account2 = Account::factory()->create();
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNotEquals($account1->instagram_id, $account2->instagram_id);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -319,7 +297,6 @@ class AccountModelTest extends TestCase
 
         /** #region Arrange */
         /* Arrange */
-        
 
         /** #endregion */
 
@@ -327,15 +304,14 @@ class AccountModelTest extends TestCase
         /* Act */
         $account1 = Account::factory()->create();
         $account2 = Account::factory()->create();
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertNotEquals($account1->access_token, $account2->access_token);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 
     #[Test]
@@ -347,21 +323,19 @@ class AccountModelTest extends TestCase
         /* Arrange */
         $account = Account::factory()->create();
         BlockedAccount::factory()->count(3)->forAccount($account)->create();
-        
 
         /** #endregion */
 
         /** #region Act */
         /* Act */
         $blockedAccounts = $account->blockedAccounts;
-        
 
         /** #endregion */
 
         /** #region Assert */
         /* Assert */
         $this->assertCount(3, $blockedAccounts);
-        
-    /** #endregion */
+
+        /** #endregion */
     }
 }

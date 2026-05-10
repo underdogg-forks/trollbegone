@@ -20,7 +20,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function complete_blocking_workflow_with_fixtures(): void
+    public function it_completes_blocking_workflow_with_fixtures(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -66,7 +66,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function blocking_workflow_when_user_search_fails(): void
+    public function it_handles_blocking_workflow_when_user_search_fails(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -107,7 +107,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function blocking_multiple_users_from_comments(): void
+    public function it_blocks_multiple_users_from_comments(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -163,7 +163,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function is_blocked_with_fixture_data(): void
+    public function it_checks_if_user_is_blocked_with_fixture_data(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -206,7 +206,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function get_blocked_accounts_returns_latest_first(): void
+    public function it_returns_blocked_accounts_latest_first(): void
     {
         /** #region Arrange */
         /* Arrange */
@@ -254,7 +254,7 @@ class BlockedAccountServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function blocking_workflow_when_api_block_fails(): void
+    public function it_handles_blocking_workflow_when_api_block_fails(): void
     {
         /** #region Arrange */
         /* Arrange */
