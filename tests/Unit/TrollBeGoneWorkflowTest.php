@@ -68,6 +68,7 @@ class TrollBeGoneWorkflowTest extends TestCase
             ['id' => 'c3', 'username' => 'gamma', 'text' => 'rude #trollbegone'],
             ['id' => 'c4', 'username' => 'delta', 'text' => 'also rude #TROLLBEGONE'],
             ['id' => 'c5', 'username' => 'epsilon', 'text' => 'bad #Trollbegone'],
+            ['id' => 'c6', 'username' => 'zeta', 'text' => 'mixed #tRoLlBeGoNe'],
         ]]);
 
         $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
@@ -77,10 +78,14 @@ class TrollBeGoneWorkflowTest extends TestCase
         $comments = $service->getPostComments($account, 'post-1');
         $tagged = $service->filterCommentsByTag($comments, 'TrollBeGone');
         $withoutTags = $service->filterCommentsWithoutTags($comments);
+        $taggedCommentIds = $tagged->pluck('id')->all();
 
         /* Assert */
-        $this->assertCount(5, $comments);
-        $this->assertCount(4, $tagged);
+        $this->assertCount(6, $comments);
+        $this->assertCount(5, $tagged);
+        $this->assertContains('c4', $taggedCommentIds);
+        $this->assertContains('c5', $taggedCommentIds);
+        $this->assertContains('c6', $taggedCommentIds);
         $this->assertCount(1, $withoutTags);
         $this->assertSame('c1', $withoutTags->first()['id']);
     }
@@ -104,10 +109,10 @@ class TrollBeGoneWorkflowTest extends TestCase
         $deleted = $instagramApi->deleteComment($account, 'comment-10');
         $blocked = (new BlockedAccountService($fakeBlockingApi))
             ->blockAccount($account, 'troll_user', 'Trolling', 'bad comment');
-        $deleteRequest = collect($fakeHttpClient->getRequestHistory())
-            ->first(fn (array $request): bool => str_ends_with($request['url'], '/comment-10'));
 
         /* Assert */
+        $deleteRequest = collect($fakeHttpClient->getRequestHistory())
+            ->first(fn (array $request): bool => str_ends_with($request['url'], '/comment-10'));
         $this->assertTrue($deleted);
         $this->assertNotNull($deleteRequest);
         $this->assertSame('DELETE', $deleteRequest['method']);
@@ -143,7 +148,7 @@ class TrollBeGoneWorkflowTest extends TestCase
     }
 
     #[Test]
-    public function it_uses_stored_api_key_when_making_instagram_requests(): void
+    public function it_uses_stored_access_token_when_making_instagram_requests(): void
     {
         /* Arrange */
         $fakeHttpClient = new FakeHttpClient;
@@ -157,11 +162,12 @@ class TrollBeGoneWorkflowTest extends TestCase
 
         /* Assert */
         $this->assertNotNull($request);
-        $this->assertSame('stored_token_abc', $request['options']['token'] ?? null);
+        $this->assertArrayHasKey('token', $request['options']);
+        $this->assertSame('stored_token_abc', $request['options']['token']);
     }
 
     #[Test]
-    public function it_uses_the_renewed_api_key_for_subsequent_requests(): void
+    public function it_uses_the_renewed_access_token_for_subsequent_requests(): void
     {
         /* Arrange */
         $fakeHttpClient = new FakeHttpClient;
@@ -172,13 +178,14 @@ class TrollBeGoneWorkflowTest extends TestCase
         /* Act */
         $service->getFollowing($account);
         $account->update(['access_token' => 'renewed_token']);
-        $account->refresh();
         $service->getFollowing($account);
         $requestHistory = $fakeHttpClient->getRequestHistory();
 
         /* Assert */
         $this->assertCount(2, $requestHistory);
-        $this->assertSame('old_token', $requestHistory[0]['options']['token'] ?? null);
-        $this->assertSame('renewed_token', $requestHistory[1]['options']['token'] ?? null);
+        $this->assertArrayHasKey('token', $requestHistory[0]['options']);
+        $this->assertArrayHasKey('token', $requestHistory[1]['options']);
+        $this->assertSame('old_token', $requestHistory[0]['options']['token']);
+        $this->assertSame('renewed_token', $requestHistory[1]['options']['token']);
     }
 }

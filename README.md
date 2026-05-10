@@ -320,7 +320,7 @@ $account->save();
 
 ### Token Retrieval and Renewal in TrollBeGone
 
-- **Retrieval for requests**: every Instagram request uses the `Account` instance passed to `InstagramBaseClient::request(...)`, which injects that account's `access_token`.
+- **Retrieval for requests**: Every Instagram request uses the `Account` instance passed to `InstagramBaseClient::request(...)`, which injects that account's `access_token`.
 - **Renewal/rotation**: reconnecting the same Instagram account via OAuth updates the existing record (`updateOrCreate` in `InstagramOAuthController`) and replaces the stored `access_token`.
 - **Verification in tests**: workflow tests assert token storage, token usage in request options, and that renewed tokens are used on subsequent API calls.
 
