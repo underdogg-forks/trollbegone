@@ -14,6 +14,89 @@ use Illuminate\Support\Facades\Log;
 class InstagramApiService extends InstagramBaseClient
 {
     /**
+     * Get users followed by the authenticated account.
+     *
+     * API Endpoint: GET /me/following
+     * Response example: {"data": [{"id": "1784...", "username": "example_user"}]}
+     */
+    public function getFollowing(Account $account): Collection
+    {
+        $response = $this->request(RequestMethod::GET, $account, '/me/following');
+
+        return collect($response->json('data', []));
+    }
+
+    /**
+     * Get posts for a specific Instagram username.
+     *
+     * API Endpoints:
+     * - GET /search?q={username}&type=user
+     * - GET /{user_id}/media
+     * Response example: {"data": [{"id": "media_1", "caption": "Hello"}]}
+     */
+    public function getPostsByUsername(Account $account, string $username): Collection
+    {
+        $userInfo = $this->getUserInfo($account, $username);
+
+        if (! $userInfo || ! isset($userInfo['id'])) {
+            return collect([]);
+        }
+
+        $response = $this->request(RequestMethod::GET, $account, "/{$userInfo['id']}/media");
+
+        return collect($response->json('data', []));
+    }
+
+    /**
+     * Get comments for a specific post.
+     *
+     * API Endpoint: GET /{post_id}/comments
+     * Response example: {"data": [{"id": "comment_1", "text": "Nice!", "username": "user"}]}
+     */
+    public function getPostComments(Account $account, string $postId): Collection
+    {
+        $response = $this->request(RequestMethod::GET, $account, "/{$postId}/comments");
+
+        return collect($response->json('data', []));
+    }
+
+    public function filterCommentsByTag(Collection $comments, string $tag): Collection
+    {
+        $needle = '#'.ltrim(strtolower($tag), '#');
+
+        return $comments->filter(function (array $comment) use ($needle) {
+            $text = strtolower((string) ($comment['text'] ?? ''));
+
+            return str_contains($text, $needle);
+        })->values();
+    }
+
+    public function filterCommentsWithoutTags(Collection $comments): Collection
+    {
+        return $comments->filter(function (array $comment) {
+            $text = (string) ($comment['text'] ?? '');
+
+            return ! preg_match('/#[A-Za-z0-9_]+/', $text);
+        })->values();
+    }
+
+    /**
+     * Delete a specific comment.
+     *
+     * API Endpoint: DELETE /{comment_id}
+     * Response example: {"success": true}
+     */
+    public function deleteComment(Account $account, string $commentId): bool
+    {
+        try {
+            $this->request(RequestMethod::DELETE, $account, "/{$commentId}");
+
+            return true;
+        } catch (\Exception) {
+            return false;
+        }
+    }
+    /**
      * Get stories for an Instagram account.
      *
      * API Endpoint: GET /me/stories
