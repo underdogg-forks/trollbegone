@@ -70,7 +70,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account->id]);
+        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account]);
         /** #endregion */
 
         /** #region Assert */
@@ -93,7 +93,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account->id]);
+        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account]);
         /** #endregion */
 
         /** #region Assert */
@@ -113,7 +113,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account->id]);
+        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account]);
         /** #endregion */
 
         /** #region Assert */
@@ -133,7 +133,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        Livewire::test(ViewFollowing::class, ['record' => $this->account->id]);
+        Livewire::test(ViewFollowing::class, ['record' => $this->account]);
         /** #endregion */
 
         /** #region Assert */
@@ -167,7 +167,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account->id]);
+        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account]);
         /** #endregion */
 
         /** #region Assert */
@@ -196,7 +196,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account->id]);
+        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account]);
         $component->callAction('refresh');
         /** #endregion */
 
@@ -227,7 +227,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account->id]);
+        $component = Livewire::test(ViewFollowing::class, ['record' => $this->account]);
         /** #endregion */
 
         /** #region Assert */
