@@ -76,6 +76,17 @@ class FakeInstagramApiService extends InstagramApiService
     }
 
     /**
+     * Set the response for getPostComments.
+     *
+     * @param  string  $postId  Post ID to match
+     * @param  Collection  $comments  Comments to return
+     */
+    public function setPostCommentsResponse(string $postId, Collection $comments): void
+    {
+        $this->commentsResponses[$postId] = $comments;
+    }
+
+    /**
      * Set the result for blockUser.
      *
      * @param  string  $userId  User ID to match
@@ -108,6 +119,14 @@ class FakeInstagramApiService extends InstagramApiService
     public function getStoryComments(Account $account, string $storyId): Collection
     {
         return $this->commentsResponses[$storyId] ?? collect([]);
+    }
+
+    /**
+     * Get comments for a post.
+     */
+    public function getPostComments(Account $account, string $postId): Collection
+    {
+        return $this->commentsResponses[$postId] ?? collect([]);
     }
 
     /**
