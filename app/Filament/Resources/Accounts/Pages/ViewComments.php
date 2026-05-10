@@ -11,6 +11,7 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Resources\Pages\Page;
 use Illuminate\Support\Collection;
+use Livewire\Attributes\Locked;
 
 /**
  * View Comments Page
@@ -32,6 +33,7 @@ class ViewComments extends Page
 
     public array $selectedComments = [];
 
+    #[Locked]
     public array $comments = [];
 
     public function mount(Account $record, string $post): void
