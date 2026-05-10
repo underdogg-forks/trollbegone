@@ -13,13 +13,12 @@ class ExampleTest extends TestCase
     #[Test]
     public function it_validates_that_true_is_true(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
+        $result = true;
 
         /* Assert */
-        $this->assertTrue(true);
+        $this->assertTrue($result);
     }
 }

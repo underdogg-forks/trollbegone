@@ -34,8 +34,6 @@ class AccountResourceTest extends TestCase
     #[Test]
     public function it_can_render_instagram_accounts_list_page(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */

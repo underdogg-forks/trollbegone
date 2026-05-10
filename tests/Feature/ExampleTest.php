@@ -13,8 +13,6 @@ class ExampleTest extends TestCase
     #[Test]
     public function it_returns_successful_response_for_application(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */

@@ -3,14 +3,14 @@
 namespace App\Filament\Resources\Accounts\RelationManagers;
 
 use App\Services\Instagram\BlockedAccountService;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\RelationManagers\RelationManager;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\CreateAction;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -26,6 +26,17 @@ class BlockedAccountsRelationManager extends RelationManager
     protected static string $relationship = 'blockedAccounts';
 
     protected static ?string $recordTitleAttribute = 'blocked_username';
+
+    /**
+     * Allow full CRUD even when embedded in a ViewRecord page.
+     *
+     * Filament v4 marks relation managers read-only on view pages by default.
+     * Blocked accounts need to be manageable directly from the account view page.
+     */
+    public function isReadOnly(): bool
+    {
+        return false;
+    }
 
     /**
      * Configure the table for the relation manager.
