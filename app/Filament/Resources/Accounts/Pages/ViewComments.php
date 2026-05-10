@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Accounts\Pages;
 
-use App\Enums\RequestMethod;
 use App\Filament\Resources\Accounts\AccountResource;
 use App\Jobs\BlockUserJob;
 use App\Models\Account;
@@ -33,7 +32,7 @@ class ViewComments extends Page
 
     public array $selectedComments = [];
 
-    protected array $comments = [];
+    public array $comments = [];
 
     public function mount(Account $record, string $post): void
     {
@@ -46,16 +45,9 @@ class ViewComments extends Page
     {
         try {
             $apiService = app(InstagramApiService::class);
+            $comments = $apiService->getPostComments($this->record, $this->postId);
 
-            // Fetch comments for this post
-            $response = $apiService->request(
-                RequestMethod::GET,
-                $this->record,
-                "/{$this->postId}/comments",
-                ['query' => ['fields' => 'id,text,username,timestamp,like_count']]
-            );
-
-            return $response->json('data', []);
+            return $comments->all();
         } catch (\Exception $e) {
             logger()->error('Failed to fetch comments', [
                 'account_id' => $this->record->id,
@@ -97,12 +89,12 @@ class ViewComments extends Page
                 continue;
             }
 
-            dispatch(new BlockUserJob(
+            BlockUserJob::dispatch(
                 account: $this->record,
                 username: $comment['username'],
                 reason: 'Blocked from post comments',
                 commentText: $comment['text'] ?? null
-            ));
+            );
         }
 
         Notification::make()
