@@ -17,6 +17,7 @@ use Livewire\Attributes\Locked;
  * List Commenters Page
  *
  * Displays unique commenters for a post and allows bulk blocking.
+ * This is a custom resource page backed by Instagram API data (not Eloquent records).
  */
 class ListCommenters extends Page
 {

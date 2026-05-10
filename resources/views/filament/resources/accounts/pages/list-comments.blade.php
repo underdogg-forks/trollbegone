@@ -28,17 +28,9 @@
                         </div>
 
                         <div class="flex-1 min-w-0">
-                            <div class="flex items-center justify-between">
-                                <h3 class="font-bold text-gray-900 dark:text-white">
-                                    {{ $comment['username'] ?? 'Unknown User' }}
-                                </h3>
-                                <button
-                                    wire:click.stop="deleteAndBlockComment('{{ $comment['id'] }}')"
-                                    class="text-xs bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
-                                >
-                                    Delete + Block
-                                </button>
-                            </div>
+                            <h3 class="font-bold text-gray-900 dark:text-white">
+                                {{ $comment['username'] ?? 'Unknown User' }}
+                            </h3>
 
                             @if(isset($comment['text']))
                                 <p class="mt-2 text-gray-700 dark:text-gray-300">
@@ -54,5 +46,9 @@
                 </div>
             @endforelse
         </div>
+
+        <p class="text-xs text-gray-500 dark:text-gray-400">
+            Tip: Select one comment and use the “Delete + Block Selected” header action to confirm via modal.
+        </p>
     </div>
 </x-filament-panels::page>

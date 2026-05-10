@@ -53,7 +53,7 @@ class ViewCommentsPageTest extends TestCase
             ->assertSee('single_troll')
             ->call('toggleComment', 'comment-1')
             ->assertSet('selectedComments', ['comment-1'])
-            ->call('blockSelected');
+            ->callAction('block_selected');
         /** #endregion */
 
         /** #region Assert */
@@ -87,7 +87,7 @@ class ViewCommentsPageTest extends TestCase
             ->call('toggleComment', 'comment-10')
             ->call('toggleComment', 'comment-11')
             ->assertSet('selectedComments', ['comment-10', 'comment-11'])
-            ->call('blockSelected')
+            ->callAction('block_selected')
             ->assertSet('selectedComments', []);
         /** #endregion */
 

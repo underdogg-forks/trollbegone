@@ -55,7 +55,9 @@ class ListCommentsPageTest extends TestCase
         /** #region Act */
         Livewire::test(ListComments::class, ['record' => $this->account, 'post' => 'post-1'])
             ->assertSee('single_troll')
-            ->call('deleteAndBlockComment', 'comment-1');
+            ->call('toggleComment', 'comment-1')
+            ->assertSet('selectedComments', ['comment-1'])
+            ->callAction('delete_and_block_selected');
         /** #endregion */
 
         /** #region Assert */
@@ -94,7 +96,7 @@ class ListCommentsPageTest extends TestCase
         /** #region Act */
         Livewire::test(ListComments::class, ['record' => $this->account, 'post' => 'post-2'])
             ->assertSee('alpha')
-            ->call('bulkDeleteTaggedComments', 'TrollBeGone');
+            ->callAction('bulk_delete_trolls');
         /** #endregion */
 
         /** #region Assert */

@@ -46,7 +46,7 @@ class ListCommentersPageTest extends TestCase
             ->assertSee('beta')
             ->call('toggleCommenter', 'alpha')
             ->call('toggleCommenter', 'beta')
-            ->call('blockSelectedCommenters');
+            ->callAction('block_selected_commenters');
         /** #endregion */
 
         /** #region Assert */
