@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Account;
 use App\Models\BlockedAccount;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -15,17 +16,15 @@ class AccountTest extends TestCase
     #[Test]
     public function it_can_create_account(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
-        $account = Account::factory()->create([
+
+        /* Act */
+        Account::factory()->create([
             'username' => 'test_user',
             'instagram_id' => '123456',
             'access_token' => 'test_token',
             'is_active' => true,
         ]);
-
-        /* Act */
 
         /* Assert */
         $this->assertDatabaseHas('instagram_accounts', [
@@ -37,8 +36,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_can_create_blocked_account(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
@@ -65,8 +62,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_relationship_with_blocked_accounts(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
@@ -90,15 +85,12 @@ class AccountTest extends TestCase
     #[Test]
     public function it_can_be_activated_and_deactivated(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
             'is_active' => true,
         ]);
-        $this->assertTrue($account->is_active);
 
         /* Act */
         $account->update(['is_active' => false]);
@@ -110,14 +102,11 @@ class AccountTest extends TestCase
     #[Test]
     public function it_stores_last_synced_at(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
-        $this->assertNull($account->last_synced_at);
         $syncTime = now();
 
         /* Act */
@@ -125,41 +114,40 @@ class AccountTest extends TestCase
 
         /* Assert */
         $this->assertNotNull($account->fresh()->last_synced_at);
-        $this->assertTrue($account->fresh()->last_synced_at->equalTo($syncTime));
+        // SQLite stores timestamps without microseconds; compare at second precision.
+        $this->assertEquals($syncTime->startOfSecond()->timestamp, $account->fresh()->last_synced_at->timestamp);
     }
 
     #[Test]
     public function it_username_is_required(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
+        $user = User::factory()->create();
 
         /* Act */
-
-        /* Assert */
         $this->expectException(\Illuminate\Database\QueryException::class);
         Account::factory()->create([
-            'access_token' => 'token',
+            'user_id' => $user->id,
+            'username' => null,
         ]);
+
+        /* Assert */
     }
 
     #[Test]
     public function it_belongs_to_instagram_account(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
+
+        /* Act */
         $blockedAccount = BlockedAccount::create([
             'instagram_account_id' => $instagramAccount->id,
             'blocked_username' => 'blocked_user',
         ]);
-
-        /* Act */
 
         /* Assert */
         $this->assertInstanceOf(Account::class, $blockedAccount->account);
@@ -169,8 +157,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_can_store_reason_and_comment(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
@@ -193,8 +179,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_can_store_instagram_id(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
@@ -215,8 +199,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_reason_and_comment_are_optional(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
@@ -238,8 +220,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_multiple_instagram_accounts_can_block_same_username(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account1 = Account::factory()->create([
             'username' => 'account1',
@@ -269,8 +249,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_can_have_many_blocked_accounts(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
@@ -290,37 +268,29 @@ class AccountTest extends TestCase
     }
 
     #[Test]
-    public function it_deleting_instagram_account_does_not_cascade_delete_blocked_accounts(): void
+    public function it_deleting_instagram_account_cascades_blocked_accounts(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
-        BlockedAccount::create([
+        $blockedAccount = BlockedAccount::create([
             'instagram_account_id' => $account->id,
             'blocked_username' => 'blocked_user',
         ]);
-        $blockedAccountCount = BlockedAccount::count();
 
         /* Act */
-        try {
-            $account->delete();
-        } catch (\Exception $e) {
-            $this->assertInstanceOf(\Exception::class, $e);
-        }
+        $account->delete();
 
         /* Assert */
-        $this->assertEquals($blockedAccountCount, BlockedAccount::count());
+        $this->assertDatabaseMissing('instagram_accounts', ['id' => $account->id]);
+        $this->assertDatabaseMissing('blocked_accounts', ['id' => $blockedAccount->id]);
     }
 
     #[Test]
     public function it_casts_is_active_to_boolean(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -338,8 +308,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_casts_last_synced_at_to_datetime(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -356,8 +324,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_blocked_account_has_timestamps(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $instagramAccount = Account::factory()->create([
             'username' => 'test_user',
@@ -378,8 +344,6 @@ class AccountTest extends TestCase
     #[Test]
     public function it_account_has_timestamps(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */

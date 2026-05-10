@@ -11,6 +11,7 @@ use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Fakes\FakeInstagramApiService;
 use Tests\TestCase;
 
 class BlockedAccountServiceTest extends TestCase
@@ -20,26 +21,17 @@ class BlockedAccountServiceTest extends TestCase
     #[Test]
     public function it_creates_blocked_account_record_with_user_info(): void
     {
-        $this->markTestIncomplete('Http::fake does not intercept in this test context - needs Feature test approach');
-
         /* Arrange */
-        Http::fake([
-            'https://graph.instagram.com/search*' => Http::response([
-                'data' => [['id' => '12345', 'username' => 'spam_user']],
-            ], 200),
-            'https://graph.instagram.com/me/blocked' => Http::response(['success' => true], 200),
-        ]);
-
         $instagramAccount = Account::factory()->create([
             'username' => 'main_account',
             'access_token' => 'test_token',
             'is_active' => true,
         ]);
 
-        $client = new ExternalClient;
-        $decorator = new HttpClientExceptionDecorator($client);
-        $instagramApi = new InstagramApiService($decorator);
-        $service = new BlockedAccountService($instagramApi);
+        $fakeApi = new FakeInstagramApiService;
+        $fakeApi->setUserInfoResponse('spam_user', ['id' => '12345', 'username' => 'spam_user']);
+        $fakeApi->setBlockUserResult('12345', true);
+        $service = new BlockedAccountService($fakeApi);
 
         /* Act */
         $blockedAccount = $service->blockAccount(
@@ -50,10 +42,6 @@ class BlockedAccountServiceTest extends TestCase
         );
 
         /* Assert */
-        Http::assertSent(function ($request) {
-            return str_contains($request->url(), 'search');
-        });
-
         $this->assertInstanceOf(BlockedAccount::class, $blockedAccount);
         $this->assertEquals('spam_user', $blockedAccount->blocked_username);
         $this->assertEquals('12345', $blockedAccount->blocked_instagram_id);

@@ -13,28 +13,30 @@ class BlockedAccountModelTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_has_fillable_attributes(): void
+    public function it_allows_mass_assignment_of_all_attributes(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
+        $account = Account::factory()->create();
 
         /* Act */
-        $fillable = (new BlockedAccount)->getFillable();
+        $blockedAccount = BlockedAccount::create([
+            'instagram_account_id' => $account->id,
+            'blocked_username' => 'spammer',
+            'blocked_instagram_id' => '99999',
+            'reason' => 'Spam',
+            'comment_text' => 'Buy my product!',
+        ]);
 
         /* Assert */
-        $this->assertContains('instagram_account_id', $fillable);
-        $this->assertContains('blocked_username', $fillable);
-        $this->assertContains('blocked_instagram_id', $fillable);
-        $this->assertContains('reason', $fillable);
-        $this->assertContains('comment_text', $fillable);
+        $this->assertEquals('spammer', $blockedAccount->blocked_username);
+        $this->assertEquals('99999', $blockedAccount->blocked_instagram_id);
+        $this->assertEquals('Spam', $blockedAccount->reason);
+        $this->assertDatabaseHas('blocked_accounts', ['blocked_username' => 'spammer']);
     }
 
     #[Test]
     public function it_belongs_to_instagram_account(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create();
 
@@ -42,7 +44,6 @@ class BlockedAccountModelTest extends TestCase
         $blockedAccount = BlockedAccount::factory()->forAccount($account)->create();
 
         /* Assert */
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\BelongsTo::class, $blockedAccount->account());
         $this->assertInstanceOf(Account::class, $blockedAccount->account);
         $this->assertEquals($account->id, $blockedAccount->account->id);
     }
@@ -50,8 +51,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_can_have_null_blocked_instagram_id(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -64,8 +63,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_can_have_null_reason(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -80,8 +77,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_can_have_null_comment_text(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -96,8 +91,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_stores_reason_correctly(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $reason = 'Spam and harassment';
 
@@ -111,8 +104,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_stores_comment_text_correctly(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $comment = 'This is the offensive comment';
 
@@ -126,8 +117,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_can_be_updated(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $blockedAccount = BlockedAccount::factory()->create([
             'reason' => 'Original reason',
@@ -143,8 +132,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_has_created_at_timestamp(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -158,8 +145,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_has_updated_at_timestamp(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -173,8 +158,6 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_factory_generates_valid_data(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -189,41 +172,32 @@ class BlockedAccountModelTest extends TestCase
     #[Test]
     public function it_multiple_blocked_accounts_can_exist_for_same_instagram_account(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create();
-        $blocked1 = BlockedAccount::factory()->forAccount($account)->create();
 
         /* Act */
-        $blocked2 = BlockedAccount::factory()->forAccount($account)->create();
+        BlockedAccount::factory()->count(2)->forAccount($account)->create();
 
         /* Assert */
-        $this->assertEquals($account->id, $blocked1->instagram_account_id);
-        $this->assertEquals($account->id, $blocked2->instagram_account_id);
-        $this->assertNotEquals($blocked1->id, $blocked2->id);
+        $this->assertCount(2, $account->blockedAccounts);
+        $this->assertDatabaseCount('blocked_accounts', 2);
     }
 
     #[Test]
     public function it_username_can_be_duplicated_across_different_accounts(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account1 = Account::factory()->create();
         $account2 = Account::factory()->create();
-        $blocked1 = BlockedAccount::factory()->forAccount($account1)->create([
-            'blocked_username' => 'same_user',
-        ]);
-        $blocked2 = BlockedAccount::factory()->forAccount($account2)->create([
-            'blocked_username' => 'same_user',
-        ]);
 
         /* Act */
+        $blocked1 = BlockedAccount::factory()->forAccount($account1)->create(['blocked_username' => 'same_user']);
+        $blocked2 = BlockedAccount::factory()->forAccount($account2)->create(['blocked_username' => 'same_user']);
 
         /* Assert */
         $this->assertEquals('same_user', $blocked1->blocked_username);
         $this->assertEquals('same_user', $blocked2->blocked_username);
         $this->assertNotEquals($blocked1->instagram_account_id, $blocked2->instagram_account_id);
+        $this->assertDatabaseCount('blocked_accounts', 2);
     }
 }

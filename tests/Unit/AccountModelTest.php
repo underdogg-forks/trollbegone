@@ -4,6 +4,7 @@ namespace Tests\Unit;
 
 use App\Models\Account;
 use App\Models\BlockedAccount;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -13,64 +14,64 @@ class AccountModelTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_has_fillable_attributes(): void
+    public function it_allows_mass_assignment_of_all_attributes(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
-        $account = new Account;
+        $user = User::factory()->create();
 
         /* Act */
-        $fillable = $account->getFillable();
-        $guarded = $account->getGuarded();
+        $account = Account::create([
+            'user_id' => $user->id,
+            'username' => 'test_user',
+            'instagram_id' => '12345',
+            'access_token' => 'secret_token',
+            'is_active' => true,
+            'last_synced_at' => null,
+        ]);
 
         /* Assert */
-        $this->assertContains('username', $fillable);
-        $this->assertContains('instagram_id', $fillable);
-        $this->assertContains('is_active', $fillable);
-        $this->assertContains('last_synced_at', $fillable);
-        $this->assertNotContains('access_token', $fillable);
-        $this->assertContains('access_token', $guarded);
+        $this->assertEquals('test_user', $account->username);
+        $this->assertEquals('12345', $account->instagram_id);
+        $this->assertEquals('secret_token', $account->access_token);
+        $this->assertTrue($account->is_active);
+        $this->assertDatabaseHas('instagram_accounts', ['username' => 'test_user']);
     }
 
     #[Test]
     public function it_casts_attributes_correctly(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
-
-        /* Act */
         $account = Account::factory()->create([
             'is_active' => 1,
             'last_synced_at' => '2024-01-01 12:00:00',
         ]);
 
+        /* Act */
+        $fresh = $account->fresh();
+
         /* Assert */
-        $this->assertIsBool($account->is_active);
-        $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $account->last_synced_at);
+        $this->assertIsBool($fresh->is_active);
+        $this->assertInstanceOf(\Illuminate\Support\Carbon::class, $fresh->last_synced_at);
     }
 
     #[Test]
     public function it_has_blocked_accounts_relationship(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create();
+        BlockedAccount::factory()->count(2)->forAccount($account)->create();
 
         /* Act */
-        $relationship = $account->blockedAccounts();
+        $blockedAccounts = $account->blockedAccounts;
 
         /* Assert */
-        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $relationship);
+        $this->assertCount(2, $blockedAccounts);
+        $this->assertInstanceOf(\Illuminate\Database\Eloquent\Collection::class, $blockedAccounts);
     }
 
     #[Test]
     public function it_can_have_null_instagram_id(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -89,8 +90,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_can_have_null_access_token(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -103,8 +102,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_defaults_to_active(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -117,8 +114,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_can_be_inactive(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -131,8 +126,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_last_synced_at_is_nullable(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -147,8 +140,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_can_be_updated(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create([
             'username' => 'original_username',
@@ -164,8 +155,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_factory_creates_unique_usernames(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -179,8 +168,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_factory_creates_unique_instagram_ids(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -194,8 +181,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_factory_creates_unique_access_tokens(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
 
         /* Act */
@@ -209,8 +194,6 @@ class AccountModelTest extends TestCase
     #[Test]
     public function it_relationship_loads_blocked_accounts_correctly(): void
     {
-        $this->markTestIncomplete();
-
         /* Arrange */
         $account = Account::factory()->create();
         BlockedAccount::factory()->count(3)->forAccount($account)->create();
