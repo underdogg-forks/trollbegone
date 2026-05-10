@@ -107,14 +107,14 @@ class AccountTest extends TestCase
             'username' => 'test_user',
             'access_token' => 'token',
         ]);
-        $syncTime = now();
+        $syncTime = now()->startOfSecond();
 
         /* Act */
         $account->update(['last_synced_at' => $syncTime]);
 
         /* Assert */
         $this->assertNotNull($account->fresh()->last_synced_at);
-        $this->assertEquals($syncTime->startOfSecond()->timestamp, $account->fresh()->last_synced_at->timestamp);
+        $this->assertTrue($syncTime->equalTo($account->fresh()->last_synced_at));
     }
 
     #[Test]
