@@ -45,9 +45,11 @@ INSTAGRAM_REDIRECT_URI=https://yourdomain.com/auth/instagram/callback
 ### 4. Configure Permissions
 
 Your app needs the following permissions:
-- `instagram_basic` - Read basic account info
-- `instagram_manage_comments` - Read and manage comments
-- `instagram_manage_insights` - Access to insights data
+- `instagram_basic` - Read basic account info and following list
+- `instagram_manage_comments` - Read and manage comments on your posts
+- `instagram_manage_insights` - Access to insights data (reserved for future use)
+
+**Important:** See [PRIVACY_AND_PERMISSIONS.md](PRIVACY_AND_PERMISSIONS.md) for complete details on what each scope allows and what TrollBeGone can and cannot do with your Instagram account.
 
 ### 5. Test the Integration
 
