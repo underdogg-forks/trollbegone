@@ -60,7 +60,7 @@ class AccountTest extends TestCase
     }
 
     #[Test]
-    public function it_relationship_with_blocked_accounts(): void
+    public function it_has_a_relationship_with_blocked_accounts(): void
     {
         /* Arrange */
         $instagramAccount = Account::factory()->create([
@@ -118,7 +118,7 @@ class AccountTest extends TestCase
     }
 
     #[Test]
-    public function it_username_is_required(): void
+    public function it_requires_a_username(): void
     {
         /* Arrange */
         $user = User::factory()->create();
@@ -134,7 +134,7 @@ class AccountTest extends TestCase
     }
 
     #[Test]
-    public function it_belongs_to_instagram_account(): void
+    public function it_belongs_to_an_instagram_account(): void
     {
         /* Arrange */
         $instagramAccount = Account::factory()->create([
@@ -196,7 +196,7 @@ class AccountTest extends TestCase
     }
 
     #[Test]
-    public function it_reason_and_comment_are_optional(): void
+    public function it_allows_reason_and_comment_to_be_optional(): void
     {
         /* Arrange */
         $instagramAccount = Account::factory()->create([
@@ -217,7 +217,7 @@ class AccountTest extends TestCase
     }
 
     #[Test]
-    public function it_multiple_instagram_accounts_can_block_same_username(): void
+    public function it_allows_multiple_instagram_accounts_to_block_the_same_username(): void
     {
         /* Arrange */
         $account1 = Account::factory()->create([
@@ -321,7 +321,7 @@ class AccountTest extends TestCase
     }
 
     #[Test]
-    public function it_blocked_account_has_timestamps(): void
+    public function it_ensures_blocked_account_has_timestamps(): void
     {
         /* Arrange */
         $instagramAccount = Account::factory()->create([
@@ -341,7 +341,7 @@ class AccountTest extends TestCase
     }
 
     #[Test]
-    public function it_account_has_timestamps(): void
+    public function it_ensures_account_has_timestamps(): void
     {
         /* Arrange */
 

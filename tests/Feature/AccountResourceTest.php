@@ -176,7 +176,7 @@ class AccountResourceTest extends TestCase
     }
 
     #[Test]
-    public function it_instagram_accounts_table_displays_correct_columns(): void
+    public function it_displays_correct_columns_in_instagram_accounts_table(): void
     {
         /* Arrange */
         $account = Account::factory()->create([
@@ -220,7 +220,7 @@ class AccountResourceTest extends TestCase
     }
 
     #[Test]
-    public function it_instagram_accounts_are_sorted_by_default(): void
+    public function it_sorts_instagram_accounts_by_default(): void
     {
         /* Arrange */
         $accounts = Account::factory()->count(3)->create(['user_id' => $this->adminUser->id]);

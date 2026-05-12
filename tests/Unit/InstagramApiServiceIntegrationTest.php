@@ -19,7 +19,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     use RefreshDatabase;
 
     #[Test]
-    public function it_gets_stories_with_real_fixture(): void
+    public function it_gets_stories_using_real_fixture_data(): void
     {
         /* Arrange */
         $account = Account::factory()->create([
@@ -46,7 +46,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_gets_story_comments_with_real_fixture(): void
+    public function it_gets_story_comments_using_real_fixture_data(): void
     {
         /* Arrange */
         $account = Account::factory()->create([
@@ -72,7 +72,7 @@ class InstagramApiServiceIntegrationTest extends TestCase
     }
 
     #[Test]
-    public function it_gets_user_info_with_real_fixture(): void
+    public function it_gets_user_info_using_real_fixture_data(): void
     {
         /* Arrange */
         $account = Account::factory()->create([

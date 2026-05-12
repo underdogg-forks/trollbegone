@@ -35,7 +35,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function it_belongs_to_instagram_account(): void
+    public function it_belongs_to_an_instagram_account(): void
     {
         /* Arrange */
         $account = Account::factory()->create();
@@ -170,7 +170,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function it_multiple_blocked_accounts_can_exist_for_same_instagram_account(): void
+    public function it_allows_multiple_blocked_accounts_for_the_same_instagram_account(): void
     {
         /* Arrange */
         $account = Account::factory()->create();
@@ -184,7 +184,7 @@ class BlockedAccountModelTest extends TestCase
     }
 
     #[Test]
-    public function it_username_can_be_duplicated_across_different_accounts(): void
+    public function it_allows_username_duplication_across_different_accounts(): void
     {
         /* Arrange */
         $account1 = Account::factory()->create();
