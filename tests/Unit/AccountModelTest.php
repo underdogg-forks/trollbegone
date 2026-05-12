@@ -124,7 +124,7 @@ class AccountModelTest extends TestCase
     }
 
     #[Test]
-    public function it_last_synced_at_is_nullable(): void
+    public function it_allows_last_synced_at_to_be_nullable(): void
     {
         /* Arrange */
 

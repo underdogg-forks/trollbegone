@@ -101,7 +101,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
     }
 
     #[Test]
-    public function it_blocked_account_creation_uses_transaction(): void
+    public function it_uses_a_transaction_for_blocked_account_creation(): void
     {
         /* Arrange */
         $fakeApiService = new FakeInstagramApiService;
@@ -198,7 +198,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
     }
 
     #[Test]
-    public function it_blocked_accounts_table_displays_correct_columns(): void
+    public function it_displays_correct_columns_in_blocked_accounts_table(): void
     {
         /* Arrange */
         $blockedAccount = BlockedAccount::factory()->forAccount($this->account)->create([
@@ -244,7 +244,7 @@ class BlockedAccountsRelationManagerTest extends TestCase
     }
 
     #[Test]
-    public function it_blocked_accounts_sorted_by_created_at_desc(): void
+    public function it_sorts_blocked_accounts_by_created_at_desc(): void
     {
         /* Arrange */
         $older = BlockedAccount::factory()->forAccount($this->account)->create([
