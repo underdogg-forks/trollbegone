@@ -60,6 +60,9 @@ test.describe('Accounts resource CRUD and table interactions', () => {
 
     /* Assert */
     await expect(page).toHaveURL(/\/admin\/accounts$/);
+
+    /* Additional verification: account should not appear in the table */
+    await expect(page.getByText('primary_account')).not.toBeVisible();
     await expect(page.getByRole('row', { name: /primary_account/i })).not.toBeVisible();
   });
 });
