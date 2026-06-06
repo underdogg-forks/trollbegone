@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Models\Account;
 use App\Models\User;
-use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -44,7 +43,7 @@ class OAuthWorkflowIntegrationTest extends TestCase
 
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/me/stories', ['data' => []]);
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -81,7 +80,7 @@ class OAuthWorkflowIntegrationTest extends TestCase
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/me/stories', ['data' => []]);
         $fakeHttpClient->addResponse('/me/stories', ['data' => []]);
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
 
         $instagramUser = $this->makeSocialiteUser(
