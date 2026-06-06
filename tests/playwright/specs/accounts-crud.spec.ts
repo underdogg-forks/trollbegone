@@ -14,7 +14,7 @@ test.describe('Accounts resource CRUD and table interactions', () => {
     await page.getByRole('button', { name: /^create$/i }).click();
 
     /* Assert */
-    await expect(page.getByText(/required/i).first()).toBeVisible();
+    await expect(page.getByLabel('Username').locator('..').getByText(/required/i)).toBeVisible();
 
     /* Act */
     await page.getByLabel('Username').fill('created_account');
@@ -39,7 +39,7 @@ test.describe('Accounts resource CRUD and table interactions', () => {
     await expect(page.getByText('secondary_account')).toBeVisible();
 
     /* Act */
-    await page.getByRole('row', { name: /secondary_account/i }).getByRole('link').first().click();
+    await page.getByRole('row', { name: /secondary_account/i }).getByRole('link', { name: /view|detail|secondary_account/i }).click();
     await page.getByRole('button', { name: /^edit$/i }).click();
     await page.getByLabel('Username').fill('secondary_account_updated');
     await page.getByRole('button', { name: /^save changes$/i }).click();
@@ -60,5 +60,6 @@ test.describe('Accounts resource CRUD and table interactions', () => {
 
     /* Assert */
     await expect(page).toHaveURL(/\/admin\/accounts$/);
+    await expect(page.getByRole('row', { name: /primary_account/i })).not.toBeVisible();
   });
 });

@@ -5,5 +5,5 @@ export const loginAsAdmin = async (page: Page, email: string, password: string):
   await page.getByLabel('Email address').fill(email);
   await page.getByLabel('Password').fill(password);
   await page.getByRole('button', { name: /sign in/i }).click();
-  await expect(page).toHaveURL(/\/admin/);
+  await expect(page).toHaveURL(/^\/admin\/?$/);
 };

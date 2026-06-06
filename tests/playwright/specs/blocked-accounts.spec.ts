@@ -35,7 +35,7 @@ test.describe('Blocked accounts relation manager', () => {
     await expect(page.getByText('Single troll block updated')).toBeVisible();
   });
 
-  test('search blocked commenters and bulk-select multiple commenters', async ({ page }) => {
+  test('create multiple blocked commenters and search filters results', async ({ page }) => {
     /* Arrange */
     const ctx = seedBaseData();
     await loginAsAdmin(page, ctx.userEmail, ctx.userPassword);
@@ -61,5 +61,6 @@ test.describe('Blocked accounts relation manager', () => {
 
     /* Assert */
     await expect(page.getByText('alpha_troll')).toBeVisible();
+    await expect(page.getByText('beta_troll')).not.toBeVisible();
   });
 });

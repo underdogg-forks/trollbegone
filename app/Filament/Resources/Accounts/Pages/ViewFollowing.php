@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Accounts\Pages;
 
+use App\Contracts\InstagramApiServiceContract;
 use App\Filament\Resources\Accounts\AccountResource;
 use App\Models\Account;
-use App\Services\Instagram\InstagramApiService;
 use Filament\Actions\Action;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
 use Filament\Resources\Pages\Page;
@@ -33,6 +33,16 @@ class ViewFollowing extends Page implements HasTable
     public Account $record;
 
     public array $following = [];
+
+    protected InstagramApiServiceContract $instagramApi;
+
+    /**
+     * Inject dependencies via Livewire's boot method.
+     */
+    public function boot(InstagramApiServiceContract $instagramApi): void
+    {
+        $this->instagramApi = $instagramApi;
+    }
 
     public function mount(Account $record): void
     {
@@ -72,7 +82,7 @@ class ViewFollowing extends Page implements HasTable
     protected function getFollowingFromApi(): array
     {
         try {
-            return app(InstagramApiService::class)
+            return $this->instagramApi
                 ->getFollowing($this->record)
                 ->all();
         } catch (\Exception $e) {
