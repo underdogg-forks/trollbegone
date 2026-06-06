@@ -43,7 +43,7 @@ class InstagramOAuthController extends Controller
 
             if (! $userId) {
                 return redirect()
-                    ->route('login')
+                    ->route('filament.admin.auth.login')
                     ->with('error', 'Unable to link Instagram account: no authenticated user.');
             }
 

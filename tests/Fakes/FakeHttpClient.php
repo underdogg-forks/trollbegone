@@ -19,6 +19,8 @@ class FakeHttpClient extends ExternalClient
      */
     protected array $responses = [];
 
+    protected ?string $nextRequestException = null;
+
     /**
      * @var array<int, array{method: string, url: string, options: array}>
      */
@@ -53,6 +55,14 @@ class FakeHttpClient extends ExternalClient
     }
 
     /**
+     * Throw an exception on the very next request regardless of URL.
+     */
+    public function throwExceptionOnNextRequest(string $message): void
+    {
+        $this->nextRequestException = $message;
+    }
+
+    /**
      * Send an HTTP request with fake response handling.
      *
      * @param  RequestMethod|string  $method  HTTP method
@@ -74,6 +84,12 @@ class FakeHttpClient extends ExternalClient
             'url' => $url,
             'options' => $options,
         ];
+
+        if ($this->nextRequestException !== null) {
+            $message = $this->nextRequestException;
+            $this->nextRequestException = null;
+            throw new HttpClientException($message);
+        }
 
         // Find matching response
         $responseData = $this->findResponse($url);
@@ -149,5 +165,6 @@ class FakeHttpClient extends ExternalClient
     {
         $this->responses = [];
         $this->requestHistory = [];
+        $this->nextRequestException = null;
     }
 }

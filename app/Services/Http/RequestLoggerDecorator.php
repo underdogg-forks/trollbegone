@@ -23,7 +23,7 @@ class RequestLoggerDecorator implements ApiClient
         string $url,
         array $options = []
     ): Response {
-        $methodValue = $method instanceof RequestMethod ? $method->value : (string) $method;
+        $methodValue = RequestMethod::normalize($method);
         $startedAt = microtime(true);
 
         try {

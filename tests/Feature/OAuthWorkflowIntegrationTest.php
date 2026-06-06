@@ -7,9 +7,8 @@ use App\Models\User;
 use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Laravel\Socialite\Contracts\User as SocialiteUserContract;
-use Laravel\Socialite\Facades\Socialite;
 use PHPUnit\Framework\Attributes\Test;
+use Tests\Concerns\SocialiteTestHelpers;
 use Tests\Fakes\FakeHttpClient;
 use Tests\TestCase;
 
@@ -26,66 +25,7 @@ use Tests\TestCase;
 class OAuthWorkflowIntegrationTest extends TestCase
 {
     use RefreshDatabase;
-
-    private function fakeSocialiteDriver(SocialiteUserContract $instagramUser): void
-    {
-        $provider = new class($instagramUser)
-        {
-            public function __construct(private readonly SocialiteUserContract $instagramUser) {}
-
-            public function user(): SocialiteUserContract
-            {
-                return $this->instagramUser;
-            }
-        };
-
-        Socialite::shouldReceive('driver')
-            ->once()
-            ->with('instagram')
-            ->andReturn($provider);
-    }
-
-    private function makeSocialiteUser(
-        string $id,
-        string $nickname,
-        string $name,
-        string $token
-    ): SocialiteUserContract {
-        return new class($id, $nickname, $name, $token) implements SocialiteUserContract
-        {
-            public function __construct(
-                private readonly string $id,
-                private readonly string $nickname,
-                private readonly string $name,
-                public string $token
-            ) {}
-
-            public function getId()
-            {
-                return $this->id;
-            }
-
-            public function getNickname()
-            {
-                return $this->nickname;
-            }
-
-            public function getName()
-            {
-                return $this->name;
-            }
-
-            public function getEmail()
-            {
-                return null;
-            }
-
-            public function getAvatar()
-            {
-                return null;
-            }
-        };
-    }
+    use SocialiteTestHelpers;
 
     #[Test]
     public function it_stores_token_during_oauth_and_uses_it_for_api_requests(): void
@@ -94,7 +34,6 @@ class OAuthWorkflowIntegrationTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        // OAuth flow - user connects their Instagram account
         $instagramUser = $this->makeSocialiteUser(
             id: 'ig-123',
             nickname: 'connected_user',
@@ -103,7 +42,6 @@ class OAuthWorkflowIntegrationTest extends TestCase
         );
         $this->fakeSocialiteDriver($instagramUser);
 
-        // Setup fake HTTP client to verify token usage
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/me/stories', ['data' => []]);
         $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
@@ -111,24 +49,17 @@ class OAuthWorkflowIntegrationTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        // Step 1: OAuth callback stores the token
         $this->get(route('instagram.oauth.callback'));
-
-        // Step 2: Fetch the account from database
         $account = Account::query()->where('instagram_id', 'ig-123')->firstOrFail();
-
-        // Step 3: Use the account to make an API call
         $instagramApi->getStories($account);
         /** #endregion */
 
         /** #region Assert */
-        // Verify token was stored
         $this->assertSame('fresh_oauth_token_abc123', $account->access_token);
 
-        // Verify token was used in API request
         $requestHistory = $fakeHttpClient->getRequestHistory();
         $this->assertCount(1, $requestHistory);
-        $this->assertStringContainsString('access_token=fresh_oauth_token_abc123', $requestHistory[0]['url']);
+        $this->assertSame('fresh_oauth_token_abc123', $requestHistory[0]['options']['token']);
         /** #endregion */
     }
 
@@ -139,7 +70,6 @@ class OAuthWorkflowIntegrationTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        // Create account with old token
         $account = Account::factory()->create([
             'user_id' => $user->id,
             'instagram_id' => 'ig-456',
@@ -148,17 +78,12 @@ class OAuthWorkflowIntegrationTest extends TestCase
             'is_active' => true,
         ]);
 
-        // Setup fake HTTP client
         $fakeHttpClient = new FakeHttpClient;
+        $fakeHttpClient->addResponse('/me/stories', ['data' => []]);
         $fakeHttpClient->addResponse('/me/stories', ['data' => []]);
         $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
         $this->app->instance(InstagramApiService::class, $instagramApi);
 
-        // Verify old token works before renewal
-        $instagramApi->getStories($account);
-        $this->assertStringContainsString('old_token_xyz', $fakeHttpClient->getRequestHistory()[0]['url']);
-
-        // User reconnects - OAuth flow with new token
         $instagramUser = $this->makeSocialiteUser(
             id: 'ig-456',
             nickname: 'existing_user',
@@ -166,30 +91,22 @@ class OAuthWorkflowIntegrationTest extends TestCase
             token: 'renewed_token_def456'
         );
         $this->fakeSocialiteDriver($instagramUser);
-
-        // Add another API response for the call with renewed token
-        $fakeHttpClient->addResponse('/me/stories', ['data' => []]);
         /** #endregion */
 
         /** #region Act */
-        // Step 1: OAuth callback renews the token
+        $instagramApi->getStories($account);
         $this->get(route('instagram.oauth.callback'));
-
-        // Step 2: Refresh account from database
         $account->refresh();
-
-        // Step 3: Make another API call with renewed token
         $instagramApi->getStories($account);
         /** #endregion */
 
         /** #region Assert */
-        // Verify token was renewed
         $this->assertSame('renewed_token_def456', $account->access_token);
 
-        // Verify new token was used in subsequent API request
         $requestHistory = $fakeHttpClient->getRequestHistory();
         $this->assertCount(2, $requestHistory);
-        $this->assertStringContainsString('renewed_token_def456', $requestHistory[1]['url']);
+        $this->assertSame('old_token_xyz', $requestHistory[0]['options']['token']);
+        $this->assertSame('renewed_token_def456', $requestHistory[1]['options']['token']);
         /** #endregion */
     }
 
@@ -197,7 +114,6 @@ class OAuthWorkflowIntegrationTest extends TestCase
     public function it_prevents_unauthenticated_users_from_connecting_instagram(): void
     {
         /** #region Arrange */
-        // No user authenticated
         $instagramUser = $this->makeSocialiteUser(
             id: 'ig-789',
             nickname: 'test_user',
@@ -212,7 +128,7 @@ class OAuthWorkflowIntegrationTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $response->assertRedirect(route('login'));
+        $response->assertRedirect(route('filament.admin.auth.login'));
         $this->assertDatabaseMissing('instagram_accounts', [
             'instagram_id' => 'ig-789',
         ]);
@@ -226,7 +142,6 @@ class OAuthWorkflowIntegrationTest extends TestCase
         $user1 = User::factory()->create(['name' => 'User 1']);
         $user2 = User::factory()->create(['name' => 'User 2']);
 
-        // User 1 connects their Instagram
         $this->actingAs($user1);
         $instagramUser1 = $this->makeSocialiteUser(
             id: 'ig-user1',
@@ -237,7 +152,6 @@ class OAuthWorkflowIntegrationTest extends TestCase
         $this->fakeSocialiteDriver($instagramUser1);
         $this->get(route('instagram.oauth.callback'));
 
-        // User 2 connects their Instagram
         $this->actingAs($user2);
         $instagramUser2 = $this->makeSocialiteUser(
             id: 'ig-user2',
@@ -297,7 +211,6 @@ class OAuthWorkflowIntegrationTest extends TestCase
         $user = User::factory()->create();
         $this->actingAs($user);
 
-        // Initial connection
         $account = Account::factory()->create([
             'user_id' => $user->id,
             'instagram_id' => 'ig-111',
@@ -305,7 +218,6 @@ class OAuthWorkflowIntegrationTest extends TestCase
             'access_token' => 'old_token',
         ]);
 
-        // User changed their Instagram username and reconnects
         $instagramUser = $this->makeSocialiteUser(
             id: 'ig-111',
             nickname: 'new_username',

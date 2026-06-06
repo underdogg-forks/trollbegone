@@ -34,7 +34,7 @@ class ExternalClient implements ApiClient
     ): Response {
         $client = $this->buildClient($options);
 
-        $methodValue = $method instanceof RequestMethod ? $method->value : $method;
+        $methodValue = RequestMethod::normalize($method);
 
         return $client->send($methodValue, $url, $options);
     }

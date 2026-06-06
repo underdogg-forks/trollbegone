@@ -76,15 +76,11 @@ class CommentModerationService
         return $comments
             ->filter(fn (array $comment): bool => isset($comment['username']))
             ->groupBy('username')
-            ->map(function (Collection $items, string $username): array {
-                $firstComment = $items->first();
-
-                return [
-                    'username' => $username,
-                    'comment_count' => $items->count(),
-                    'latest_comment' => $firstComment['text'] ?? null,
-                ];
-            })
+            ->map(fn (Collection $items, string $username): array => [
+                'username' => $username,
+                'comment_count' => $items->count(),
+                'latest_comment' => $items->last()['text'] ?? null,
+            ])
             ->values();
     }
 }

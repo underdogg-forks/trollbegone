@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Contracts\InstagramApiServiceContract;
 use App\Services\Http\ApiClient;
 use App\Services\Http\ExternalClient;
 use App\Services\Http\HttpClientExceptionDecorator;
@@ -30,6 +31,8 @@ class ApiClientServiceProvider extends ServiceProvider
         $this->app->singleton(InstagramApiService::class, function ($app) {
             return new InstagramApiService($app->make(ApiClient::class));
         });
+
+        $this->app->alias(InstagramApiService::class, InstagramApiServiceContract::class);
 
         $this->app->singleton(BlockedAccountService::class, function ($app) {
             return new BlockedAccountService($app->make(InstagramApiService::class));

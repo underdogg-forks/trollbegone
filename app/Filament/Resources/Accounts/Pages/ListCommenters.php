@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Accounts\Pages;
 
+use App\Contracts\InstagramApiServiceContract;
 use App\Filament\Resources\Accounts\AccountResource;
 use App\Models\Account;
 use App\Services\Instagram\CommentModerationService;
-use App\Services\Instagram\InstagramApiService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
@@ -33,7 +33,7 @@ class ListCommenters extends Page
 
     public array $selectedCommenters = [];
 
-    protected InstagramApiService $instagramApi;
+    protected InstagramApiServiceContract $instagramApi;
 
     protected CommentModerationService $commentModerationService;
 
@@ -44,7 +44,7 @@ class ListCommenters extends Page
      * Inject dependencies via Livewire's boot method.
      */
     public function boot(
-        InstagramApiService $instagramApi,
+        InstagramApiServiceContract $instagramApi,
         CommentModerationService $commentModerationService
     ): void {
         $this->instagramApi = $instagramApi;

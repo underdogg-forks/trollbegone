@@ -2,6 +2,7 @@
 
 namespace App\Services\Instagram;
 
+use App\Contracts\InstagramApiServiceContract;
 use App\Enums\RequestMethod;
 use App\Models\Account;
 use Illuminate\Support\Collection;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Log;
  * InstagramApiService provides methods for interacting with Instagram's Graph API.
  * All methods extend the base client functionality with specific Instagram API operations.
  */
-class InstagramApiService extends InstagramBaseClient
+class InstagramApiService extends InstagramBaseClient implements InstagramApiServiceContract
 {
     /**
      * Get users followed by the authenticated account.

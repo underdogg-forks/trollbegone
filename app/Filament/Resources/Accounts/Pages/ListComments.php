@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources\Accounts\Pages;
 
+use App\Contracts\InstagramApiServiceContract;
 use App\Filament\Resources\Accounts\AccountResource;
 use App\Jobs\BlockUserJob;
 use App\Models\Account;
-use App\Services\Instagram\InstagramApiService;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithHeaderActions;
@@ -33,7 +33,7 @@ class ListComments extends Page
 
     public array $selectedComments = [];
 
-    protected InstagramApiService $instagramApi;
+    protected InstagramApiServiceContract $instagramApi;
 
     #[Locked]
     public array $comments = [];
@@ -41,7 +41,7 @@ class ListComments extends Page
     /**
      * Inject dependencies via Livewire's boot method.
      */
-    public function boot(InstagramApiService $instagramApi): void
+    public function boot(InstagramApiServiceContract $instagramApi): void
     {
         $this->instagramApi = $instagramApi;
     }
