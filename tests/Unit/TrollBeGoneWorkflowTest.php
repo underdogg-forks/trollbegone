@@ -4,7 +4,6 @@ namespace Tests\Unit;
 
 use App\Models\Account;
 use App\Models\User;
-use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\BlockedAccountService;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -43,7 +42,7 @@ class TrollBeGoneWorkflowTest extends TestCase
         $fakeHttpClient->addResponse('/search', InstagramApiFixtures::getFollowedUserSearchResponse());
         $fakeHttpClient->addResponse('/followed-1/media', InstagramApiFixtures::getFollowedUserMediaResponse());
 
-        $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $service = $this->makeInstagramApiService($fakeHttpClient);
         $account = Account::factory()->create(['access_token' => 'token']);
 
         /* Act */
@@ -61,7 +60,7 @@ class TrollBeGoneWorkflowTest extends TestCase
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/post-1/comments', InstagramApiFixtures::getPostCommentsWithTrollBeGoneTagsResponse());
 
-        $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $service = $this->makeInstagramApiService($fakeHttpClient);
         $account = Account::factory()->create(['access_token' => 'token']);
 
         /* Act */
@@ -87,7 +86,7 @@ class TrollBeGoneWorkflowTest extends TestCase
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/comment-10', InstagramApiFixtures::getBlockUserSuccessResponse());
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
 
         $fakeBlockingApi = new FakeInstagramApiService;
         $fakeBlockingApi->setUserInfoResponse('troll_user', ['id' => 'u-10', 'username' => 'troll_user']);
@@ -143,7 +142,7 @@ class TrollBeGoneWorkflowTest extends TestCase
         /* Arrange */
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/me/following', ['data' => []]);
-        $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $service = $this->makeInstagramApiService($fakeHttpClient);
         $account = Account::factory()->create(['access_token' => 'stored_token_abc']);
 
         /* Act */
@@ -162,7 +161,7 @@ class TrollBeGoneWorkflowTest extends TestCase
         /* Arrange */
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/me/following', ['data' => []]);
-        $service = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $service = $this->makeInstagramApiService($fakeHttpClient);
         $account = Account::factory()->create(['access_token' => 'old_token']);
 
         /* Act */

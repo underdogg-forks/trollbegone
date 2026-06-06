@@ -6,7 +6,6 @@ use App\Filament\Resources\Accounts\Pages\ListComments;
 use App\Jobs\BlockUserJob;
 use App\Models\Account;
 use App\Models\User;
-use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -48,7 +47,7 @@ class ListCommentsPageTest extends TestCase
             ],
         ]);
         $fakeHttpClient->addResponse('/comment-1', ['success' => true]);
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -89,7 +88,7 @@ class ListCommentsPageTest extends TestCase
         ]);
         $fakeHttpClient->addResponse('/comment-10', ['success' => true]);
         $fakeHttpClient->addResponse('/comment-11', ['success' => true]);
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 

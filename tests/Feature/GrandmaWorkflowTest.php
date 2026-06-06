@@ -8,7 +8,6 @@ use App\Filament\Resources\Accounts\Pages\ViewPosts;
 use App\Jobs\BlockUserJob;
 use App\Models\Account;
 use App\Models\User;
-use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Queue;
@@ -79,7 +78,7 @@ class GrandmaWorkflowTest extends TestCase
             ],
         ]);
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -158,7 +157,7 @@ class GrandmaWorkflowTest extends TestCase
             'data' => [['id' => 'comment-b', 'username' => 'troll_y', 'text' => 'spam']],
         ]);
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -216,7 +215,7 @@ class GrandmaWorkflowTest extends TestCase
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->throwExceptionOnNextRequest('Invalid OAuth token');
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 

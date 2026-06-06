@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Filament\Resources\Accounts\Pages\ViewFollowing;
 use App\Models\Account;
 use App\Models\User;
-use App\Services\Http\HttpClientExceptionDecorator;
 use App\Services\Instagram\InstagramApiService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
@@ -65,7 +64,7 @@ class ViewFollowingPageTest extends TestCase
             ],
         ]);
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -88,7 +87,7 @@ class ViewFollowingPageTest extends TestCase
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/me/following', ['data' => []]);
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -108,7 +107,7 @@ class ViewFollowingPageTest extends TestCase
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->throwExceptionOnNextRequest('API Error');
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -128,7 +127,7 @@ class ViewFollowingPageTest extends TestCase
         $fakeHttpClient = new FakeHttpClient;
         $fakeHttpClient->addResponse('/me/following', ['data' => []]);
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -162,7 +161,7 @@ class ViewFollowingPageTest extends TestCase
             ],
         ]);
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -191,7 +190,7 @@ class ViewFollowingPageTest extends TestCase
             ],
         ]);
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
@@ -222,7 +221,7 @@ class ViewFollowingPageTest extends TestCase
             ],
         ]);
 
-        $instagramApi = new InstagramApiService(new HttpClientExceptionDecorator($fakeHttpClient));
+        $instagramApi = $this->makeInstagramApiService($fakeHttpClient);
         $this->app->instance(InstagramApiService::class, $instagramApi);
         /** #endregion */
 
