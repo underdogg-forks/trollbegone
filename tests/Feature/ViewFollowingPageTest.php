@@ -97,7 +97,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertCount(0, $component->getFollowing());
+        $this->assertEmpty($component->following);
         /** #endregion */
     }
 
@@ -117,7 +117,7 @@ class ViewFollowingPageTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertCount(0, $component->getFollowing());
+        $this->assertEmpty($component->following);
         /** #endregion */
     }
 
@@ -143,7 +143,7 @@ class ViewFollowingPageTest extends TestCase
         $followingRequest = $requestHistory[0];
         $this->assertEquals('GET', $followingRequest['method']);
         $this->assertStringContainsString('/me/following', $followingRequest['url']);
-        $this->assertStringContainsString('access_token=test-token', $followingRequest['url']);
+        $this->assertSame('test-token', $followingRequest['options']['token']);
         /** #endregion */
     }
 

@@ -90,7 +90,7 @@ class ViewPostsPageTest extends TestCase
         $component->assertSee('Beautiful sunset photo');
         $component->assertSee('Video of the day');
         $this->assertEquals('friend_account', $component->username);
-        $this->assertCount(2, $component->getPosts());
+        $this->assertCount(2, $component->posts);
         /** #endregion */
     }
 
@@ -114,7 +114,7 @@ class ViewPostsPageTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertCount(0, $component->getPosts());
+        $this->assertEmpty($component->posts);
         /** #endregion */
     }
 
@@ -142,7 +142,7 @@ class ViewPostsPageTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertCount(0, $component->getPosts());
+        $this->assertEmpty($component->posts);
         /** #endregion */
     }
 
@@ -165,7 +165,7 @@ class ViewPostsPageTest extends TestCase
         /** #endregion */
 
         /** #region Assert */
-        $this->assertCount(0, $component->getPosts());
+        $this->assertEmpty($component->posts);
         /** #endregion */
     }
 
@@ -197,7 +197,7 @@ class ViewPostsPageTest extends TestCase
         $this->assertGreaterThanOrEqual(2, count($requestHistory));
 
         foreach ($requestHistory as $request) {
-            $this->assertStringContainsString('access_token=test-token', $request['url']);
+            $this->assertSame('test-token', $request['options']['token']);
         }
         /** #endregion */
     }
@@ -239,7 +239,7 @@ class ViewPostsPageTest extends TestCase
 
         /** #region Assert */
         $component->assertSee('New post after refresh');
-        $this->assertCount(2, $component->getPosts());
+        $this->assertCount(2, $component->posts);
         /** #endregion */
     }
 
@@ -254,7 +254,7 @@ class ViewPostsPageTest extends TestCase
         /** #endregion */
 
         /** #region Act */
-        $formattedTime = $component->formatTimestamp('2024-01-15T10:30:00+0000');
+        $formattedTime = $component->instance()->formatTimestamp('2024-01-15T10:30:00+0000');
         /** #endregion */
 
         /** #region Assert */

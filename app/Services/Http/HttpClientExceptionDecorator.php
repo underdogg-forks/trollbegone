@@ -32,8 +32,7 @@ class HttpClientExceptionDecorator implements ApiClient
         array $options = []
     ): Response {
         try {
-            $methodValue = $method instanceof RequestMethod ? $method->value : $method;
-            $response = $this->client->request($methodValue, $url, $options);
+            $response = $this->client->request(RequestMethod::normalize($method), $url, $options);
 
             $response->throw();
 

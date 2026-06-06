@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\Accounts\Pages;
 
-use App\Enums\RequestMethod;
 use App\Filament\Resources\Accounts\AccountResource;
 use App\Models\Account;
 use App\Services\Instagram\InstagramApiService;
@@ -33,18 +32,18 @@ class ViewFollowing extends Page implements HasTable
 
     public Account $record;
 
-    protected array $following = [];
+    public array $following = [];
 
-    public function mount(int|string $record): void
+    public function mount(Account $record): void
     {
-        $this->record = Account::findOrFail($record);
+        $this->record = $record;
         $this->following = $this->getFollowingFromApi();
     }
 
     public function table(Table $table): Table
     {
         return $table
-            ->records($this->getFollowing())
+            ->records(fn () => $this->getFollowing())
             ->columns([
                 ImageColumn::make('profile_picture_url')
                     ->label('Avatar')
@@ -60,7 +59,7 @@ class ViewFollowing extends Page implements HasTable
                     ->default(0),
             ])
             ->recordActions([
-                \Filament\Tables\Actions\Action::make('view_posts')
+                Action::make('view_posts')
                     ->label('View Posts')
                     ->icon('heroicon-o-photo')
                     ->url(fn ($record) => route('filament.admin.resources.accounts.posts', [
@@ -73,17 +72,9 @@ class ViewFollowing extends Page implements HasTable
     protected function getFollowingFromApi(): array
     {
         try {
-            $apiService = app(InstagramApiService::class);
-
-            // Fetch following list from Instagram API
-            $response = $apiService->request(
-                RequestMethod::GET,
-                $this->record,
-                '/me/following',
-                ['query' => ['fields' => 'id,username,full_name,profile_picture_url,followers_count']]
-            );
-
-            return $response->json('data', []);
+            return app(InstagramApiService::class)
+                ->getFollowing($this->record)
+                ->all();
         } catch (\Exception $e) {
             \Log::error('Failed to fetch following list', [
                 'account_id' => $this->record->id,

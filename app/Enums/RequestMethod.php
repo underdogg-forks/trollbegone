@@ -16,4 +16,9 @@ enum RequestMethod: string
     case PATCH = 'PATCH';
     case HEAD = 'HEAD';
     case OPTIONS = 'OPTIONS';
+
+    public static function normalize(self|string $method): string
+    {
+        return $method instanceof self ? $method->value : (string) $method;
+    }
 }

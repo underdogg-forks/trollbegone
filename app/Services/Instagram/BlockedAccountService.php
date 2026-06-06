@@ -2,11 +2,12 @@
 
 namespace App\Services\Instagram;
 
+use App\Contracts\InstagramApiServiceContract;
 use App\Models\Account;
 use App\Models\BlockedAccount;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Collection;
 
 /**
  * BlockedAccountService manages blocking functionality for Instagram accounts.
@@ -15,7 +16,7 @@ use Illuminate\Support\Collection;
 class BlockedAccountService
 {
     public function __construct(
-        protected InstagramApiService $instagramApi
+        protected InstagramApiServiceContract $instagramApi
     ) {}
 
     /**
@@ -123,14 +124,8 @@ class BlockedAccountService
         Collection $comments,
         string $tag = 'TrollBeGone'
     ): Collection {
-        $needle = '#'.ltrim(strtolower($tag), '#');
-
-        return $comments
-            ->filter(function (array $comment) use ($needle) {
-                $text = strtolower((string) ($comment['text'] ?? ''));
-
-                return isset($comment['username']) && str_contains($text, $needle);
-            })
+        return $this->instagramApi->filterCommentsByTag($comments, $tag)
+            ->filter(fn (array $comment) => isset($comment['username']))
             ->map(fn (array $comment) => $this->blockAccount(
                 $account,
                 $comment['username'],

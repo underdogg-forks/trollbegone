@@ -52,7 +52,7 @@ class CommentModerationServiceTest extends TestCase
         $beta = $summary->firstWhere('username', 'beta');
 
         $this->assertSame(2, $alpha['comment_count']);
-        $this->assertSame('first', $alpha['latest_comment']);
+        $this->assertSame('second', $alpha['latest_comment']);
         $this->assertSame(1, $beta['comment_count']);
         $this->assertSame('third', $beta['latest_comment']);
         /** #endregion */

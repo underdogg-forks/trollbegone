@@ -2,17 +2,15 @@
 
 namespace Tests\Fakes;
 
+use App\Contracts\InstagramApiServiceContract;
 use App\Models\Account;
-use App\Services\Instagram\InstagramApiService;
 use Illuminate\Support\Collection;
 
 /**
- * FakeInstagramApiService provides a fake implementation of InstagramApiService for testing.
- * This allows tests to define predictable responses without needing Mockery.
- *
- * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+ * FakeInstagramApiService provides a test double for InstagramApiServiceContract.
+ * This allows tests to define predictable responses without HTTP calls.
  */
-class FakeInstagramApiService extends InstagramApiService
+class FakeInstagramApiService implements InstagramApiServiceContract
 {
     /**
      * @var array<string, array>
@@ -30,6 +28,11 @@ class FakeInstagramApiService extends InstagramApiService
     protected array $commentsResponses = [];
 
     /**
+     * @var array<string, Collection>
+     */
+    protected array $followingResponses = [];
+
+    /**
      * @var array<string, bool>
      */
     protected array $blockUserResults = [];
@@ -39,104 +42,87 @@ class FakeInstagramApiService extends InstagramApiService
      */
     protected array $blockUserCalls = [];
 
-    /**
-     * Override constructor to avoid requiring HttpClientExceptionDecorator.
-     */
-    public function __construct()
-    {
-        // Don't call parent constructor - we're a fake
-    }
-
-    /**
-     * Set the response for getUserInfo.
-     *
-     * @param  string  $username  Username to match
-     * @param  array|null  $userInfo  User info to return
-     */
     public function setUserInfoResponse(string $username, ?array $userInfo): void
     {
         $this->userInfoResponses[$username] = $userInfo;
     }
 
-    /**
-     * Set the response for getStories.
-     *
-     * @param  string  $accountUsername  Account username to match
-     * @param  Collection  $stories  Stories to return
-     */
     public function setStoriesResponse(string $accountUsername, Collection $stories): void
     {
         $this->storiesResponses[$accountUsername] = $stories;
     }
 
-    /**
-     * Set the response for getStoryComments.
-     *
-     * @param  string  $storyId  Story ID to match
-     * @param  Collection  $comments  Comments to return
-     */
     public function setCommentsResponse(string $storyId, Collection $comments): void
     {
         $this->commentsResponses[$storyId] = $comments;
     }
 
-    /**
-     * Set the response for getPostComments.
-     *
-     * @param  string  $postId  Post ID to match
-     * @param  Collection  $comments  Comments to return
-     */
     public function setPostCommentsResponse(string $postId, Collection $comments): void
     {
         $this->commentsResponses[$postId] = $comments;
     }
 
-    /**
-     * Set the result for blockUser.
-     *
-     * @param  string  $userId  User ID to match
-     * @param  bool  $result  Success or failure
-     */
+    public function setFollowingResponse(string $accountUsername, Collection $following): void
+    {
+        $this->followingResponses[$accountUsername] = $following;
+    }
+
     public function setBlockUserResult(string $userId, bool $result): void
     {
         $this->blockUserResults[$userId] = $result;
     }
 
-    /**
-     * Get user info by username.
-     */
-    public function getUserInfo(Account $account, string $username): ?array
+    public function getFollowing(Account $account): Collection
     {
-        return $this->userInfoResponses[$username] ?? null;
+        return $this->followingResponses[$account->username] ?? collect([]);
     }
 
-    /**
-     * Get stories for an account.
-     */
-    public function getStories(Account $account): Collection
+    public function getPostsByUsername(Account $account, string $username): Collection
     {
-        return $this->storiesResponses[$account->username] ?? collect([]);
+        return collect([]);
     }
 
-    /**
-     * Get comments for a story.
-     */
-    public function getStoryComments(Account $account, string $storyId): Collection
-    {
-        return $this->commentsResponses[$storyId] ?? collect([]);
-    }
-
-    /**
-     * Get comments for a post.
-     */
     public function getPostComments(Account $account, string $postId): Collection
     {
         return $this->commentsResponses[$postId] ?? collect([]);
     }
 
-    /**
-     * Block a user.
-     */
+    public function filterCommentsByTag(Collection $comments, string $tag): Collection
+    {
+        $needle = '#'.ltrim(strtolower($tag), '#');
+
+        return $comments->filter(function (array $comment) use ($needle) {
+            return str_contains(strtolower((string) ($comment['text'] ?? '')), $needle);
+        })->values();
+    }
+
+    public function filterCommentsWithoutTags(Collection $comments): Collection
+    {
+        return $comments->filter(function (array $comment) {
+            return ! preg_match('/#[A-Za-z0-9_]+/', (string) ($comment['text'] ?? ''));
+        })->values();
+    }
+
+    public function deleteComment(Account $account, string $commentId): bool
+    {
+        return true;
+    }
+
+    public function getUserInfo(Account $account, string $username): ?array
+    {
+        return $this->userInfoResponses[$username] ?? null;
+    }
+
+    public function getStories(Account $account): Collection
+    {
+        return $this->storiesResponses[$account->username] ?? collect([]);
+    }
+
+    public function getStoryComments(Account $account, string $storyId): Collection
+    {
+        return $this->commentsResponses[$storyId] ?? collect([]);
+    }
+
     public function blockUser(Account $account, string $userId): bool
     {
         $this->blockUserCalls[] = $userId;
@@ -144,24 +130,17 @@ class FakeInstagramApiService extends InstagramApiService
         return $this->blockUserResults[$userId] ?? true;
     }
 
-    /**
-     * Get all user IDs passed to blockUser.
-     *
-     * @return array<int, string>
-     */
     public function getBlockUserCalls(): array
     {
         return $this->blockUserCalls;
     }
 
-    /**
-     * Reset all fake responses.
-     */
     public function reset(): void
     {
         $this->userInfoResponses = [];
         $this->storiesResponses = [];
         $this->commentsResponses = [];
+        $this->followingResponses = [];
         $this->blockUserResults = [];
         $this->blockUserCalls = [];
     }

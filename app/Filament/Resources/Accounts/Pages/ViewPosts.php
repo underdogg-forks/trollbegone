@@ -28,7 +28,7 @@ class ViewPosts extends Page
 
     public string $username;
 
-    protected array $posts = [];
+    public array $posts = [];
 
     public function mount(Account $record, string $username): void
     {

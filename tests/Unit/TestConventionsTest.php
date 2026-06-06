@@ -32,9 +32,9 @@ class TestConventionsTest extends TestCase
                 $signatureOffset = (int) $nameOffset;
                 $beforeSignature = substr($content, 0, $signatureOffset);
                 $lastAttributeOffset = strrpos($beforeSignature, '#[Test]');
-                $lastPublicOffset = strrpos($beforeSignature, 'public function');
+                $lastClosingBrace = strrpos($beforeSignature, '}');
 
-                if ($lastAttributeOffset === false || ($lastPublicOffset !== false && $lastAttributeOffset < $lastPublicOffset)) {
+                if ($lastAttributeOffset === false || ($lastClosingBrace !== false && $lastAttributeOffset < $lastClosingBrace)) {
                     $violations[] = sprintf('%s::%s must be annotated with #[Test]', $file, $methodName);
                 }
 
